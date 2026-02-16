@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Remplacez VOTRE_APP_ID par votre ID d'application Facebook (ex: 123456789) -->
+    <string name="facebook_app_id">1662040518500459</string>
+    
+    <!-- Remplacez VOTRE_APP_ID par le même ID, mais gardez le préfixe "fb" (ex: fb123456789) -->
+    <string name="fb_login_protocol_scheme">fb1662040518500459</string>
+    
+    <!-- Remplacez VOTRE_CLIENT_TOKEN par votre Token client (trouvé dans Paramètres > Avancé) -->
+    <string name="facebook_client_token">051a517e15c8430294cfef09ff7c255e</string>
+</resources>
