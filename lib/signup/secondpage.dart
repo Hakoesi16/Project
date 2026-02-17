@@ -29,11 +29,15 @@ class _SecondpageState extends State<Secondpage> {
         listener: (context, state) {
           if (state is AuthSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Login Success")),
+              const SnackBar(
+                content: Text("Account created successfully!"),
+                backgroundColor: Colors.green, // Vert pour succès
+              ),
             );
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
+              SnackBar(content: Text(state.message),
+              backgroundColor: Colors.red,),
             );
           }
         },

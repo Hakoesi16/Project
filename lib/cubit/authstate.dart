@@ -28,3 +28,7 @@ class EmailSentSuccess extends AuthState {}
 class CodeVerifiedSuccess extends AuthState {}
 
 class PasswordSentSuccess extends AuthState {}
+class AuthAuthenticated extends AuthState {
+  final Map<String, dynamic> user;
+  AuthAuthenticated(this.user);
+}
