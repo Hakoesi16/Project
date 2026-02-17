@@ -27,7 +27,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {//methode qui construit l'interface
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -39,9 +39,6 @@ class _SplashPageState extends State<SplashPage> {
             colors: [
               Color(0xFF0172B2), // designer color
               Color(0xFF001645),
-              // Colors.blue.shade600,
-              // Colors.blue.shade900,
-              // Colors.blue.shade900,
             ],
           ),
         ),

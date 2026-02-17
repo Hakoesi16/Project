@@ -29,7 +29,7 @@ class AuthCubit extends Cubit<AuthState> {
       final response = await http.post(
         Uri.parse("https://yourbackend.com/google-login"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"idToken": idToken}),
+        body: jsonEncode({"idToken": idToken}),//envoiyer auc backen end id token qui contient(nom,emai,password,photo...)
       );
 
       if (response.statusCode == 200) {
@@ -42,32 +42,62 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
   //sign in avec facebook account
+  // Future<void> signInWithFacebook() async {
+  //   try {
+  //     emit(AuthLoading());
+  //
+  //     final LoginResult result = await FacebookAuth.instance.login();
+  //
+  //     if (result.status == LoginStatus.success) {
+  //       final accessToken = result.accessToken?.token;
+  //
+  //       // 🔥 envoyer au backend
+  //       final response = await http.post(
+  //         Uri.parse("https://yourbackend.com/facebook-login"),
+  //         headers: {"Content-Type": "application/json"},
+  //         body: jsonEncode({"accessToken": accessToken}),
+  //       );
+  //       if (response.statusCode == 200) {
+  //         // Récupérer les infos utilisateur
+  //         final userData = await FacebookAuth.instance.getUserData();
+  //         emit(AuthSuccessFacebook(userData)); // Nouveau state pour FB
+  //       } else {
+  //         emit(AuthError("Server error"));
+  //       }
+  //     } else if (result.status == LoginStatus.cancelled) {
+  //       emit(AuthError("User cancelled"));
+  //     } else {
+  //       emit(AuthError(result.message ?? "Facebook login failed"));
+  //     }
+  //   } catch (e) {
+  //     emit(AuthError(e.toString()));
+  //   }
+  // }
   Future<void> signInWithFacebook() async {
     try {
       emit(AuthLoading());
 
-      final LoginResult result = await FacebookAuth.instance.login();
+      final LoginResult result =
+      await FacebookAuth.instance.login();
 
-      if (result.status == LoginStatus.success) {
-        final accessToken = result.accessToken?.token;
+      if (result.status != LoginStatus.success) {
+        emit(AuthError("Facebook login cancelled"));
+        return;
+      }
 
-        // 🔥 envoyer au backend
-        final response = await http.post(
-          Uri.parse("https://yourbackend.com/facebook-login"),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode({"accessToken": accessToken}),
-        );
-        if (response.statusCode == 200) {
-          // Récupérer les infos utilisateur
-          final userData = await FacebookAuth.instance.getUserData();
-          emit(AuthSuccessFacebook(userData)); // Nouveau state pour FB
-        } else {
-          emit(AuthError("Server error"));
-        }
-      } else if (result.status == LoginStatus.cancelled) {
-        emit(AuthError("User cancelled"));
+      final accessToken = result.accessToken!.token;
+
+      final response = await http.post(
+        Uri.parse("https://yourbackend.com/facebook-login"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"accessToken": accessToken}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        emit(AuthAuthenticated(data));
       } else {
-        emit(AuthError(result.message ?? "Facebook login failed"));
+        emit(AuthError("Server error"));
       }
     } catch (e) {
       emit(AuthError(e.toString()));
