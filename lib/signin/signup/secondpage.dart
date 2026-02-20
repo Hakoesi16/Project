@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:projetsndcp/signup/therdpage.dart';
+import 'package:projetsndcp/signin/signup/therdpage.dart';
 import '../cubit/authcubit.dart';
 import '../cubit/authstate.dart';
 
