@@ -12,7 +12,7 @@ class Therdpage extends StatefulWidget {
 }
 
 class _TherdpageState extends State<Therdpage> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();//lire ce que utilisateur tape
 
   @override
   Widget build(BuildContext context) {

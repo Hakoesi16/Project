@@ -1,6 +1,6 @@
 import 'package:checkmark/checkmark.dart';
 import 'package:flutter/material.dart';
-import 'package:projetsndcp/userspage/usertype.dart';
+import '../userspage/usertype.dart';
 
 class Sixpage extends StatefulWidget {
   const Sixpage({super.key});
