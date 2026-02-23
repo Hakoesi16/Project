@@ -32,3 +32,16 @@ class AuthAuthenticated extends AuthState {
   final Map<String, dynamic> user;
   AuthAuthenticated(this.user);
 }
+class AuthSuccessManual extends AuthState {
+  final Map<String, dynamic> userData;
+  AuthSuccessManual(this.userData);
+}
+class ProfileLoaded extends AuthState {
+  final Map<String, dynamic> user;
+  ProfileLoaded(this.user);
+}
+
+class ProfileError extends AuthState {
+  final String message;
+  ProfileError(this.message);
+}
