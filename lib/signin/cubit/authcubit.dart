@@ -259,7 +259,8 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final userData = jsonDecode(response.body);
-        emit(AuthSuccessManual(userData));
+        // emit(AuthSuccessManual(userData));
+        emit(AuthAuthenticated(userData));
       } else {
         emit(AuthError("Registration failed: ${response.statusCode}"));
       }
@@ -291,11 +292,25 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  // Future<void> fetchProfile(String token) async {
+  //   emit(ProfileLoaded({
+  //     "name": "Captain Test",
+  //     "email": "test@mail.com",
+  //     "boatName": "Sea Explorer",
+  //     "registration": "MAR-9999",
+  //     "homePort": "Oran",
+  //     "licenseExpiry": "2026",
+  //   }));
+  // }
   // --- LOGOUT ---
   Future<void> logout() async {
-    await _googleSignIn.signOut();
-    await FacebookAuth.instance.logOut();
-    emit(AuthInitial());
+    try {
+      await _googleSignIn.signOut();
+      await FacebookAuth.instance.logOut();
+      emit(AuthInitial());
+    } catch (e) {
+      emit(AuthError("Logout failed: ${e.toString()}"));
+    }
   }
 
   // --- EMAIL & CODE ---
@@ -307,8 +322,11 @@ class AuthCubit extends Cubit<AuthState> {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email}),
       );
-      if (response.statusCode == 200) emit(EmailSentSuccess());
-      else emit(AuthError("Server error: ${response.statusCode}"));
+      if (response.statusCode == 200) {
+        emit(EmailSentSuccess());
+      } else {
+        emit(AuthError("Server error: ${response.statusCode}"));
+      }
     } catch (e) { emit(AuthError(e.toString())); }
   }
 
@@ -320,8 +338,11 @@ class AuthCubit extends Cubit<AuthState> {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email, "code": code}),
       );
-      if (response.statusCode == 200) emit(CodeVerifiedSuccess());
-      else emit(AuthError("Invalid code"));
+      if (response.statusCode == 200) {
+        emit(CodeVerifiedSuccess());
+      } else {
+        emit(AuthError("Invalid code"));
+      }
     } catch (e) { emit(AuthError(e.toString())); }
   }
 }
