@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
-
 class EditProfilePage extends StatefulWidget {
   final String token;
 
@@ -25,6 +24,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
+  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -79,27 +79,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state is ProfileLoaded) {
+          if (state is ProfileLoaded && !_isInitialized) {
             _nameController.text = state.user["name"] ?? "";
             _phoneController.text = state.user["phone"] ?? "";
             _emailController.text = state.user["email"] ?? "";
             _homePortController.text = state.user["homePort"] ?? "";
             _boatNameController.text = state.user["boatName"] ?? "";
+            _isInitialized = true; // Empêche d'écraser les saisies de l'utilisateur
           }
           if (state is ProfileUpdatedSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Profile updated successfully")),
+              const SnackBar(content: Text("Profile updated successfully"), backgroundColor: Colors.green),
             );
             Navigator.pop(context);
           }
           if (state is ProfileError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
+              SnackBar(content: Text(state.message), backgroundColor: Colors.red),
             );
           }
         },
         builder: (context, state) {
-          if (state is AuthLoading) {
+          if (state is AuthLoading && !_isInitialized) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -107,7 +108,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                _buildProfileImage(),
+                _buildProfileImage(state),
                 const SizedBox(height: 24),
                 _buildPersonalInfoCard(),
                 const SizedBox(height: 20),
@@ -115,7 +116,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 const SizedBox(height: 24),
                 _buildDeactivateButton(),
                 const SizedBox(height: 16),
-                _buildSaveButton(),
+                _buildSaveButton(state),
                 const SizedBox(height: 12),
                 _buildCancelButton(),
               ],
@@ -126,7 +127,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _buildProfileImage() {
+  Widget _buildProfileImage(AuthState state) {
+    String? networkImage;
+    if (state is ProfileLoaded) networkImage = state.user["profilePicture"];
+
     return Column(
       children: [
         Stack(
@@ -141,7 +145,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   backgroundColor: const Color(0xFFE3F2FD),
                   backgroundImage: _imageFile != null
                       ? FileImage(_imageFile!)
-                      : const NetworkImage('https://via.placeholder.com/150') as ImageProvider,
+                      : (networkImage != null 
+                          ? NetworkImage(networkImage) 
+                          : const NetworkImage('https://via.placeholder.com/150')) as ImageProvider,
                 ),
               ),
             ),
@@ -224,9 +230,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _buildSaveButton() {
+  Widget _buildSaveButton(AuthState state) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: state is AuthLoading ? null : () {
         context.read<AuthCubit>().updateProfile(
           token: widget.token,
           name: _nameController.text,
@@ -241,17 +247,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 2,
       ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.check_circle_outline, color: Colors.white),
-          SizedBox(width: 8),
-          Text(
-            "Save Changes",
-            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+      child: state is AuthLoading 
+        ? const CircularProgressIndicator(color: Colors.white)
+        : const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.check_circle_outline, color: Colors.white),
+              SizedBox(width: 8),
+              Text(
+                "Save Changes",
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 
@@ -304,7 +312,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withOpacity(0.04), // Correction withValues -> withOpacity
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
