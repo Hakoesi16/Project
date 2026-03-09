@@ -302,6 +302,62 @@ class AuthCubit extends Cubit<AuthState> {
   //     "licenseExpiry": "2026",
   //   }));
   // }
+  Future<void> fetchHomeData(String token) async {
+    try {
+      emit(AuthLoading());
+      // Simulation d'un appel API
+      await Future.delayed(const Duration(seconds: 1));
+      final response = await http.get(
+        Uri.parse("https://yourbackend.com/api/profile"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        emit(ProfileLoaded(data));
+      } else {
+        emit(AuthError("Failed to load Home page"));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+  // --- UPDATE PROFIL ---
+  Future<void> updateProfile({
+    required String token,
+    required String name,
+    required String phone,
+    required String homePort,
+    required String boatName,
+  }) async {
+    try {
+      emit(AuthLoading());
+      final response = await http.put(
+        Uri.parse("https://backend.com"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          "name": name,
+          "phone": phone,
+          "homePort": homePort,
+          "boatName": boatName,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        emit(ProfileUpdatedSuccess());
+      } else {
+        emit(ProfileError("Update failed"));
+      }
+    } catch (e) {
+      emit(ProfileError(e.toString()));
+    }
+  }
+
   // --- LOGOUT ---
   Future<void> logout() async {
     try {
