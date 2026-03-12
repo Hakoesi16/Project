@@ -294,8 +294,8 @@ class _HomePageState extends State<HomePage> {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              'https://via.placeholder.com/60',
+            child: Image.asset(
+              'assets/images/serdina.jpg',
               width: 60,
               height: 60,
               fit: BoxFit.cover,
