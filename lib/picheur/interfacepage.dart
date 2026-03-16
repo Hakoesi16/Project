@@ -62,7 +62,7 @@ class _InterfacepageState extends State<Interfacepage> {
               ),
               child: MaterialButton(onPressed: (){
                 // Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(token: widget.token)));
-              },child: const Text("Start Setup", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),)
+              },child: const Text("Start Setup", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),)
           ),
         ],
       ),
