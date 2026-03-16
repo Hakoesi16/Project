@@ -202,7 +202,7 @@ class _InfopageState extends State<Infopage> {
             children: [
               CircleAvatar(radius: 15, backgroundColor: const Color(0xFF033F78), child: Text(number, style: const TextStyle(color: Colors.white))),
               const SizedBox(width: 12),
-              Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
             ],
           ),
           const SizedBox(height: 20),
