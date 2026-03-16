@@ -158,6 +158,7 @@
 
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -166,7 +167,7 @@ import 'authstate.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
-
+  final String _baseUrl = "https://yourbackend.com";
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // --- LOGIN GOOGLE ---
@@ -357,6 +358,65 @@ class AuthCubit extends Cubit<AuthState> {
       emit(ProfileError(e.toString()));
     }
   }
+
+  // --- COMPLETE SETUP (MULTIPART) ---
+  Future<void> submitSetup({
+    required String token,
+    required String fullName,
+    required String nationalId,
+    required String phone,
+    required String email,
+    required String boatName,
+    required String registrationNumber,
+    required String vesselType,
+    required String homePort,
+    required String licenseNumber,
+    required String expiryDate,
+    File? fishingLicense,
+    File? boatRegistration,
+  }) async {
+    try {
+      emit(SetupLoading());
+
+      var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/api/complete-setup"));//un type de http envoier a la fois text et fichier
+      request.headers.addAll({
+        "Authorization": "Bearer $token",
+        "Content-Type": "multipart/form-data",//la forme de donner ou backend se accepter
+      });
+
+      // Champs textes
+      request.fields['fullName'] = fullName;
+      request.fields['nationalId'] = nationalId;
+      request.fields['phone'] = phone;
+      request.fields['email'] = email;
+      request.fields['boatName'] = boatName;
+      request.fields['registrationNumber'] = registrationNumber;
+      request.fields['vesselType'] = vesselType;
+      request.fields['homePort'] = homePort;
+      request.fields['licenseNumber'] = licenseNumber;
+      request.fields['expiryDate'] = expiryDate;
+
+      // Ajout des fichiers
+      if (fishingLicense != null) {
+        request.files.add(await http.MultipartFile.fromPath('fishingLicense', fishingLicense.path));
+      }
+      if (boatRegistration != null) {
+        request.files.add(await http.MultipartFile.fromPath('boatRegistration', boatRegistration.path));
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        emit(SetupSuccess());
+      } else {
+        emit(AuthError("Setup failed: ${response.body}"));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
 
   // --- LOGOUT ---
   Future<void> logout() async {

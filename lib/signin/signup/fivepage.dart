@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projetsndcp/signin/signup/sixpage.dart';
 import '../cubit/authcubit.dart';
 import '../cubit/authstate.dart';
 
@@ -119,7 +120,17 @@ class _FivepageState extends State<Fivepage> {
                         width: 20,
                         child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                       )
-                          : const Text("Continue", style: TextStyle(color: Colors.white)),
+                          : MaterialButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                             MaterialPageRoute(builder: (context) => Sixpage()),
+                          );
+                        },
+                        child: const Text(
+                          "Continue",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
                     ),
                   ),
                 ],

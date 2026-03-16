@@ -65,6 +65,8 @@ class HomeDataLoaded extends AuthState {
   List<Object?> get props => [data];
 }
 class ProfileUpdatedSuccess extends AuthState {}
+class SetupLoading extends AuthState {}
+class SetupSuccess extends AuthState {}
 // import 'package:equatable/equatable.dart';
 //
 // abstract class AuthState extends Equatable {

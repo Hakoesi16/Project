@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'filinfo.dart';
+
 class Interfacepage extends StatefulWidget {
   final String token;
   const Interfacepage({super.key, required this.token});
@@ -61,7 +63,7 @@ class _InterfacepageState extends State<Interfacepage> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: MaterialButton(onPressed: (){
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(token: widget.token)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Infopage(token: widget.token)));
               },child: const Text("Start Setup", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),)
           ),
         ],
