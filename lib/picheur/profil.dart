@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
+import 'Weather&Safety.dart';
 import 'editprofile.dart';
+import 'homepage.dart';
 
 class ProfilePage extends StatefulWidget {
   final String token;
@@ -269,8 +271,12 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.anchor, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(token: widget.token)));
+          }, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => WeatherSafetypage()));
+          }, icon: const Icon(Icons.anchor, color: Colors.grey)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.person, color: Color(0xFF013D73), size: 30)),

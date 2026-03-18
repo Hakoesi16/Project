@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timelines_plus/timelines_plus.dart';
+import 'package:timelines/timelines.dart';
 
 class BatchDetailspage extends StatefulWidget{
   const BatchDetailspage ({super.key});
@@ -26,9 +26,9 @@ class _BatchDetailsState extends State<BatchDetailspage> {
   bool _pending = false;
   bool _rejected = false;
 
-  
-  
-  
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,12 +55,12 @@ class _BatchDetailsState extends State<BatchDetailspage> {
               width: 396,
               height: 78,
               decoration: BoxDecoration(
-                color: Color(0xFFECFDF5),
-                borderRadius: BorderRadiusGeometry.circular(13),
-                border: BoxBorder.all(
-                  color: Color(0xFFD1FAE5),
-                  width: 1.5,
-                )
+                  color: Color(0xFFECFDF5),
+                  borderRadius: BorderRadiusGeometry.circular(13),
+                  border: BoxBorder.all(
+                    color: Color(0xFFD1FAE5),
+                    width: 1.5,
+                  )
               ),
               child: Row(
                 spacing: 10,
@@ -71,17 +71,17 @@ class _BatchDetailsState extends State<BatchDetailspage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text("CURRENT STATUS", style: TextStyle(
-                        color: Color(0xFF065F46),
-                        fontFamily: "Inter",
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12,
-                        letterSpacing: 0.6
-                      ),),
-                      Text("APPROVED", style: TextStyle(
                           color: Color(0xFF065F46),
                           fontFamily: "Inter",
                           fontWeight: FontWeight.w700,
-                          fontSize: 18,
+                          fontSize: 12,
+                          letterSpacing: 0.6
+                      ),),
+                      Text("APPROVED", style: TextStyle(
+                        color: Color(0xFF065F46),
+                        fontFamily: "Inter",
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
                       ),),
 
                     ],
@@ -215,15 +215,15 @@ class _BatchDetailsState extends State<BatchDetailspage> {
             SizedBox(height: 20),
             Container(
               padding: EdgeInsets.all(13),
-              height: 172, 
+              height: 172,
               width: 389,
               decoration: BoxDecoration(
-                color: Color(0xFFFFFFFF),
-                borderRadius: BorderRadiusGeometry.circular(13),
-                border: BoxBorder.all(
-                  color: Color(0xFFE2E8F0),
-                  width: 0.5,
-                )
+                  color: Color(0xFFFFFFFF),
+                  borderRadius: BorderRadiusGeometry.circular(13),
+                  border: BoxBorder.all(
+                    color: Color(0xFFE2E8F0),
+                    width: 0.5,
+                  )
               ),
               child: Column(
                 children: [
@@ -319,12 +319,12 @@ class _BatchDetailsState extends State<BatchDetailspage> {
               height: 192,
               width: 394,
               decoration: BoxDecoration(
-                color: Color(0xFFE2E8F0),
-                borderRadius: BorderRadiusGeometry.circular(13),
-                border: BoxBorder.all(
                   color: Color(0xFFE2E8F0),
-                  width: 0.5,
-                )
+                  borderRadius: BorderRadiusGeometry.circular(13),
+                  border: BoxBorder.all(
+                    color: Color(0xFFE2E8F0),
+                    width: 0.5,
+                  )
               ),
             ),
             SizedBox(height: 20),
@@ -395,51 +395,51 @@ class _BatchDetailsState extends State<BatchDetailspage> {
             ),
             SizedBox(height: 5),
             FixedTimeline.tileBuilder(
-              theme: TimelineThemeData(
-                nodePosition:  0,
-                connectorTheme: ConnectorThemeData(
-                  color: Colors.red,
-                  thickness: 2,
-                ),
-              ),
-              builder: TimelineTileBuilder.connected(
-                itemCount: events.length,
-                itemExtent: 80,
-
-                connectorBuilder: (context, index, type) => SolidLineConnector(
-                  color: Color(0xFF023E77),
-                  thickness: 2,
-                ),
-                indicatorBuilder: (context, index) => DotIndicator(
-                  color: index == 0? Color(0xFF023E77):Color(0xFFC4D3E0),
-                  size: 16,
-                  border: BoxBorder.all(
-                    color: Color(0xFFFFFFFF),
-                    width: 3.5,
+                theme: TimelineThemeData(
+                  nodePosition:  0,
+                  connectorTheme: ConnectorThemeData(
+                    color: Colors.red,
+                    thickness: 2,
                   ),
                 ),
-                contentsBuilder: (context, index) => Padding(
+                builder: TimelineTileBuilder.connected(
+                  itemCount: events.length,
+                  itemExtent: 80,
+
+                  connectorBuilder: (context, index, type) => SolidLineConnector(
+                    color: Color(0xFF023E77),
+                    thickness: 2,
+                  ),
+                  indicatorBuilder: (context, index) => DotIndicator(
+                    color: index == 0? Color(0xFF023E77):Color(0xFFC4D3E0),
+                    size: 16,
+                    border: BoxBorder.all(
+                      color: Color(0xFFFFFFFF),
+                      width: 3.5,
+                    ),
+                  ),
+                  contentsBuilder: (context, index) => Padding(
                     padding: EdgeInsetsGeometry.only(left: 8,top: 25),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("${events[index]["title"]}",style: TextStyle(
-                        color: Color(0xFF0F172A),
-                        fontFamily: "Inter",
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
+                          color: Color(0xFF0F172A),
+                          fontFamily: "Inter",
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
                         ),),
                         SizedBox(height: 1,),
                         Text("${events[index]["subtitle"]}",style: TextStyle(
-                            color: Color(0xFF64748B),
-                            fontFamily: "Inter",
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
+                          color: Color(0xFF64748B),
+                          fontFamily: "Inter",
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
                         )),
                       ],
                     ),
-                ),
-              )
+                  ),
+                )
             ),
             SizedBox(height: 20),
             Container(
