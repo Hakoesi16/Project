@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:projetsndcp/picheur/interfacepage.dart';
 import 'package:projetsndcp/signin/cubit/authcubit.dart';
 import 'package:projetsndcp/signin/signup/splage.dart';
+import 'package:projetsndcp/picheur/profil.dart';
+
+
 
 
 void main() {
@@ -18,8 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashPage(
-      ),
+      home: SplashPage(),
     );
   }
 }
