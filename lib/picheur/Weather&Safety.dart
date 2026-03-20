@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:weather/weather.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;

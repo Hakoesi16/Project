@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timelines_plus/timelines_plus.dart';
+import 'package:timelines/timelines.dart';
 
 class BatchDetailspage extends StatefulWidget{
   const BatchDetailspage ({super.key});
