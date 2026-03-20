@@ -278,7 +278,13 @@ class _ProfilePageState extends State<ProfilePage> {
             Navigator.push(context, MaterialPageRoute(builder: (context) => WeatherSafetypage()));
           }, icon: const Icon(Icons.anchor, color: Colors.grey)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WeatherSafetypage(),
+                ));
+          }, icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.person, color: Color(0xFF013D73), size: 30)),
         ],
       ),

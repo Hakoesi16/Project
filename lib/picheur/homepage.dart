@@ -4,6 +4,8 @@ import 'package:projetsndcp/picheur/profil.dart';//appel aux profile papge
 
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
+import 'Weather&Safety.dart';
+import 'addBatchPage.dart';
 
 class HomePage extends StatefulWidget {
   final String token;
@@ -139,7 +141,12 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [BoxShadow(color: const Color(0xFF013D73).withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 8))],
         ),
-        child: Row(
+        child:MaterialButton(onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Addbatchpage(),
+          ));
+        },child:Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
@@ -158,7 +165,8 @@ class _HomePageState extends State<HomePage> {
             ),
             const Icon(Icons.chevron_right, color: Colors.white),
           ],
-        ),
+        ) ,)
+
       ),
     );
   }
@@ -186,7 +194,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildActionItem(IconData icon, String title) {
-    return Container(
+    return MaterialButton(onPressed: (){
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => batchdetailpage(),
+      //   ));
+    },child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10)]),
       child: Column(
@@ -196,7 +210,8 @@ class _HomePageState extends State<HomePage> {
           Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
         ],
       ),
-    );
+    ),)
+      ;
   }
 
   Widget _buildSectionHeader(IconData icon, String title, {String? trailing}) {
@@ -353,7 +368,7 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               // Navigator.push(
               //   context,
-              //   MaterialPageRoute(builder: (context) => BatchPage(token: widget.token)),
+              //   MaterialPageRoute(builder: (context) => HomePage(token: widget.token)),
               // );
             },
             child: _navIcon(Icons.anchor, false),
@@ -369,19 +384,20 @@ class _HomePageState extends State<HomePage> {
           ),
           GestureDetector(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => EmailPage(token: widget.token)),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => WeatherSafetypage()),
+              );
             },
             child: _navIcon(Icons.remove_red_eye_outlined, false),
           ),
           GestureDetector(
             onTap: () {
               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfilePage(token: widget.token)),
-              );
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(token: widget.token),
+                  ));
             },
             child: _navIcon(Icons.person_outline, false),
           ),
