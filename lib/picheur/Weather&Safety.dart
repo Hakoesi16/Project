@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:weather/weather.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
@@ -29,7 +28,7 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
     );
     final response1 = await http.get(
       Uri.parse(
-          "https://marine-api.open-meteo.com/v1/marine?latitude=${position.latitude}&longitude=${position.longitude}&current=wave_height",
+        "https://marine-api.open-meteo.com/v1/marine?latitude=${position.latitude}&longitude=${position.longitude}&current=wave_height",
       ),
     );
     final response2 = await http.get(
@@ -532,21 +531,21 @@ Widget Cardinfo(Color color,IconData icon, String title, String info1, String va
           ],
         ),
         Row(
-            children: [
-              Text(info1,style: TextStyle(
-                color: Color(0xFF64748B),
-                fontFamily: "Inter",
-                fontWeight: FontWeight.w400,
-                fontSize: 12,
-              ),),
-              Spacer(),
-              Text("$value1 AM",style: TextStyle(
-                color: Color(0xFF0F172A),
-                fontFamily: "Inter",
-                fontWeight: FontWeight.w700,
-                fontSize: 12,
-              ),),
-            ],
+          children: [
+            Text(info1,style: TextStyle(
+              color: Color(0xFF64748B),
+              fontFamily: "Inter",
+              fontWeight: FontWeight.w400,
+              fontSize: 12,
+            ),),
+            Spacer(),
+            Text("$value1 AM",style: TextStyle(
+              color: Color(0xFF0F172A),
+              fontFamily: "Inter",
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+            ),),
+          ],
         ),
         Row(
           children: [
