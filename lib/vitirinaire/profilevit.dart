@@ -15,7 +15,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   bool _notifications = true;
   bool _darkMode = false;
-  final Color primaryTeal = const Color(0xFF00A896); // Couleur Turquoise de la photo
+  final Color primaryTeal = const Color(0xFF00A896);
 
   @override
   void initState() {
