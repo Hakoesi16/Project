@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:timelines/timelines.dart';
+import 'package:timelines_plus/timelines_plus.dart';
+import 'package:projetsndcp/picheur/myBatches.dart';
 
 class BatchDetailspage extends StatefulWidget{
-  const BatchDetailspage ({super.key});
+  final BatchItem batch;
+  const BatchDetailspage({super.key, required this.batch});
   @override State<BatchDetailspage> createState() => _BatchDetailsState();
 }
 

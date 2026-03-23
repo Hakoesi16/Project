@@ -4,6 +4,7 @@ import 'package:projetsndcp/picheur/interfacepage.dart';
 import 'package:projetsndcp/signin/cubit/authcubit.dart';
 import 'package:projetsndcp/signin/signup/splage.dart';
 import 'package:projetsndcp/picheur/profil.dart';
+//import 'package:projetsndcp/picheur/myBatches.dart';
 
 
 
