@@ -34,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
         ),
       ),
       body: BlocBuilder<AuthCubit, AuthState>(
@@ -76,18 +76,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
 
           if (state is ProfileError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.message),
-                  ElevatedButton(
-                    onPressed: () => context.read<AuthCubit>().fetchProfile(widget.token),
-                    child: const Text("Retry"),
-                  )
-                ],
-              ),
-            );
+            return Center(child: Text(state.message));
           }
 
           return const Center(child: Text("No Profile Data Available"));
@@ -123,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 12),
           Text(user["name"] ?? "Unknown", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          Text("ID: ${user["id"] ?? "N/A"} | LICENSE: ${user["license"] ?? "N/A"}",
+          Text("ID: ${user["id"] ?? "/"} | LICENSE: ${user["license"] ?? "/"}",
               style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
           const SizedBox(height: 16),
           Row(
@@ -161,11 +150,11 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         children: [
           _infoTile(Icons.anchor_outlined, "ASSIGNED PORT", user["assignedPort"] ?? "Oran Port", trailing: _statusBadge()),
-          const Divider(),
+          const Divider(height: 32),
           _infoTile(Icons.badge_outlined, "SPECIALIZATION", user["specialization"] ?? "Aquatic Pathology"),
-          const Divider(),
-          _infoTile(Icons.directions_boat_outlined, "EXPERIENCE", user["experience"] ?? "12 Years Professional"),
-          const Divider(),
+          const Divider(height: 32),
+          _infoTile(Icons.history_edu_outlined, "EXPERIENCE", user["experience"] ?? "12 Years Professional"),
+          const Divider(height: 32),
           _infoTile(Icons.verified_user_outlined, "LICENSE EXPIRY", user["licenseExpiry"] ?? "Dec 31, 2024"),
         ],
       ),
@@ -179,7 +168,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         children: [
           _infoTile(Icons.email_outlined, "Email Address", user["email"] ?? "project@esi-sba.dz"),
-          const Divider(),
+          const Divider(height: 32),
           _infoTile(Icons.phone_outlined, "Phone Number", user["phoneNumber"] ?? "+213 674854088"),
         ],
       ),
@@ -206,19 +195,29 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _infoTile(IconData icon, String label, String value, {Widget? trailing}) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: primaryTeal.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(10),
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: primaryTeal, size: 24),
         ),
-        child: Icon(icon, color: primaryTeal, size: 24),
-      ),
-      title: Text(label, style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.bold)),
-      subtitle: Text(value, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A), fontSize: 14)),
-      trailing: trailing,
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Text(value, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A), fontSize: 14)),
+            ],
+          ),
+        ),
+        if (trailing != null) trailing,
+      ],
     );
   }
 
@@ -251,9 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.anchor, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.access_time, color: Colors.grey)),
           IconButton(onPressed: () {}, icon: Icon(Icons.person, color: primaryTeal, size: 30)),
         ],
       ),
