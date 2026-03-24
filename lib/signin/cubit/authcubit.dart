@@ -416,7 +416,59 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
+//Fill information page for vitirinaire
+  Future<void> submitSetupVit({
+    required String token,
+    required String fullNameVit,
+    required String nationalIdVit,
+    required String phoneVit,
+    required String emailVit,
+    required String boatNameVit,
+    required String registrationNumberVit,
+    required String homePortVit,
+    required String licenseNumberVit,
+    required String expiryDateVit,
+    File? fishingLicenseVit,
+    File? boatRegistrationVit,
+  }) async {
+    try {
+      emit(SetupLoading());
 
+      var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/api/complete-setup"));
+      request.headers.addAll({
+        "Authorization": "Bearer $token",
+        "Content-Type": "multipart/form-data",
+      });
+
+      request.fields['fullNameVit'] = fullNameVit;
+      request.fields['nationalIdVit'] = nationalIdVit;
+      request.fields['phoneVit'] = phoneVit;
+      request.fields['emailVit'] = emailVit;
+      request.fields['boatNameVit'] = boatNameVit;
+      request.fields['registrationNumberVit'] = registrationNumberVit;
+      request.fields['homePortVit'] = homePortVit;
+      request.fields['licenseNumberVit'] = licenseNumberVit;
+      request.fields['expiryDateVit'] = expiryDateVit;
+
+      if (fishingLicenseVit != null) {
+        request.files.add(await http.MultipartFile.fromPath('fishingLicense', fishingLicenseVit.path));
+      }
+      if (boatRegistrationVit != null) {
+        request.files.add(await http.MultipartFile.fromPath('boatRegistration', boatRegistrationVit.path));
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        emit(SetupSuccess());
+      } else {
+        emit(AuthError("Setup failed: ${response.body}"));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
 
   // --- LOGOUT ---
   Future<void> logout() async {
