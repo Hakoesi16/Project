@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projetsndcp/picheur/profil.dart';
 import 'package:projetsndcp/signin/cubit/authcubit.dart';
 import 'package:projetsndcp/signin/cubit/themecubit.dart';
-import 'package:projetsndcp/signin/signup/splage.dart';
 
 void main() {
   runApp(
@@ -62,13 +62,8 @@ class MyApp extends StatelessWidget {
               elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
-            textTheme: const TextTheme(
-              bodyLarge: TextStyle(color: Colors.white),
-              bodyMedium: TextStyle(color: Colors.white70),
-            ),
-            dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const SplashPage(),
+          home: const ProfilePage(token: ''),
         );
       },
     );
