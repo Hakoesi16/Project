@@ -303,6 +303,9 @@ class AuthCubit extends Cubit<AuthState> {
   //     "licenseExpiry": "2026",
   //   }));
   // }
+
+
+
   Future<void> fetchHomeData(String token) async {
     try {
       emit(AuthLoading());

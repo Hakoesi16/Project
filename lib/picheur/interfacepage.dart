@@ -14,22 +14,23 @@ class _InterfacepageState extends State<Interfacepage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F9),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text("Let's Fishing", style: TextStyle(
-            fontWeight: FontWeight.bold, color: Colors.black)),
+        title: Text("Let's Fishing", style: TextStyle(
+            fontWeight: FontWeight.bold, color:isDark?Colors.white: Colors.black)),
         actions: [
           Container(
             padding: EdgeInsets.all(15),
             decoration: BoxDecoration(
-              border: Border.fromBorderSide( const BorderSide(color: Colors.grey)),
+              border: Border.fromBorderSide( BorderSide(color:isDark?Colors.white12: Colors.grey)),
             ),
             child:Container(
                 padding: EdgeInsets.all(10),
-                child: IconButton(onPressed: (){}, icon: Icon(Icons.help_outline,color: Colors.grey,))),
+                child: IconButton(onPressed: (){}, icon: Icon(Icons.help_outline,color:isDark?Colors.white: Colors.grey,))),
           )
         ],
       ),
@@ -49,11 +50,11 @@ class _InterfacepageState extends State<Interfacepage> {
             ),
           ),
           const SizedBox(height: 50),
-          _textcenter("Let's Complete"),
-          _textcenter("Your Profil"),
-          _text("To start trading in the marketplace,"),
-          _text("we need a few more details about you"),
-          _text("and your vessel"),
+          _textcenter("Let's Complete",isDark),
+          _textcenter("Your Profil",isDark),
+          _text("To start trading in the marketplace,",isDark),
+          _text("we need a few more details about you",isDark),
+          _text("and your vessel",isDark),
           const SizedBox(height: 16),
           ElevatedButton(
               onPressed: (){},
@@ -72,12 +73,12 @@ class _InterfacepageState extends State<Interfacepage> {
   }
 }
 
-Widget _textcenter(String txt){
+Widget _textcenter(String txt,bool isDark){
   return Center(
     child: RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        style: TextStyle(fontSize: 11, color: Colors.black),
+        style: TextStyle(fontSize: 11, color:isDark?Colors.white: Colors.black),
         children: [
           TextSpan(text:txt,style: TextStyle(fontWeight: FontWeight.w800,fontSize: 36)),
         ],
@@ -87,12 +88,12 @@ Widget _textcenter(String txt){
 
 }
 
-Widget _text(String text){
+Widget _text(String text,bool isDark){
   return Center(
     child: RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        style: TextStyle(fontSize: 11, color: Colors.grey),
+        style: TextStyle(fontSize: 11, color:isDark?Colors.white54: Colors.grey),
         children: [
           TextSpan(text:text,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Color(0xFF475569))),
         ],
