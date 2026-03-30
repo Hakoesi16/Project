@@ -17,445 +17,266 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
   double? _visibility;
   double? _waveHeight;
   String? _highTide, _lowTide, _sunrise, _sunset, _lastUpdated = "";
+  // ignore: unused_field
   bool _weatherLoaded = false;
 
   Future<void> _getWeather() async {
-    Position position = await Geolocator.getCurrentPosition();
-    final response = await http.get(
-      Uri.parse(
-        "https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=00267594af2060e6f2b24e9db3d63478&units=metric",
-      ),
-    );
-    final response1 = await http.get(
-      Uri.parse(
-        "https://marine-api.open-meteo.com/v1/marine?latitude=${position.latitude}&longitude=${position.longitude}&current=wave_height",
-      ),
-    );
-    final response2 = await http.get(
-      Uri.parse(
-        "https://api.open-meteo.com/v1/forecast?latitude=${position.latitude}&longitude=${position.longitude}&daily=sunrise,sunset&timezone=auto",
-      ),
-    );
+    try {
+      // Vérifier les permissions avant de demander la position
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
 
-    final response3 = await http.get(
-      Uri.parse(
-        "https://api.stormglass.io/v2/tide/extremes/point?lat=${position.latitude}&&lng=${position.longitude}&type=high,low",
-      ),
-    );
+      Position position = await Geolocator.getCurrentPosition();
+      
+      final response = await http.get(
+        Uri.parse("https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=00267594af2060e6f2b24e9db3d63478&units=metric"),
+      );
+      
+      final response1 = await http.get(
+        Uri.parse("https://marine-api.open-meteo.com/v1/marine?latitude=${position.latitude}&longitude=${position.longitude}&current=wave_height"),
+      );
 
+      final response2 = await http.get(
+        Uri.parse("https://api.open-meteo.com/v1/forecast?latitude=${position.latitude}&longitude=${position.longitude}&daily=sunrise,sunset&timezone=auto"),
+      );
 
-    final data = jsonDecode(response.body);
-    final data1 = jsonDecode(response1.body);
-    final data2 = jsonDecode(response2.body);
-    final data3 = jsonDecode(response3.body);
+      final response3 = await http.get(
+        Uri.parse("https://api.stormglass.io/v2/tide/extremes/point?lat=${position.latitude}&&lng=${position.longitude}&type=high,low"),
+      );
 
-    setState(() {
-      _temp = data["main"]["temp"];
-      _wind = data["wind"]["speed"];
-      _visibility = data["visibility"] / 1000;
-      _waveHeight = data1["current"]["wave_height"];
-      _sunrise = data2["daily"]["sunrise"][0];
-      _sunset = data2["daily"]["sunset"][0];
-      _highTide = data3["data"][0]["high"];
-      _lowTide = data3["data"][0]["low"];
-      _lastUpdated = DateTime.now().toString();
-      bool _weatherLoaded = true;
-    });
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final data1 = jsonDecode(response1.body);
+        final data2 = jsonDecode(response2.body);
+        final data3 = jsonDecode(response3.body);
+
+        setState(() {
+          _temp = data["main"]["temp"];
+          _wind = data["wind"]["speed"];
+          _visibility = (data["visibility"] as int) / 1000;
+          _waveHeight = data1["current"]["wave_height"];
+          _sunrise = data2["daily"]["sunrise"][0];
+          _sunset = data2["daily"]["sunset"][0];
+          _highTide = data3["data"]?[0]?["high"]?.toString();
+          _lowTide = data3["data"]?[0]?["low"]?.toString();
+          _lastUpdated = DateTime.now().toString();
+          _weatherLoaded = true;
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching weather: $e");
+    }
   }
 
   String _getUpdatedTime() {
-    if (_lastUpdated!.isEmpty) return "...";
+    if (_lastUpdated == null || _lastUpdated!.isEmpty) return "Updating...";
 
     final lastTime = DateTime.parse(_lastUpdated!);
     final difference = DateTime.now().difference(lastTime);
 
-    if (difference.inMinutes < 1) {
-      return "Updated just now";
-    } else if (difference.inMinutes < 60) {
-      return "Updated ${difference.inMinutes}m ago";
-    } else {
-      return "Updated ${difference.inHours}h ago";
-    }
+    if (difference.inMinutes < 1) return "Updated just now";
+    if (difference.inMinutes < 60) return "Updated ${difference.inMinutes}m ago";
+    return "Updated ${difference.inHours}h ago";
   }
 
   @override
   void initState() {
     super.initState();
     _getWeather();
-    _getUpdatedTime();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F7F9),
+      backgroundColor: const Color(0xFFF5F7F9),
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.arrow_back),
-          color: Color(0xFF0F172A),
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back),
+          color: const Color(0xFF0F172A),
         ),
-        title: Text(
+        title: const Text(
           "Weather & Safety",
-          style: TextStyle(
-            color: Color(0xFF0F172A),
-            fontFamily: "Inter",
-            fontWeight: FontWeight.w700,
-            fontSize: 24,
-            letterSpacing: -0.6,
-          ),
-          textAlign: TextAlign.center,
+          style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w700, fontSize: 24),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsetsGeometry.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "CURRENT WEATHER",
-                  style: TextStyle(
-                    color: Color(0xFF0F172A),
-                    fontFamily: "Inter",
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                    letterSpacing: 0.7,
-                  ),
-                ),
-                Text(
-                  _getUpdatedTime(),
-                  style: TextStyle(
-                    color: Color(0xFF64748B),
-                    fontFamily: "Inter",
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
-                    letterSpacing: 0.7,
-                  ),
-                ),
+                const Text("CURRENT WEATHER", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                Text(_getUpdatedTime(), style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
               ],
             ),
-            Block(),
-            Column(
-              spacing: 12,
-              children: [
-                Row(
-                  spacing: 12,
-                  children: [
-                    Expanded(
-                      child: WeatherInfo(
-                        title: "temp",
-                        value: "${_temp}°C",
-                        icon1: Icons.thermostat,
-                      ),
-                    ),
-                    Expanded(
-                      child: WeatherInfo(
-                        title: "wind",
-                        value: "${_wind}m/s",
-                        icon1: Icons.air_outlined,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  spacing: 12,
-                  children: [
-                    Expanded(
-                      child: WeatherInfo(
-                        title: "waves",
-                        value: "Strong",
-                        icon1: Icons.waves,
-                      ),
-                    ),
-                    Expanded(
-                      child: WeatherInfo(
-                        title: "visibility",
-                        value: "${_visibility}km",
-                        icon1: Icons.visibility,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Block(),
-            Text(
-              "Navigation Map",
-              style: TextStyle(
-                color: Color(0xFF0F172A),
-                fontFamily: "Inter",
-                fontWeight: FontWeight.w700,
-                fontSize: 22,
-                letterSpacing: -0.55,
-              ),
-            ),
-            Block(),
-            SizedBox(height: 336),
-            Block(),
-            Container(
-              padding: EdgeInsetsGeometry.all(16),
-              decoration: BoxDecoration(
-                color: Color(0xFFFFFFFF),
-                borderRadius: BorderRadiusGeometry.circular(13),
-                border: BoxBorder.all(color: Color(0xFFE2E8F0), width: 0.5),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.local_gas_station_outlined,
-                        color: Color(0xFF94A3B8),
-                      ),
-                      SizedBox(width: 5),
-                      Text(
-                        "Full level",
-                        style: TextStyle(
-                          color: Color(0xFF94A3B8),
-                          fontFamily: "Inter",
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Spacer(),
-                      Column(
-                        children: [
-                          Text(
-                            "75",
-                            style: TextStyle(
-                              color: Color(0xFF0F172A),
-                              fontFamily: "Inter",
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            "%",
-                            style: TextStyle(
-                              color: Color(0xFF0F172A),
-                              fontFamily: "Inter",
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5),
-                  LinearPercentIndicator(
-                    percent: 0.75,
-                    lineHeight: 10,
-                    backgroundColor: Color(0xFFF1F5F9),
-                    progressColor: Color(0xFF033F78),
-                    barRadius: Radius.circular(5),
-                    padding: EdgeInsets.zero,
-                  ),
-                ],
-              ),
-            ),
-            Block(),
-            Padding(
-              padding: EdgeInsetsGeometry.all(10),
-              child: Row(
-                spacing: 10,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {_getWeather();},
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsetsGeometry.all(16),
-                        backgroundColor: Color(0xFFDC2626),
-                        foregroundColor: Color(0xFFFFFFFF),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusGeometry.circular(13),
-                        ),
-                        alignment: AlignmentGeometry.center,
-                        shadowColor: Color(0xFFDC2626),
-                        elevation: 2,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "SOS",
-                            style: TextStyle(
-                              fontFamily: "Inter",
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
-                            ),
-                          ),
-                          SizedBox(height: 3),
-                          Text(
-                            "EMERGENCY SOS",
-                            style: TextStyle(
-                              fontFamily: "Inter",
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Column(
-                    spacing: 10,
-                    children: [
-                      Container(
-                        width: 160,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsetsGeometry.all(10),
-                            backgroundColor: Color(0xFF0F172A),
-                            foregroundColor: Color(0xFFFFFFFF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusGeometry.circular(13),
-                            ),
-                            alignment: AlignmentGeometry.center,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(
-                                Icons.navigation_outlined,
-                                size: 30,
-                                color: Color(0xFF033F78),
-                              ),
-                              Text(
-                                "Navigate to\nPort",
-                                style: TextStyle(
-                                  fontFamily: "Inter",
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: 160,
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsetsGeometry.all(10),
-                            backgroundColor: Color(0xFFFFFFFF),
-                            foregroundColor: Color(0xFF1E293B),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadiusGeometry.circular(13),
-                            ),
-                            alignment: AlignmentGeometry.center,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Icon(
-                                Icons.bookmark_border_outlined,
-                                size: 30,
-                                color: Color(0xFF033F78),
-                              ),
-                              Text(
-                                "Save \nLocation",
-                                style: TextStyle(
-                                  fontFamily: "Inter",
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Block(),
+            const SizedBox(height: 20),
             Row(
-              spacing: 5,
               children: [
-                // Expanded(child: Cardinfo(Color(0xFF033F78),Icons.waves_outlined,"TIDE\nTIME","High","${_highTide?.substring(11,16)}","Low","${_lowTide?.substring(11,16)}")),
-                Expanded(child: Cardinfo(Color(0xFFF97316),Icons.wb_sunny_outlined,"DAILY\nGHT","RISE","${_sunrise!.substring(11,16)}","SET","${_sunset!.substring(11,16)}")),
+                Expanded(child: WeatherInfo(title: "temp", value: "${_temp ?? "--"}°C", icon1: Icons.thermostat)),
+                const SizedBox(width: 12),
+                Expanded(child: WeatherInfo(title: "wind", value: "${_wind ?? "--"}m/s", icon1: Icons.air_outlined)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: WeatherInfo(title: "waves", value: "${_waveHeight ?? "--"}m", icon1: Icons.waves)),
+                const SizedBox(width: 12),
+                Expanded(child: WeatherInfo(title: "visibility", value: "${_visibility ?? "--"}km", icon1: Icons.visibility)),
+              ],
+            ),
+            const SizedBox(height: 20),
+            const Text("Navigation Map", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22)),
+            const SizedBox(height: 336),
+            _buildFuelIndicator(),
+            const SizedBox(height: 20),
+            _buildSOSButtons(),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(child: cardInfo(const Color(0xFF033F78), Icons.waves_outlined, "TIDE TIME", "High", _formatTime(_highTide), "Low", _formatTime(_lowTide))),
+                const SizedBox(width: 8),
+                Expanded(child: cardInfo(const Color(0xFFF97316), Icons.wb_sunny_outlined, "DAILY LIGHT", "RISE", _formatTime(_sunrise), "SET", _formatTime(_sunset))),
               ],
             )
-
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
+    );
+  }
+
+  String _formatTime(String? time) {
+    if (time == null || time.length < 16) return "--:--";
+    return time.substring(11, 16);
+  }
+
+  Widget _buildFuelIndicator() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(13),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 0.5),
+      ),
+      child: Column(
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.local_gas_station_outlined, color: Color(0xFF94A3B8)),
+              SizedBox(width: 5),
+              Text("Fuel level", style: TextStyle(color: Color(0xFF94A3B8), fontWeight: FontWeight.w700)),
+              Spacer(),
+              Text("75%", style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          LinearPercentIndicator(
+            percent: 0.75,
+            lineHeight: 10,
+            backgroundColor: const Color(0xFFF1F5F9),
+            progressColor: const Color(0xFF033F78),
+            barRadius: const Radius.circular(5),
+            padding: EdgeInsets.zero,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSOSButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () => _getWeather(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDC2626),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+            ),
+            child: const Column(
+              children: [
+                Text("SOS", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text("EMERGENCY SOS", style: TextStyle(fontSize: 10)),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Column(
+          children: [
+            _actionBtn(Icons.navigation_outlined, "Navigate to\nPort", const Color(0xFF0F172A), Colors.white),
+            const SizedBox(height: 10),
+            _actionBtn(Icons.bookmark_border_outlined, "Save\nLocation", Colors.white, const Color(0xFF1E293B)),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _actionBtn(IconData icon, String label, Color bg, Color text) {
+    return SizedBox(
+      width: 160,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: bg,
+          foregroundColor: text,
+          padding: const EdgeInsets.all(10),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: const Color(0xFF033F78)),
+            const SizedBox(width: 8),
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class Block extends StatelessWidget {
-  const Block({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(height: 20);
-  }
-}
-
 class WeatherInfo extends StatelessWidget {
-  final String? title;
-  final String? value;
-  final IconData? icon1;
-  const WeatherInfo({super.key, this.title, this.value, this.icon1});
+  final String title;
+  final String value;
+  final IconData icon1;
+  const WeatherInfo({super.key, required this.title, required this.value, required this.icon1});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Color(0xFFFFFFFF),
-        borderRadius: BorderRadiusGeometry.circular(13),
-        border: BoxBorder.all(color: Color(0xFFE2E8F0), width: 0.5),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(13),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 0.5),
       ),
       child: Column(
-        spacing: 5,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Icon(icon1, color: Color(0xFF033F78)),
-              SizedBox(width: 5),
-              Text(
-                "$title",
-                style: TextStyle(
-                  color: Color(0xFF64748B),
-                  fontFamily: "Inter",
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                ),
-              ),
+              Icon(icon1, color: const Color(0xFF033F78), size: 20),
+              const SizedBox(width: 6),
+              Text(title, style: const TextStyle(color: Color(0xFF64748B), fontSize: 13)),
             ],
           ),
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "$value",
-                style: TextStyle(
-                  color: Color(0xFF0F172A),
-                  fontFamily: "Inter",
-                  fontWeight: FontWeight.w900,
-                  fontSize: 20,
-                ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.arrow_forward_ios_outlined,
-                  color: Color(0xFFA8A8A8),
-                ),
-              ),
+              Text(value, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+              const Icon(Icons.arrow_forward_ios_outlined, color: Color(0xFFA8A8A8), size: 14),
             ],
           ),
         ],
@@ -464,112 +285,46 @@ class WeatherInfo extends StatelessWidget {
   }
 }
 
-Widget _buildBottomNavBar() {
+Widget cardInfo(Color color, IconData icon, String title, String i1, String v1, String i2, String v2) {
   return Container(
-    margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-    height: 70,
+    padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(35),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.1),
-          blurRadius: 20,
-          offset: const Offset(0, 5),
-        ),
-      ],
+      color: const Color(0xFFF8FAFC),
+      borderRadius: BorderRadius.circular(13),
+      border: Border.all(color: const Color(0xFFE2E8F0), width: 0.5),
     ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+    child: Column(
       children: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.home_outlined, color: Colors.grey),
+        Row(
+          children: [
+            Icon(icon, color: color, size: 15),
+            const SizedBox(width: 6),
+            Text(title, style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.bold, fontSize: 10)),
+          ],
         ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.anchor, color: Colors.grey),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.person, color: Color(0xFF013D73), size: 30),
-        ),
+        const SizedBox(height: 8),
+        _rowInfo(i1, v1),
+        const SizedBox(height: 4),
+        _rowInfo(i2, v2),
       ],
     ),
   );
 }
 
-Widget Cardinfo(Color color,IconData icon, String title, String info1, String value1, String info2, String value2,){
-  return Container(
-    padding: EdgeInsets.all(10),
-    decoration: BoxDecoration(
-      color: Color(0xFFF8FAFC),
-      borderRadius: BorderRadiusGeometry.circular(13),
-      border: BoxBorder.all(color: Color(0xFFE2E8F0), width: 0.5),
-    ),
-    child: Column(
-      spacing: 5,
-      children: [
-        Row(
-          spacing: 10,
-          children: [
-            Icon(icon,color: color,size: 15,),
-            Text(title,style: TextStyle(
-              color: Color(0xFF64748B),
-              fontFamily: "Inter",
-              fontWeight: FontWeight.w700,
-              fontSize: 10,
-            ),)
-          ],
-        ),
-        Row(
-          children: [
-            Text(info1,style: TextStyle(
-              color: Color(0xFF64748B),
-              fontFamily: "Inter",
-              fontWeight: FontWeight.w400,
-              fontSize: 12,
-            ),),
-            Spacer(),
-            Text("$value1 AM",style: TextStyle(
-              color: Color(0xFF0F172A),
-              fontFamily: "Inter",
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
-            ),),
-          ],
-        ),
-        Row(
-          children: [
-            Text(info2,style: TextStyle(
-              color: Color(0xFF64748B),
-              fontFamily: "Inter",
-              fontWeight: FontWeight.w400,
-              fontSize: 12,
-            ),),
-            Spacer(),
-            Text("$value2 PM",style: TextStyle(
-              color: Color(0xFF0F172A),
-              fontFamily: "Inter",
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
-            ),),
-          ],
-        )
-      ],
-    ),
-
-
-
+Widget _rowInfo(String label, String value) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(label, style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
+      Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+    ],
   );
+}
 
-
+class Block extends StatelessWidget {
+  const Block({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 20);
+  }
 }
