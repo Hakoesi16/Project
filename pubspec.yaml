@@ -19,10 +19,12 @@ dependencies:
   checkmark: ^0.0.2+1
   equatable: ^2.0.7
   image_picker: ^1.0.7
-  timelines: ^0.1.0
-  # Versions stables corrigées ici :
-  google_maps_flutter: ^2.10.0
-  geolocator: ^13.0.2
+  
+  # Remplacement de timelines (trop vieux) par un package moderne sur pub.dev
+  another_stepper: ^1.2.1
+
+  google_maps_flutter: ^2.5.3
+  geolocator: ^10.1.0
   percent_indicator: ^4.2.3
 
 dev_dependencies:
@@ -42,6 +44,7 @@ flutter:
      - images/fish1.png
      - images/fish2.png
      - images/fish3.jpg
+     - images/grey.jpg
 
   fonts:
    - family: Inter
