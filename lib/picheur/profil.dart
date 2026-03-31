@@ -281,16 +281,16 @@ class _ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MyBatchesPage()
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(token: widget.token))
                 // HomePage(token: widget.token)
-            )
             );
+
           }, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
           IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>Addbatchpage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>MyBatchesPage()));
           }, icon: const Icon(Icons.anchor, color: Colors.grey)),
           IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(token: widget.token)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Addbatchpage()));
           }, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
           IconButton(onPressed: () {
             Navigator.push(
