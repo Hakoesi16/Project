@@ -9,6 +9,7 @@ import 'batchDetailsPage.dart';
 import 'editprofile.dart';
 import 'homepage.dart';
 import 'myBatches.dart';
+import 'objects.dart';
 
 class ProfilePage extends StatefulWidget {
   final String token;
@@ -288,7 +289,9 @@ class _ProfilePageState extends State<ProfilePage> {
           IconButton(onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) =>Addbatchpage()));
           }, icon: const Icon(Icons.anchor, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(token: widget.token)));
+          }, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
           IconButton(onPressed: () {
             Navigator.push(
                 context,
