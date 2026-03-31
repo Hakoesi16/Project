@@ -22,7 +22,6 @@ dependencies:
   
   # Remplacement de timelines (trop vieux) par un package moderne sur pub.dev
   another_stepper: ^1.2.1
-
   google_maps_flutter: ^2.5.3
   geolocator: ^10.1.0
   percent_indicator: ^4.2.3
