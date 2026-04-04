@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const ProfilePage(token: '',),
+          home: const Interfacepage(token: '',),
         );
       },
     );

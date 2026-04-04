@@ -20,7 +20,7 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchProfile(widget.token);
+    context.read<AuthCubit>().fetchProfilevit(widget.token);
   }
 
   @override
@@ -107,12 +107,12 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
           CircleAvatar(
             radius: 50,
             backgroundColor: const Color(0xFFE3F2FD),
-            backgroundImage: user["profilePicture"] != null ? NetworkImage(user["profilePicture"]) : null,
+            backgroundImage: user["profilePicture_vit"] != null ? NetworkImage(user["profilePicture"]) : null,
             child: user["profilePicture"] == null ? Icon(Icons.person, size: 60, color: primaryTeal) : null,
           ),
           const SizedBox(height: 12),
-          Text(user["name"] ?? "Unknown", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          Text("ID: ${user["id"] ?? "/"} | LICENSE: ${user["license"] ?? "/"}",
+          Text(user["namevit"] ?? "Unknown", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          Text("ID: ${user["idvit"] ?? "/"} | LICENSE: ${user["licensevit"] ?? "/"}",
               style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
           const SizedBox(height: 16),
           Row(
@@ -149,13 +149,13 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
-          _infoTile(Icons.anchor_outlined, "ASSIGNED PORT", user["assignedPort"] ?? "Oran Port", trailing: _statusBadge()),
+          _infoTile(Icons.anchor_outlined, "ASSIGNED PORT", user["assignedPortvit"] ?? "Oran Port", trailing: _statusBadge()),
           const Divider(height: 32),
-          _infoTile(Icons.badge_outlined, "SPECIALIZATION", user["specialization"] ?? "Aquatic Pathology"),
+          _infoTile(Icons.badge_outlined, "SPECIALIZATION", user["specializationvit"] ?? "Aquatic Pathology"),
           const Divider(height: 32),
-          _infoTile(Icons.history_edu_outlined, "EXPERIENCE", user["experience"] ?? "12 Years Professional"),
+          _infoTile(Icons.history_edu_outlined, "EXPERIENCE", user["experiencevit"] ?? "12 Years Professional"),
           const Divider(height: 32),
-          _infoTile(Icons.verified_user_outlined, "LICENSE EXPIRY", user["licenseExpiry"] ?? "Dec 31, 2024"),
+          _infoTile(Icons.verified_user_outlined, "LICENSE EXPIRY", user["licenseExpiryvit"] ?? "Dec 31, 2024"),
         ],
       ),
     );
@@ -167,9 +167,9 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
-          _infoTile(Icons.email_outlined, "Email Address", user["email"] ?? "project@esi-sba.dz"),
+          _infoTile(Icons.email_outlined, "Email Address", user["emailvit"] ?? "project@esi-sba.dz"),
           const Divider(height: 32),
-          _infoTile(Icons.phone_outlined, "Phone Number", user["phoneNumber"] ?? "+213 674854088"),
+          _infoTile(Icons.phone_outlined, "Phone Number", user["phoneNumbervit"] ?? "+213 674854088"),
         ],
       ),
     );
