@@ -6,6 +6,8 @@ import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 import 'Weather&Safety.dart';
 import 'addBatchPage.dart';
+import 'batchDetailsPage.dart';
+import 'myBatches.dart';
 
 class HomePage extends StatefulWidget {
   final String token;
@@ -182,12 +184,12 @@ class _HomePageState extends State<HomePage> {
         Expanded(
           child: InkWell(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const MyBatchesPage(),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MyBatchesPage(token: '',),
+                ),
+              );
             },
             child: _buildActionItem(Icons.list_alt, "My Batches"),
           ),
@@ -201,7 +203,7 @@ class _HomePageState extends State<HomePage> {
       // Navigator.push(
       //   context,
       //   MaterialPageRoute(
-      //     builder: (context) => batchdetailpage(),
+      //     builder: (context) => BatchDetailspage(batch: null),
       //   ));
     },child: Container(
       padding: const EdgeInsets.all(16),
@@ -369,10 +371,10 @@ class _HomePageState extends State<HomePage> {
           ),
           GestureDetector(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => HomePage(token: widget.token)),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyBatchesPage( token: widget.token)),
+              );
             },
             child: _navIcon(Icons.anchor, false),
           ),
@@ -389,7 +391,7 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => WeatherSafetypage()),
+                MaterialPageRoute(builder: (context) => WeatherSafetypage( token: widget.token)),
               );
             },
             child: _navIcon(Icons.remove_red_eye_outlined, false),
