@@ -25,6 +25,7 @@ dependencies:
   google_maps_flutter: ^2.5.3
   geolocator: ^10.1.0
   percent_indicator: ^4.2.3
+  flutter_svg: ^2.2.4
 
 dev_dependencies:
   flutter_test:
@@ -44,6 +45,8 @@ flutter:
      - images/fish2.png
      - images/fish3.jpg
      - images/grey.jpg
+     - images/boat.svg
+
 
   fonts:
    - family: Inter
