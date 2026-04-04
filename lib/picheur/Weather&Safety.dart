@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
+import 'package:projetsndcp/picheur/profil.dart';
 import 'dart:convert';
 
+import '../signin/cubit/authcubit.dart';
+import 'homepage.dart';
+import 'myBatches.dart';
+
 class WeatherSafetypage extends StatefulWidget {
-  const WeatherSafetypage({super.key});
+  final String token;
+  const WeatherSafetypage({super.key, required this.token});
 
   @override
   State<WeatherSafetypage> createState() => _WeatherSafetyState();
@@ -149,6 +155,7 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
           ],
         ),
       ),
+      bottomNavigationBar: _buildBottomNavBar(),
     );
   }
 
@@ -222,6 +229,64 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
     );
   }
 
+  Widget _buildBottomNavBar() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      height: 70,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(35),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 5))],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomePage(token: widget.token)),
+              );
+            },
+            child: _navIcon(Icons.home, false),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyBatchesPage( token: widget.token)),
+              );
+            },
+            child: _navIcon(Icons.anchor, false),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => WeatherSafetypage( token: widget.token)),
+              );
+            },
+            child: _navIcon(Icons.remove_red_eye_outlined, true),
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(token: widget.token),
+                  ));
+            },
+            child: _navIcon(Icons.person_outline, false),
+          ),
+        ],
+      ),
+    );
+  }
+  Widget _navIcon(IconData icon, bool isActive) {
+    return Icon(icon, color: isActive ? const Color(0xFF013D73) : Colors.grey.shade400, size: 28);
+  }
+}
+
   Widget _actionBtn(IconData icon, String label, Color bg, Color text) {
     return SizedBox(
       width: 160,
@@ -244,7 +309,7 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
       ),
     );
   }
-}
+
 
 class WeatherInfo extends StatelessWidget {
   final String title;

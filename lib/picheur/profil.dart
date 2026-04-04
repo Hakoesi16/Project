@@ -281,22 +281,19 @@ class _ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MyBatchesPage()
+            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(token: widget.token))
                 // HomePage(token: widget.token)
-            )
             );
+
           }, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
           IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>Addbatchpage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) =>MyBatchesPage( token: widget.token)));
           }, icon: const Icon(Icons.anchor, color: Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(token: widget.token)));
-          }, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
           IconButton(onPressed: () {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => WeatherSafetypage(),
+                  builder: (context) => WeatherSafetypage( token: widget.token),
                 ));
           }, icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey)),
           IconButton(onPressed: () {}, icon:  Icon(Icons.person, color:isDark?Color(0xFF01A896): Color(0xFF013D73), size: 30)),
@@ -305,3 +302,4 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+

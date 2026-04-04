@@ -275,7 +275,7 @@ class AuthCubit extends Cubit<AuthState> {
   //   try {
   //     emit(AuthLoading());
   //     final response = await http.get(
-  //       Uri.parse("https://yourbackend.com/api/profile"),
+  //       Uri.parse("https://api.example.com/profile"),
   //       headers: {
   //         "Content-Type": "application/json",
   //         "Authorization": "Bearer $token",

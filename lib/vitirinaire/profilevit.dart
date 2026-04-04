@@ -3,16 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilevitPage extends StatefulWidget {
   final String token;
 
-  const ProfilePage({super.key, required this.token});
+  const ProfilevitPage({super.key, required this.token});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<ProfilevitPage> createState() => _ProfilevitPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilevitPageState extends State<ProfilevitPage> {
   bool _notifications = true;
   bool _darkMode = false;
   final Color primaryTeal = const Color(0xFF00A896);
