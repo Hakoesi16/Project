@@ -168,7 +168,9 @@ import 'authstate.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
   final String _baseUrl = "https://yourbackend.com";
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    serverClientId: "936821595024-uek9ov9mlscdqvbg483dughq9b5u1ksi.apps.googleusercontent.com",
+  );
 
   // --- LOGIN GOOGLE ---
   Future<void> signInWithGoogle() async {
@@ -182,23 +184,59 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       final googleAuth = await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+      final String? serverAuthCode = googleUser.serverAuthCode;
+
       final response = await http.post(
-        Uri.parse("https://yourbackend.com/google-login"),
+        Uri.parse("$_baseUrl/google-login"),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"idToken": googleAuth.idToken}),
+        body: jsonEncode({
+          "idToken": idToken,
+          "clientId": "936821595024-uek9ov9mlscdqvbg483dughq9b5u1ksi.apps.googleusercontent.com", // Web Client ID
+          "serverAuthCode": serverAuthCode,
+        }),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        emit(AuthAuthenticated(data)); // On utilise l'état authentifié avec les data du backend
+        emit(AuthAuthenticated(data));
       } else {
-        emit(AuthError("Server error during Google login"));
+        emit(AuthError("Server error: ${response.body}")); //  affiche le vrai message
       }
     } catch (e) {
       emit(AuthError(e.toString()));
     }
   }
 
+  // --- LOGIN GOOGLE ---
+
+  // Future<void> signInWithGoogle() async {
+  //   try {
+  //     emit(AuthLoading());
+  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+  //
+  //     if (googleUser == null) {
+  //       emit(AuthError("User cancelled"));
+  //       return;
+  //     }
+  //
+  //     final googleAuth = await googleUser.authentication;
+  //     final response = await http.post(
+  //       Uri.parse("https://yourbackend.com/google-login"),
+  //       headers: {"Content-Type": "application/json"},
+  //       body: jsonEncode({"idToken": googleAuth.idToken}),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       emit(AuthAuthenticated(data)); // On utilise l'état authentifié avec les data du backend
+  //     } else {
+  //       emit(AuthError("Server error during Google login"));
+  //     }
+  //   } catch (e) {
+  //     emit(AuthError(e.toString()));
+  //   }
+  // }
   // --- LOGIN FACEBOOK ---
   Future<void> signInWithFacebook() async {
     try {
