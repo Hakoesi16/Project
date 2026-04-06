@@ -167,7 +167,7 @@ import 'authstate.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
-  final String _baseUrl = "https://yourbackend.com";
+  final String _baseUrl = "http://192.168.1.36:2000/api";
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     serverClientId: "936821595024-uek9ov9mlscdqvbg483dughq9b5u1ksi.apps.googleusercontent.com",
   );
@@ -188,7 +188,7 @@ class AuthCubit extends Cubit<AuthState> {
       final String? serverAuthCode = googleUser.serverAuthCode;
 
       final response = await http.post(
-        Uri.parse("$_baseUrl/google-login"),
+        Uri.parse("$_baseUrl/auth/google-login-fishmen"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           "idToken": idToken,
@@ -249,7 +249,7 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       final response = await http.post(
-        Uri.parse("https://yourbackend.com/facebook-login"),
+        Uri.parse("$_baseUrl/auth/facebook-login-fishmen"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"accessToken": result.accessToken!.token}),
       );
@@ -270,7 +270,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.post(
-        Uri.parse("https://yourbackend.com/api/login"),
+        Uri.parse("$_baseUrl/auth/login-fishmen"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email, "password": password}),
       );
@@ -291,7 +291,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.post(
-        Uri.parse("https://yourbackend.com/api/register"),
+        Uri.parse("$_baseUrl/auth/register-fishmen"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email, "password": password}),
       );
@@ -419,7 +419,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(SetupLoading());
 
-      var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/api/complete-setup"));//un type de http envoier a la fois text et fichier
+      var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/auth/complete-setup-fishmen"));//un type de http envoier a la fois text et fichier
       request.headers.addAll({
         "Authorization": "Bearer $token",
         "Content-Type": "multipart/form-data",//la forme de donner ou backend se accepter
@@ -527,7 +527,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.post(
-        Uri.parse("https://yourbackend.com/api/send-email"),
+        Uri.parse("$_baseUrl/auth/send-email-fishmen"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email}),
       );
@@ -543,7 +543,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.post(
-        Uri.parse("https://yourbackend.com/api/verify-code"),
+        Uri.parse("$_baseUrl/auth/verify-code-fishmen"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email, "code": code}),
       );
