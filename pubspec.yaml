@@ -19,6 +19,7 @@ dependencies:
   checkmark: ^0.0.2+1
   equatable: ^2.0.7
   image_picker: ^1.0.7
+  url_launcher: ^6.2.5
   
   # Remplacement de timelines (trop vieux) par un package moderne sur pub.dev
   another_stepper: ^1.2.1

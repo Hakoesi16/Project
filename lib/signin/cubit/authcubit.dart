@@ -167,7 +167,8 @@ import 'authstate.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
-  final String _baseUrl = "http://192.168.1.36:2000/api";
+  final String _baseUrl ="https://cushionless-buxomly-cherry.ngrok-free.dev/api";
+      // "http://192.168.1.36:2000/api";
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     serverClientId: "936821595024-uek9ov9mlscdqvbg483dughq9b5u1ksi.apps.googleusercontent.com",
   );
@@ -182,26 +183,28 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("User cancelled"));
         return;
       }
-
       final googleAuth = await googleUser.authentication;
       final String? idToken = googleAuth.idToken;
       final String? serverAuthCode = googleUser.serverAuthCode;
+      final String email = googleUser.email; // ← email Google
 
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/google-login-fishmen"),
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",},
         body: jsonEncode({
           "idToken": idToken,
-          "clientId": "936821595024-uek9ov9mlscdqvbg483dughq9b5u1ksi.apps.googleusercontent.com", // Web Client ID
+          "clientId": "936821595024-uek9ov9mlscdqvbg483dughq9b5u1ksi.apps.googleusercontent.com",
           "serverAuthCode": serverAuthCode,
         }),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        emit(AuthAuthenticated(data));
+        //  émet l'email pour que Fivepage puisse l'utiliser
+        emit(GooglePasswordRequired(email));
       } else {
-        emit(AuthError("Server error: ${response.body}")); //  affiche le vrai message
+        emit(AuthError("Server error: ${response.body}"));
       }
     } catch (e) {
       emit(AuthError(e.toString()));
@@ -250,7 +253,8 @@ class AuthCubit extends Cubit<AuthState> {
 
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/facebook-login-fishmen"),
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",},
         body: jsonEncode({"accessToken": result.accessToken!.token}),
       );
 
@@ -271,7 +275,8 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthLoading());
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/login-fishmen"),
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",},
         body: jsonEncode({"email": email, "password": password}),
       );
 
@@ -292,7 +297,8 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthLoading());
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/register-fishmen"),
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",},
         body: jsonEncode({"email": email, "password": password}),
       );
 
@@ -309,38 +315,39 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   // --- PROFIL ---
-  // Future<void> fetchProfile(String token) async {
-  //   try {
-  //     emit(AuthLoading());
-  //     final response = await http.get(
-  //       Uri.parse("https://api.example.com/profile"),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Authorization": "Bearer $token",
-  //       },
-  //     );
-  //
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //       emit(ProfileLoaded(data));
-  //     } else {
-  //       emit(ProfileError("Failed to load profile"));
-  //     }
-  //   } catch (e) {
-  //     emit(ProfileError(e.toString()));
-  //   }
-  // }
-
   Future<void> fetchProfile(String token) async {
-    emit(ProfileLoaded({
-      "name": "Captain Test",
-      "email": "test@mail.com",
-      "boatName": "Sea Explorer",
-      "registration": "MAR-9999",
-      "homePort": "Oran",
-      "licenseExpiry": "2026",
-    }));
+    try {
+      emit(AuthLoading());
+      final response = await http.get(
+        Uri.parse("https://api.example.com/profile"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "ngrok-skip-browser-warning": "true",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        emit(ProfileLoaded(data));
+      } else {
+        emit(ProfileError("Failed to load profile"));
+      }
+    } catch (e) {
+      emit(ProfileError(e.toString()));
+    }
   }
+
+  // Future<void> fetchProfile(String token) async {
+  //   emit(ProfileLoaded({
+  //     "name": "Captain Test",
+  //     "email": "test@mail.com",
+  //     "boatName": "Sea Explorer",
+  //     "registration": "MAR-9999",
+  //     "homePort": "Oran",
+  //     "licenseExpiry": "2026",
+  //   }));
+  // }
 
 
 
@@ -354,6 +361,7 @@ class AuthCubit extends Cubit<AuthState> {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
+          "ngrok-skip-browser-warning": "true",
         },
       );
       if (response.statusCode == 200) {
@@ -377,10 +385,11 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.put(
-        Uri.parse("https://backend.com"),
+        Uri.parse("https://cushionless-buxomly-cherry.ngrok-free.dev/api/auth"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
+          "ngrok-skip-browser-warning": "true",
         },
         body: jsonEncode({
           "name": name,
@@ -422,6 +431,7 @@ class AuthCubit extends Cubit<AuthState> {
       var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/auth/complete-setup-fishmen"));//un type de http envoier a la fois text et fichier
       request.headers.addAll({
         "Authorization": "Bearer $token",
+        "ngrok-skip-browser-warning": "true",
         "Content-Type": "multipart/form-data",//la forme de donner ou backend se accepter
       });
 
@@ -479,6 +489,7 @@ class AuthCubit extends Cubit<AuthState> {
       request.headers.addAll({
         "Authorization": "Bearer $token",
         "Content-Type": "multipart/form-data",
+        "ngrok-skip-browser-warning": "true",
       });
 
       request.fields['fullNameVit'] = fullNameVit;
@@ -512,8 +523,17 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   // --- LOGOUT ---
-  Future<void> logout() async {
+  Future<void> logout(String token) async {
     try {
+      await http.post(
+        Uri.parse("$_baseUrl/auth/logout-fishmen"), // Vérifiez si /auth/ est nécessaire
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "ngrok-skip-browser-warning": "true",
+        },
+      );
+
       await _googleSignIn.signOut();
       await FacebookAuth.instance.logOut();
       emit(AuthInitial());
@@ -528,7 +548,8 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthLoading());
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/send-email-fishmen"),
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",},
         body: jsonEncode({"email": email}),
       );
       if (response.statusCode == 200) {
@@ -544,7 +565,8 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthLoading());
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/verify-code-fishmen"),
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",},
         body: jsonEncode({"email": email, "code": code}),
       );
       if (response.statusCode == 200) {
@@ -584,4 +606,86 @@ class AuthCubit extends Cubit<AuthState> {
 //     emit(ProfileError(e.toString()));
 //   }
 // }
+
+
+
+
+// --- VET INSPECTION DATA ---
+  Future<void> sendRejectionReason({
+    required String batchId,
+    required String reason,
+    required String token,
+  }) async {
+    try {    emit(AuthLoading());
+    final response = await http.post(
+      Uri.parse("$_baseUrl/api/reject-batch"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: jsonEncode({
+        "batchId": batchId,
+        "reason": reason,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Vous pouvez émettre un état de succès ici
+      emit(InspectionDataLoaded(jsonDecode(response.body)));
+    } else {
+      emit(AuthError("Failed to send rejection"));
+    }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+  Future<void> fetchInspectionDetails(String batchId, String token) async {
+    try {
+      emit(AuthLoading());
+      // Simulation d'un appel API avec délai
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      emit(InspectionDataLoaded({
+        "status": "Approved",
+        "batchId": "#FSH-99283",
+        "fisherName": "Captain Elias",
+        "fishType": "Sardin",
+        "expiryDate": "Mar 21, 2026",
+        "timeLeft": "01 Day, 23 hours restants",
+      }));
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+//   Future<void> fetchInspectionDetails(String batchId, String token) async {
+//     try {
+//       emit(AuthLoading());
+//
+//       final response = await http.get(
+//         Uri.parse("https://yourbackend.com/api/inspection/$batchId"),
+//         headers: {
+//           "Content-Type": "application/json",
+//           "Authorization": "Bearer $token", // 🔐 important
+//         },
+//       );
+//
+//       if (response.statusCode == 200) {
+//         final data = jsonDecode(response.body);
+//
+//         emit(InspectionDataLoaded({
+//           "status": data["status"],
+//           "batchId": data["batchId"],
+//           "fisherName": data["fisherName"],
+//           "fishType": data["fishType"],
+//           "expiryDate": data["expiryDate"],
+//           "timeLeft": data["timeLeft"],
+//         }));
+//       } else {
+//         emit(AuthError("Failed to load inspection data"));
+//       }
+//     } catch (e) {
+//       emit(AuthError(e.toString()));
+//     }
+//   }
 }
