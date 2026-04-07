@@ -1,165 +1,7 @@
-// import 'dart:convert';
-// import 'package:bloc/bloc.dart';
-// import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
-// import 'package:http/http.dart' as http;
-// import 'authstate.dart';
-//
-// class AuthCubit extends Cubit<AuthState> {
-//   AuthCubit() : super(AuthInitial());
-//
-//   final GoogleSignIn _googleSignIn = GoogleSignIn();
-//
-//   Future<void> signInWithGoogle() async {
-//     try {
-//       emit(AuthLoading());
-//
-//       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-//
-//       if (googleUser == null) {
-//         emit(AuthError("User cancelled"));
-//         return;
-//       }
-//
-//       final googleAuth = await googleUser.authentication;
-//       final idToken = googleAuth.idToken;
-//
-//       final response = await http.post(
-//         Uri.parse("https://yourbackend.com/google-login"),
-//         headers: {"Content-Type": "application/json"},
-//         body: jsonEncode({"idToken": idToken}),
-//       );
-//
-//       if (response.statusCode == 200) {
-//         emit(AuthSuccess(googleUser));
-//       } else {
-//         emit(AuthError("Server error"));
-//       }
-//     } catch (e) {
-//       emit(AuthError(e.toString()));
-//     }
-//   }
-//
-//   Future<void> signInWithFacebook() async {
-//     try {
-//       emit(AuthLoading());
-//
-//       final LoginResult result = await FacebookAuth.instance.login();
-//
-//       if (result.status != LoginStatus.success) {
-//         emit(AuthError("Facebook login cancelled"));
-//         return;
-//       }
-//
-//       final accessToken = result.accessToken!.token;
-//
-//       final response = await http.post(
-//         Uri.parse("https://yourbackend.com/facebook-login"),
-//         headers: {"Content-Type": "application/json"},
-//         body: jsonEncode({"accessToken": accessToken}),
-//       );
-//
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         emit(AuthAuthenticated(data));
-//       } else {
-//         emit(AuthError("Server error"));
-//       }
-//     } catch (e) {
-//       emit(AuthError(e.toString()));
-//     }
-//   }
-//
-//   Future<void> sendEmail(String email) async {
-//     try {
-//       emit(AuthLoading());
-//
-//       final response = await http.post(
-//         Uri.parse("https://yourbackend.com/api/send-email"),
-//         headers: {"Content-Type": "application/json"},
-//         body: jsonEncode({"email": email}),
-//       );
-//
-//       if (response.statusCode == 200) {
-//         emit(EmailSentSuccess());
-//       } else {
-//         emit(AuthError("Erreur du serveur : ${response.statusCode}"));
-//       }
-//     } catch (e) {
-//       emit(AuthError(e.toString()));
-//     }
-//   }
-//
-//   Future<void> verifyCode(String email, String code) async {
-//     try {
-//       emit(AuthLoading());
-//       final response = await http.post(
-//         Uri.parse("https://yourbackend.com/api/verify-code"),
-//         headers: {"Content-Type": "application/json"},
-//         body: jsonEncode({"email": email, "code": code}),
-//       );
-//
-//       if (response.statusCode == 200) {
-//         emit(CodeVerifiedSuccess());
-//       } else {
-//         emit(AuthError("Code incorrect"));
-//       }
-//     } catch (e) {
-//       emit(AuthError(e.toString()));
-//     }
-//   }
-//
-//   Future<void> registerUser(String email, String password) async {
-//     try {
-//       emit(AuthLoading());
-//
-//       final response = await http.post(
-//         Uri.parse("https://yourbackend.com/api/register"),
-//         headers: {"Content-Type": "application/json"},
-//         body: jsonEncode({
-//           "email": email,
-//           "password": password,
-//         }),
-//       );
-//
-//       // if (response.statusCode == 200 || response.statusCode == 201) {
-//       //   final userData = jsonDecode(response.body);
-//       //   emit(AuthSuccessManual(userData));
-//       // } else {
-//       //   emit(AuthError("Erreur lors de l'inscription : ${response.statusCode}"));
-//       // }
-//     } catch (e) {
-//       emit(AuthError(e.toString()));
-//     }
-//   }
-//   Future<void> fetchProfile(String token) async {
-//     try {
-//       emit(AuthLoading());
-//
-//       final response = await http.get(
-//         Uri.parse("https://yourbackend.com/api/profile"),
-//         headers: {
-//           "Content-Type": "application/json",
-//           "Authorization": "Bearer $token",
-//         },
-//       );
-//
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         emit(ProfileLoaded(data));
-//       } else {
-//         emit(ProfileError("Failed to load profile"));
-//       }
-//     } catch (e) {
-//       emit(ProfileError(e.toString()));
-//     }
-//   }
-// }
-
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
@@ -167,8 +9,9 @@ import 'authstate.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
-  final String _baseUrl ="https://cushionless-buxomly-cherry.ngrok-free.dev/api";
-      // "http://192.168.1.36:2000/api";
+  
+  final String _baseUrl = "https://cushionless-buxomly-cherry.ngrok-free.dev/api";
+  
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     serverClientId: "936821595024-uek9ov9mlscdqvbg483dughq9b5u1ksi.apps.googleusercontent.com",
   );
@@ -183,15 +26,24 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("User cancelled"));
         return;
       }
+
       final googleAuth = await googleUser.authentication;
       final String? idToken = googleAuth.idToken;
       final String? serverAuthCode = googleUser.serverAuthCode;
-      final String email = googleUser.email; // ← email Google
+      final String email = googleUser.email;
+
+      // Vérification si le token est bien présent
+      if (idToken == null) {
+        emit(AuthError("Failed to get ID Token from Google"));
+        return;
+      }
 
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/google-login-fishmen"),
-        headers: {"Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",},
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
         body: jsonEncode({
           "idToken": idToken,
           "clientId": "936821595024-uek9ov9mlscdqvbg483dughq9b5u1ksi.apps.googleusercontent.com",
@@ -200,8 +52,7 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        //  émet l'email pour que Fivepage puisse l'utiliser
+        // Succès : on envoie l'email pour la suite (Fivepage)
         emit(GooglePasswordRequired(email));
       } else {
         emit(AuthError("Server error: ${response.body}"));
@@ -211,35 +62,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // --- LOGIN GOOGLE ---
-
-  // Future<void> signInWithGoogle() async {
-  //   try {
-  //     emit(AuthLoading());
-  //     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-  //
-  //     if (googleUser == null) {
-  //       emit(AuthError("User cancelled"));
-  //       return;
-  //     }
-  //
-  //     final googleAuth = await googleUser.authentication;
-  //     final response = await http.post(
-  //       Uri.parse("https://yourbackend.com/google-login"),
-  //       headers: {"Content-Type": "application/json"},
-  //       body: jsonEncode({"idToken": googleAuth.idToken}),
-  //     );
-  //
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //       emit(AuthAuthenticated(data)); // On utilise l'état authentifié avec les data du backend
-  //     } else {
-  //       emit(AuthError("Server error during Google login"));
-  //     }
-  //   } catch (e) {
-  //     emit(AuthError(e.toString()));
-  //   }
-  // }
   // --- LOGIN FACEBOOK ---
   Future<void> signInWithFacebook() async {
     try {
@@ -253,8 +75,10 @@ class AuthCubit extends Cubit<AuthState> {
 
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/facebook-login-fishmen"),
-        headers: {"Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",},
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
         body: jsonEncode({"accessToken": result.accessToken!.token}),
       );
 
@@ -269,14 +93,16 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // --- LOGIN CLASSIQUE (Email/Password) ---
+  // --- LOGIN CLASSIQUE ---
   Future<void> login(String email, String password) async {
     try {
       emit(AuthLoading());
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/login-fishmen"),
-        headers: {"Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",},
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
         body: jsonEncode({"email": email, "password": password}),
       );
 
@@ -297,14 +123,15 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthLoading());
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/register-fishmen"),
-        headers: {"Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",},
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
         body: jsonEncode({"email": email, "password": password}),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final userData = jsonDecode(response.body);
-        // emit(AuthSuccessManual(userData));
         emit(AuthAuthenticated(userData));
       } else {
         emit(AuthError("Registration failed: ${response.statusCode}"));
@@ -319,7 +146,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.get(
-        Uri.parse("https://api.example.com/profile"),
+        Uri.parse("$_baseUrl/auth/profile-fishmen"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -338,42 +165,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // Future<void> fetchProfile(String token) async {
-  //   emit(ProfileLoaded({
-  //     "name": "Captain Test",
-  //     "email": "test@mail.com",
-  //     "boatName": "Sea Explorer",
-  //     "registration": "MAR-9999",
-  //     "homePort": "Oran",
-  //     "licenseExpiry": "2026",
-  //   }));
-  // }
-
-
-
-  Future<void> fetchHomeData(String token) async {
-    try {
-      emit(AuthLoading());
-      // Simulation d'un appel API
-      await Future.delayed(const Duration(seconds: 1));
-      final response = await http.get(
-        Uri.parse("https://yourbackend.com/api/profile"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
-      );
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        emit(ProfileLoaded(data));
-      } else {
-        emit(AuthError("Failed to load Home page"));
-      }
-    } catch (e) {
-      emit(AuthError(e.toString()));
-    }
-  }
   // --- UPDATE PROFIL ---
   Future<void> updateProfile({
     required String token,
@@ -385,14 +176,14 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.put(
-        Uri.parse("https://cushionless-buxomly-cherry.ngrok-free.dev/api/auth"),
+        Uri.parse("$_baseUrl/auth/update-profile"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
           "ngrok-skip-browser-warning": "true",
         },
         body: jsonEncode({
-          "name": name,
+          "fullName": name,
           "phone": phone,
           "homePort": homePort,
           "boatName": boatName,
@@ -409,7 +200,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // --- COMPLETE SETUP (MULTIPART) ---
+  // --- COMPLETE SETUP ---
   Future<void> submitSetup({
     required String token,
     required String fullName,
@@ -428,14 +219,12 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(SetupLoading());
 
-      var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/auth/complete-setup-fishmen"));//un type de http envoier a la fois text et fichier
+      var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/auth/complete-setup-fishmen"));
       request.headers.addAll({
         "Authorization": "Bearer $token",
         "ngrok-skip-browser-warning": "true",
-        "Content-Type": "multipart/form-data",//la forme de donner ou backend se accepter
       });
 
-      // Champs textes
       request.fields['fullName'] = fullName;
       request.fields['nationalId'] = nationalId;
       request.fields['phone'] = phone;
@@ -447,7 +236,6 @@ class AuthCubit extends Cubit<AuthState> {
       request.fields['licenseNumber'] = licenseNumber;
       request.fields['expiryDate'] = expiryDate;
 
-      // Ajout des fichiers
       if (fishingLicense != null) {
         request.files.add(await http.MultipartFile.fromPath('fishingLicense', fishingLicense.path));
       }
@@ -467,7 +255,180 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
-//Fill information page for vitirinaire
+
+  // --- LOGOUT ---
+  Future<void> logout(String token) async {
+    try {
+      await http.post(
+        Uri.parse("$_baseUrl/auth/logout-fishmen"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "ngrok-skip-browser-warning": "true",
+        },
+      );
+      await _googleSignIn.signOut();
+      await FacebookAuth.instance.logOut();
+      emit(AuthInitial());
+    } catch (e) {
+      emit(AuthError("Logout failed: ${e.toString()}"));
+    }
+  }
+
+  // --- VET PROFILE ---
+  Future<void> fetchvitProfile(String token) async {
+    try {
+      emit(AuthLoading());
+      final response = await http.get(
+        Uri.parse("$_baseUrl/auth/profile-vit"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "ngrok-skip-browser-warning": "true",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        emit(ProfileLoaded(data));
+      } else {
+        emit(ProfileError("Failed to load vet profile: ${response.statusCode}"));
+      }
+    } catch (e) {
+      emit(ProfileError(e.toString()));
+    }
+  }
+
+  // --- UPDATE VET PROFILE ---
+  Future<void> updateProfilevit({
+    required String token,
+    required String name,
+    required String phone,
+    required String homePort,
+    required String boatName,
+  }) async {
+    try {
+      emit(AuthLoading());
+      final response = await http.put(
+        Uri.parse("$_baseUrl/api/profile"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          "Vname": name,
+          "Vphone": phone,
+          "VhomePort": homePort,
+          "VboatName": boatName,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        emit(ProfileUpdatedSuccess());
+      } else {
+        emit(ProfileError("Update failed"));
+      }
+    } catch (e) {
+      emit(ProfileError(e.toString()));
+    }
+  }
+  // --- EMAIL & CODE ---
+  Future<void> sendEmail(String email) async {
+    try {
+      emit(AuthLoading());
+      final response = await http.post(
+        Uri.parse("$_baseUrl/api/send-email"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": email}),
+      );
+      if (response.statusCode == 200) {
+        emit(EmailSentSuccess());
+      } else {
+        emit(AuthError("Server error: ${response.statusCode}"));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+//   Future<void> fetchInspectionDetails(String batchId, String token) async {
+//     try {
+//       emit(AuthLoading());
+//
+//       final response = await http.get(
+//         Uri.parse("https://yourbackend.com/api/inspection/$batchId"),
+//         headers: {
+//           "Content-Type": "application/json",
+//           "Authorization": "Bearer $token", // 🔐 important
+//         },
+//       );
+//
+//       if (response.statusCode == 200) {
+//         final data = jsonDecode(response.body);
+//
+//         emit(InspectionDataLoaded({
+//           "status": data["status"],
+//           "batchId": data["batchId"],
+//           "fisherName": data["fisherName"],
+//           "fishType": data["fishType"],
+//           "expiryDate": data["expiryDate"],
+//           "timeLeft": data["timeLeft"],
+//         }));
+//       } else {
+//         emit(AuthError("Failed to load inspection data"));
+//       }
+//     } catch (e) {
+//       emit(AuthError(e.toString()));
+//     }
+//   }
+  Future<void> sendRejectionReason({
+    required String batchId,
+    required String reason,
+    required String token,
+  }) async {
+    try {    emit(AuthLoading());
+    final response = await http.post(
+      Uri.parse("$_baseUrl/api/reject-batch"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: jsonEncode({
+        "batchId": batchId,
+        "reason": reason,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Vous pouvez émettre un état de succès ici
+      emit(InspectionDataLoaded(jsonDecode(response.body)));
+    } else {
+      emit(AuthError("Failed to send rejection"));
+    }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+// --- VET INSPECTION DATA ---par simulation
+  Future<void> fetchInspectionDetails(String batchId, String token) async {
+    try {
+      emit(AuthLoading());
+      // Simulation d'un appel API avec délai
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      emit(InspectionDataLoaded({
+        "status": "Approved",
+        "batchId": "#FSH-99283",
+        "fisherName": "Captain Elias",
+        "fishType": "Sardin",
+        "expiryDate": "Mar 21, 2026",
+        "timeLeft": "01 Day, 23 hours restants",
+      }));
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+  //Fill information of Vitirinaire
   Future<void> submitSetupVit({
     required String token,
     required String fullNameVit,
@@ -489,7 +450,6 @@ class AuthCubit extends Cubit<AuthState> {
       request.headers.addAll({
         "Authorization": "Bearer $token",
         "Content-Type": "multipart/form-data",
-        "ngrok-skip-browser-warning": "true",
       });
 
       request.fields['fullNameVit'] = fullNameVit;
@@ -521,211 +481,45 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
-
-  // --- LOGOUT ---
-  Future<void> logout(String token) async {
+  Future<void> fetchHomeData(String token) async {
     try {
-      await http.post(
-        Uri.parse("$_baseUrl/auth/logout-fishmen"), // Vérifiez si /auth/ est nécessaire
+      emit(AuthLoading());
+      // Simulation d'un appel API
+      await Future.delayed(const Duration(seconds: 1));
+      final response = await http.get(
+        Uri.parse("https://yourbackend.com/api/profile"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
           "ngrok-skip-browser-warning": "true",
         },
       );
-
-      await _googleSignIn.signOut();
-      await FacebookAuth.instance.logOut();
-      emit(AuthInitial());
-    } catch (e) {
-      emit(AuthError("Logout failed: ${e.toString()}"));
-    }
-  }
-
-  // --- EMAIL & CODE ---
-  Future<void> sendEmail(String email) async {
-    try {
-      emit(AuthLoading());
-      final response = await http.post(
-        Uri.parse("$_baseUrl/auth/send-email-fishmen"),
-        headers: {"Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",},
-        body: jsonEncode({"email": email}),
-      );
       if (response.statusCode == 200) {
-        emit(EmailSentSuccess());
+        final data = jsonDecode(response.body);
+        emit(ProfileLoaded(data));
       } else {
-        emit(AuthError("Server error: ${response.statusCode}"));
+        emit(AuthError("Failed to load Home page"));
       }
-    } catch (e) { emit(AuthError(e.toString())); }
-  }
-
-  Future<void> verifyCode(String email, String code) async {
-    try {
-      emit(AuthLoading());
-      final response = await http.post(
-        Uri.parse("$_baseUrl/auth/verify-code-fishmen"),
-        headers: {"Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",},
-        body: jsonEncode({"email": email, "code": code}),
-      );
-      if (response.statusCode == 200) {
-        emit(CodeVerifiedSuccess());
-      } else {
-        emit(AuthError("Invalid code"));
-      }
-    } catch (e) { emit(AuthError(e.toString())); }
-  }
-  Future<void> fetchProfilevit(String token) async {
-    emit(ProfileLoaded({
-      "name": "Captain Test",
-      "email": "test@mail.com",
-      "boatName": "Sea Explorer",
-      "homePort": "Oran",
-      "licenseExpiry": "2026",
-    }));
-  }
-// Future<void> fetchProfilevit(String token) async {
-//   try {
-//     emit(AuthLoading());
-//     final response = await http.get(
-//       Uri.parse("https://api.example.com/profile"),
-//       headers: {
-//         "Content-Type": "application/json",
-//         "Authorization": "Bearer $token",
-//       },
-//     );
-//
-//     if (response.statusCode == 200) {
-//       final data = jsonDecode(response.body);
-//       emit(ProfileLoaded(data));
-//     } else {
-//       emit(ProfileError("Failed to load profile"));
-//     }
-//   } catch (e) {
-//     emit(ProfileError(e.toString()));
-//   }
-// }
-
-
-
-
-// --- VET INSPECTION DATA ---
-  Future<void> sendRejectionReason({
-    required String batchId,
-    required String reason,
-    required String token,
-  }) async {
-    try {    emit(AuthLoading());
-    final response = await http.post(
-      Uri.parse("$_baseUrl/api/reject-batch"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-      body: jsonEncode({
-        "batchId": batchId,
-        "reason": reason,
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      // Vous pouvez émettre un état de succès ici
-      emit(InspectionDataLoaded(jsonDecode(response.body)));
-    } else {
-      emit(AuthError("Failed to send rejection"));
-    }
     } catch (e) {
       emit(AuthError(e.toString()));
     }
   }
-  //------------------------VET INSPECTION DATA---------------
-  Future<void> fetchInspectionDetails(String batchId, String token) async {
+  Future<void> fetchConsumerProfile(String token) async {
     try {
       emit(AuthLoading());
-      // Simulation d'un appel API avec délai
-      await Future.delayed(const Duration(milliseconds: 800));
-
-      emit(InspectionDataLoaded({
-        "status": "Approved",
-        "batchId": "#FSH-99283",
-        "fisherName": "Captain Elias",
-        "fishType": "Sardin",
-        "expiryDate": "Mar 21, 2026",
-        "timeLeft": "01 Day, 23 hours restants",
-      }));
-    } catch (e) {
-      emit(AuthError(e.toString()));
-    }
-  }
-
-//   Future<void> fetchInspectionDetails(String batchId, String token) async {
-//     try {
-//       emit(AuthLoading());
-//
-//       final response = await http.get(
-//         Uri.parse("https://yourbackend.com/api/inspection/$batchId"),
-//         headers: {
-//           "Content-Type": "application/json",
-//           "Authorization": "Bearer $token", // 🔐 important
-//         },
-//       );
-//
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//
-//         emit(InspectionDataLoaded({
-//           "status": data["status"],
-//           "batchId": data["batchId"],
-//           "fisherName": data["fisherName"],
-//           "fishType": data["fishType"],
-//           "expiryDate": data["expiryDate"],
-//           "timeLeft": data["timeLeft"],
-//         }));
-//       } else {
-//         emit(AuthError("Failed to load inspection data"));
-//       }
-//     } catch (e) {
-//       emit(AuthError(e.toString()));
-//     }
-//   }
-  Future<void> fetchvitProfile(String token) async {
-    emit(ProfileLoaded({
-      "name_vit": "Dr mohamed",
-      "email_vit": "mohamed@mail.com",
-      "boatName_vit": "Sea Explorer",
-      "homePort_vit": "Oran",
-      "phone_vit_number":"+213 550515255"
-    }));
-  }
-// --- UPDATE PROFIL vitirinaire ---
-  Future<void> updateProfilevit({
-    required String token,
-    required String name,
-    required String phone,
-    required String homePort,
-    required String boatName,
-  }) async {
-    try {
-      emit(AuthLoading());
-      final response = await http.put(
-        Uri.parse("$_baseUrl/api/profile"),
+      final response = await http.get(
+        Uri.parse("https://api.example.com/profileConsumer"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
         },
-        body: jsonEncode({
-          "name": name,
-          "phone": phone,
-          "homePort": homePort,
-          "boatName": boatName,
-        }),
       );
 
       if (response.statusCode == 200) {
-        emit(ProfileUpdatedSuccess());
+        final data = jsonDecode(response.body);
+        emit(ProfileLoaded(data));
       } else {
-        emit(ProfileError("Update failed"));
+        emit(ProfileError("Failed to load profile"));
       }
     } catch (e) {
       emit(ProfileError(e.toString()));

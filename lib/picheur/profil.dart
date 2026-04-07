@@ -144,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: user["profilePicture"] == null ? Icon(Icons.person, size: 60, color:isDark?Colors.white: const Color(0xFF013D73)) : null,
           ),
           const SizedBox(height: 12),
-          Text(user["name"] ?? "Unknown", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          Text(user["fullName"] ?? "Unknown", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           Text("ID: ${user["id"] ?? "N/A"} | LICENSE: ${user["license"] ?? "N/A"}", 
             style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
           const SizedBox(height: 16),
@@ -184,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
           const Divider(),
           Row(
             children: [
-              Expanded(child: _infoTile(null, "Registration", user["registration"] ?? "N/A",isDark)),
+              Expanded(child: _infoTile(null, "Registration", user["registrationNumber"] ?? "N/A",isDark)),
               Container(width: 1, height: 40, color:isDark?Colors.white10: Colors.grey.shade300),
               const SizedBox(width: 8),
               Expanded(child: _infoTile(null, "Home Port", user["homePort"] ?? "N/A",isDark)),

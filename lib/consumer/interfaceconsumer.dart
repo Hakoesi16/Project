@@ -1,21 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:projetsndcp/vitirinaire/setupvit.dart';
 
-class Interfacevitpage extends StatefulWidget {
+class Interfaceconsumerpage extends StatefulWidget {
   final String token;
-  const Interfacevitpage({super.key, required this.token});
+  const Interfaceconsumerpage({super.key, required this.token});
 
   @override
-  State<Interfacevitpage> createState() => _InterfacevitpageState();
+  State<Interfaceconsumerpage> createState() => _InterfaceconsumerpageState();
 }
-class _InterfacevitpageState extends State<Interfacevitpage> {
+class _InterfaceconsumerpageState extends State<Interfaceconsumerpage> {
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final String assessment='images/vitirinaire.svg';
+    final String assetconsumer='images/consumer.svg';
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -43,39 +42,46 @@ class _InterfacevitpageState extends State<Interfacevitpage> {
           //   height: 300,
           //   decoration: BoxDecoration(
           //     shape: BoxShape.circle,
-          //     border: Border.all(color: Colors.transparent, width: 6),
-          //   ),
-          //   child: SvgPicture.asset(
-          //     assessment,
-          //     width: 300,
-          //     height: 300,
-          //     fit: BoxFit.cover,
+          //     border: Border.all(color: Colors.white, width: 6),
+          //     image: DecorationImage(
+          //       image: SvgPicture.asset(
+          //         assetname,
+          //         width: 300,
+          //         height: 300,
+          //       ),
+          //       // AssetImage("images/sea.png"),
+          //       fit: BoxFit.cover,
+          //     ),
           //   ),
           // ),
-          ClipOval(
+          Container(
+            width: 300,
+            height: 300,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.transparent, width: 6),
+            ),
             child: SvgPicture.asset(
-              assessment,
+              assetconsumer,
               width: 300,
               height: 300,
               fit: BoxFit.cover,
             ),
           ),
           const SizedBox(height: 50),
-          _textcenter("Welcome Doctor!",isDark),
-          _textcenter("Your Profil",isDark),
-          _text("To start inspection,,",isDark),
+          _textcenter("Welcome!",isDark),
           _text("we need a few more details about you",isDark),
-          _text("Let's complete your profile",isDark),
+          _text("Let's complete your profile.",isDark),
           const SizedBox(height: 16),
           ElevatedButton(
               onPressed: (){},
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF01A896),
+                backgroundColor: const Color(0xFF033F78),
                 minimumSize: const Size(70, 56),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: MaterialButton(onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SetupVitpage(token: widget.token)));
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => Infoconsumerpage(token: widget.token)));
               },child: const Text("Start Setup", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),)
           ),
         ],
