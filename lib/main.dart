@@ -71,8 +71,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const Interfacevitpage(token: '',)
-          // SplashPage(),
+          home: const SplashPage(),
           // Interfacepage(token: '',),
         );
       },

@@ -13,14 +13,15 @@ class ProfilevitPage extends StatefulWidget {
 }
 
 class _ProfilevitPageState extends State<ProfilevitPage> {
-  bool _notifications = true;
-  bool _darkMode = false;
+  final bool _notifications = true;
+  final bool _darkMode = false;
   final Color primaryTeal = const Color(0xFF00A896);
 
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchProfilevit(widget.token);
+    // Utilisation de la fonction fetchvitProfile que nous avons rendue dynamique
+    context.read<AuthCubit>().fetchvitProfile(widget.token);
   }
 
   @override
@@ -48,7 +49,8 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
 
             return RefreshIndicator(
               onRefresh: () async {
-                await context.read<AuthCubit>().fetchProfile(widget.token);
+                // Utilisation de la même fonction pour le rafraîchissement
+                await context.read<AuthCubit>().fetchvitProfile(widget.token);
               },
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -76,7 +78,20 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
           }
 
           if (state is ProfileError) {
-            return Center(child: Text(state.message));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                  const SizedBox(height: 16),
+                  Text(state.message),
+                  TextButton(
+                    onPressed: () => context.read<AuthCubit>().fetchvitProfile(widget.token),
+                    child: const Text("Retry"),
+                  )
+                ],
+              ),
+            );
           }
 
           return const Center(child: Text("No Profile Data Available"));
@@ -107,12 +122,12 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
           CircleAvatar(
             radius: 50,
             backgroundColor: const Color(0xFFE3F2FD),
-            backgroundImage: user["profilePicture_vit"] != null ? NetworkImage(user["profilePicture"]) : null,
-            child: user["profilePicture"] == null ? Icon(Icons.person, size: 60, color: primaryTeal) : null,
+            backgroundImage: user["profilePicture_vit"] != null ? NetworkImage(user["profilePicture_vit"]) : null,
+            child: user["profilePicture_vit"] == null ? Icon(Icons.person, size: 60, color: primaryTeal) : null,
           ),
           const SizedBox(height: 12),
-          Text(user["namevit"] ?? "Unknown", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          Text("ID: ${user["idvit"] ?? "/"} | LICENSE: ${user["licensevit"] ?? "/"}",
+          Text(user["name_vit"] ?? "Dr. Mohamed", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          Text("ID: ${user["id_vit"] ?? "/"} | LICENSE: ${user["license_vit"] ?? "/"}",
               style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
           const SizedBox(height: 16),
           Row(
@@ -149,13 +164,13 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
-          _infoTile(Icons.anchor_outlined, "ASSIGNED PORT", user["assignedPortvit"] ?? "Oran Port", trailing: _statusBadge()),
+          _infoTile(Icons.anchor_outlined, "ASSIGNED PORT", user["homePort_vit"] ?? "Oran Port", trailing: _statusBadge()),
           const Divider(height: 32),
-          _infoTile(Icons.badge_outlined, "SPECIALIZATION", user["specializationvit"] ?? "Aquatic Pathology"),
+          _infoTile(Icons.medical_services_outlined, "SPECIALIZATION", user["specialization_vit"] ?? "Aquatic Pathology"),
           const Divider(height: 32),
-          _infoTile(Icons.history_edu_outlined, "EXPERIENCE", user["experiencevit"] ?? "12 Years Professional"),
+          _infoTile(Icons.history_edu_outlined, "EXPERIENCE", user["experience_vit"] ?? "12 Years Professional"),
           const Divider(height: 32),
-          _infoTile(Icons.verified_user_outlined, "LICENSE EXPIRY", user["licenseExpiryvit"] ?? "Dec 31, 2024"),
+          _infoTile(Icons.verified_user_outlined, "LICENSE EXPIRY", user["licenseExpiry_vit"] ?? "Dec 31, 2024"),
         ],
       ),
     );
@@ -167,9 +182,9 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
-          _infoTile(Icons.email_outlined, "Email Address", user["emailvit"] ?? "project@esi-sba.dz"),
+          _infoTile(Icons.email_outlined, "Email Address", user["email_vit"] ?? "mohamed@mail.com"),
           const Divider(height: 32),
-          _infoTile(Icons.phone_outlined, "Phone Number", user["phoneNumbervit"] ?? "+213 674854088"),
+          _infoTile(Icons.phone_outlined, "Phone Number", user["phone_vit_number"] ?? "+213 550515255"),
         ],
       ),
     );
@@ -185,10 +200,10 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
           _settingsTile(Icons.language, "Language", trailing: const Text("English >", style: TextStyle(color: Colors.grey))),
           const Divider(height: 1),
           _settingsTile(Icons.notifications_none, "Notifications",
-              trailing: Switch(value: _notifications, activeColor: primaryTeal, onChanged: (v) => setState(() => _notifications = v))),
+              trailing: Switch(value: _notifications, activeColor: primaryTeal, onChanged: (v) {})),
           const Divider(height: 1),
           _settingsTile(Icons.dark_mode_outlined, "Dark Mode",
-              trailing: Switch(value: _darkMode, activeColor: primaryTeal, onChanged: (v) => setState(() => _darkMode = v))),
+              trailing: Switch(value: _darkMode, activeColor: primaryTeal, onChanged: (v) {})),
         ],
       ),
     );

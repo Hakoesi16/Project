@@ -48,6 +48,7 @@ flutter:
      - images/grey.jpg
      - images/boat.svg
      - images/vitirinaire.svg
+     - images/consumer.svg
 
 
   fonts:

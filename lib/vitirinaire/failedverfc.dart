@@ -100,7 +100,7 @@ class _FailedvetPageState extends State<FailedvetPage> {
                   const SizedBox(height: 24),
                   _buildSectionTitle("Mandatory Rejection Reasons", isDark),
                   const SizedBox(height: 12),
-                  _buildRejectionInputCard(isDark),
+                  _buildRejectionInputCard(isDark),//pour cause de fefutation de envoyer id de pecheur et le text
                   const SizedBox(height: 24),
                   _buildActionCard(
                     icon: Icons.picture_as_pdf_outlined,
