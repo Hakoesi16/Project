@@ -6,6 +6,7 @@ import 'package:projetsndcp/picheur/profil.dart';
 import 'package:projetsndcp/signin/cubit/authcubit.dart';
 import 'package:projetsndcp/signin/cubit/themecubit.dart';
 import 'package:projetsndcp/signin/signup/splage.dart';
+import 'package:projetsndcp/vitirinaire/interfacevit.dart';
 void main() {
   runApp(
     MultiBlocProvider(
@@ -70,7 +71,8 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const SplashPage(),
+          home: const Interfacevitpage(token: '',)
+          // SplashPage(),
           // Interfacepage(token: '',),
         );
       },

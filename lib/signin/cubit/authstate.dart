@@ -47,3 +47,9 @@ class InspectionDataLoaded extends AuthState { // Nouvel état pour Vet Inspecti
   @override
   List<Object?> get props => [data];
 }
+class HomeDataLoaded extends AuthState {
+  final Map<String, dynamic> data;
+  HomeDataLoaded(this.data);
+  @override
+  List<Object?> get props => [data];
+}

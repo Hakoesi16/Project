@@ -47,6 +47,7 @@ flutter:
      - images/fish3.jpg
      - images/grey.jpg
      - images/boat.svg
+     - images/vitirinaire.svg
 
 
   fonts:
