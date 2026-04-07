@@ -639,6 +639,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
+  //------------------------VET INSPECTION DATA---------------
   Future<void> fetchInspectionDetails(String batchId, String token) async {
     try {
       emit(AuthLoading());
@@ -688,4 +689,46 @@ class AuthCubit extends Cubit<AuthState> {
 //       emit(AuthError(e.toString()));
 //     }
 //   }
+  Future<void> fetchvitProfile(String token) async {
+    emit(ProfileLoaded({
+      "name_vit": "Dr mohamed",
+      "email_vit": "mohamed@mail.com",
+      "boatName_vit": "Sea Explorer",
+      "homePort_vit": "Oran",
+      "phone_vit_number":"+213 550515255"
+    }));
+  }
+// --- UPDATE PROFIL vitirinaire ---
+  Future<void> updateProfilevit({
+    required String token,
+    required String name,
+    required String phone,
+    required String homePort,
+    required String boatName,
+  }) async {
+    try {
+      emit(AuthLoading());
+      final response = await http.put(
+        Uri.parse("$_baseUrl/api/profile"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          "name": name,
+          "phone": phone,
+          "homePort": homePort,
+          "boatName": boatName,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        emit(ProfileUpdatedSuccess());
+      } else {
+        emit(ProfileError("Update failed"));
+      }
+    } catch (e) {
+      emit(ProfileError(e.toString()));
+    }
+  }
 }
