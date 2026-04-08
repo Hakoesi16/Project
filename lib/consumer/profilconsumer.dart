@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
@@ -140,7 +141,34 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
               const SizedBox(width: 12),
               Container(
                 decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(10)),
-                child: IconButton(onPressed: () {}, icon: const Icon(Icons.share, color: Colors.grey)),
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    await SharePlus.instance.share(
+                      ShareParams(
+                        text: "🐟 Découvre Let's Fishing !\n"
+                            "L'app du marché de poisson en Algérie.\n\n"
+                            "📱 Télécharge ici :\n"
+                            "https://play.google.com/store/apps/details?id=com.example.projetsndcp\n\n"
+                            "Rejoins-moi sur l'app !",
+                        subject: "Let's Fishing App",
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.share, color: Color(0xFF475569)),
+                  label: const Text(
+                    "",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFF1F5F9),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
               )
             ],
           )
