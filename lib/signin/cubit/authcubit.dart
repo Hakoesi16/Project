@@ -525,4 +525,42 @@ class AuthCubit extends Cubit<AuthState> {
       emit(ProfileError(e.toString()));
     }
   }
+  //Fill information of Consumer
+  Future<void> submitSetupCons({
+    required String token,
+    required String fullNameCons,
+    required String nationalIdCons,
+    required String phoneCons,
+    required String emailCons,
+    required String delevryAddress,
+    required String nearbyPortCons,
+  }) async {
+    try {
+      emit(SetupLoading());
+
+      var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/api/complete-setup"));
+      request.headers.addAll({
+        "Authorization": "Bearer $token",
+        "Content-Type": "multipart/form-data",
+      });
+
+      request.fields['fullNameCons'] = fullNameCons;
+      request.fields['nationalIdCons'] = nationalIdCons;
+      request.fields['phoneCons'] = phoneCons;
+      request.fields['emailCons'] = emailCons;
+      request.fields['delevryAddress'] = delevryAddress;
+      request.fields['nearbyPort'] = nearbyPortCons;
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        emit(SetupSuccess());
+      } else {
+        emit(AuthError("Setup failed: ${response.body}"));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
 }
