@@ -49,7 +49,7 @@ class _InspectionHistoryPageState extends State<InspectionHistoryPage> {
   }
 
   //for trying
-    List<InspectionItem> _inspectionsTab = [
+  final List<InspectionItem> _inspectionsTab = [
     InspectionItem(
       batchNumber: "Batch #VET-2024-082",
       date: "Jan 24, 2024 • 09:15 AM",
@@ -116,9 +116,8 @@ class _InspectionHistoryPageState extends State<InspectionHistoryPage> {
               ],
             ),
 
-            SizedBox(height: 16),
+            Block(),
 
-            // عنوان القسم
             Text(
               "RECENT INSPECTIONS",
               style: TextStyle(
@@ -130,13 +129,11 @@ class _InspectionHistoryPageState extends State<InspectionHistoryPage> {
               ),
             ),
 
-            SizedBox(height: 12),
+            Block(),
 
-            // القائمة
-            //_isLoading
-              //? Center(child: CircularProgressIndicator())
-              //:
-               ListView.builder(
+            _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: _inspectionsTab.length,
@@ -308,4 +305,13 @@ Widget _filterChip(String label) {
       style: TextStyle(fontFamily: 'Inter',color: Color(0xFF00A896),fontSize: 12, fontWeight: FontWeight.w600),
     ),
   );
+}
+
+
+class Block extends StatelessWidget {
+  const Block({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(height: 20);
+  }
 }
