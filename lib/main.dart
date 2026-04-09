@@ -7,7 +7,7 @@ import 'package:projetsndcp/signin/cubit/authcubit.dart';
 import 'package:projetsndcp/signin/cubit/themecubit.dart';
 import 'package:projetsndcp/signin/signup/splage.dart';
 import 'package:projetsndcp/vitirinaire/interfacevit.dart';
-import 'package:projetsndcp/vitirinaire/inspectionHistoryPage.dart';
+import 'package:projetsndcp/vitirinaire/PendingBatchesPage.dart';
 
 
 
