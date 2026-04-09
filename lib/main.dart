@@ -7,6 +7,9 @@ import 'package:projetsndcp/signin/cubit/authcubit.dart';
 import 'package:projetsndcp/signin/cubit/themecubit.dart';
 import 'package:projetsndcp/signin/signup/splage.dart';
 import 'package:projetsndcp/vitirinaire/interfacevit.dart';
+import 'package:projetsndcp/vitirinaire/inspectionHistoryPage.dart';
+
+
 
 import 'consumer/setupconsumer.dart';
 void main() {
@@ -73,7 +76,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const SetupConspage(token: '',)
+          home: const SetupConspage(token: '',),
           // SplashPage(),
           // Interfacepage(token: '',),
         );
