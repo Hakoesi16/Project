@@ -90,8 +90,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const VetInspectionPage(),
-          //SetupConspage(token: ''),
+          home: const SetupConspage(token: ''),
           // SplashPage(),
           // Interfacepage(token: '',),
         );
