@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projetsndcp/picheur/addBatchPage.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class VetInspectionPage extends StatefulWidget {
   const VetInspectionPage({super.key});
@@ -13,7 +14,7 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
   String? _selectedSmell;
   String? _selectedGillColor;
   String? _selectedFleshFirmness;
-  bool? _parasitesPresent;
+  bool _parasitesPresent = false;
   double _internalTemp = 1.2;
   double _freshnessScore = 85;
   TextEditingController _tempController = TextEditingController(text: "1.2");
@@ -42,6 +43,7 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
     photos: ["images/fish1.png", "images/fish2.png"],
   );
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,11 +121,11 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
             ),
 
             Block(),
-            SubTitle(subTitle: 'CATCH LOCATION'),
+            //SubTitle(subTitle: 'CATCH LOCATION'),
             SizedBox(height: 130),
 
             Block(),
-            SubTitle(subTitle: 'BATCH PHOTOS'),
+            //SubTitle(subTitle: 'BATCH PHOTOS'),
             SizedBox(height: 140,),
 
             Block(),
@@ -247,10 +249,10 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
                               onChanged: (value) => setState(() => _selectedFleshFirmness = value),
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: Colors.white,
+                                fillColor: Color(0xFFF8FAFC),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: Colors.grey[300]!),
+                                  borderSide: BorderSide(color: Color(0xFFE2E8F0)),
                                 ),
                               ),
                             ),
@@ -277,23 +279,26 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
                                     child: Container(
                                       padding: EdgeInsets.symmetric(vertical: 12),
                                       decoration: BoxDecoration(
-                                        color: _parasitesPresent == null
-                                            ? Colors.teal[50]
+                                        color: _parasitesPresent
+                                            ? Color(0x0F68E61A)
                                             : Colors.white,
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                          color: _parasitesPresent == null
-                                              ? Colors.teal
-                                              : Colors.grey[300]!,
+                                          color: _parasitesPresent
+                                              ? Color(0xFF00A896)
+                                              : Color(0xFFE2E8F0),
                                         ),
                                       ),
                                       child: Center(
                                         child: Text(
                                           "Yes",
                                           style: TextStyle(
-                                            color: _parasitesPresent == null
-                                                ? Colors.teal
-                                                : Colors.black,
+                                            color: _parasitesPresent
+                                                ? Color(0xFF00A896)
+                                                : Color(0xFF0F172A),
+                                            fontFamily: 'Inter',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       ),
@@ -307,23 +312,26 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
                                     child: Container(
                                       padding: EdgeInsets.symmetric(vertical: 12),
                                       decoration: BoxDecoration(
-                                        color: _parasitesPresent == null 
-                                            ? Colors.teal[50]
+                                        color: !_parasitesPresent
+                                            ? Color(0x0F68E61A)
                                             : Colors.white,
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                          color: _parasitesPresent == null
-                                              ? Colors.teal
-                                              : Colors.grey[300]!,
+                                          color: !_parasitesPresent
+                                              ? Color(0xFF00A896)
+                                              : Color(0xFFE2E8F0),
                                         ),
                                       ),
                                       child: Center(
                                         child: Text(
                                           "No",
                                           style: TextStyle(
-                                            color: _parasitesPresent == null
-                                                ? Colors.teal
-                                                : Colors.black,
+                                            color: !_parasitesPresent
+                                                ? Color(0xFF00A896)
+                                                : Color(0xFF0F172A),
+                                            fontFamily: 'Inter',
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       ),
@@ -337,6 +345,134 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
                       ),
                     ],
                   ),
+
+                  Block(),
+
+                  Row(
+                    children: [
+                      Text("Internal Temperature (°C)",style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: Color(0xFF334155),
+                      ),),
+                      Spacer(),
+                      Text(
+                        "${_tempController.text}°C",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          color: Color(0xFF00A896),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 6),
+                  TextFormField(
+                    controller: _tempController,
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) => setState(() {}),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Color(0xFFF8FAFC),
+                      suffixIcon: Icon(Icons.thermostat, color: Colors.grey),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                    ),
+                  ),
+
+                  Block(),
+
+                  Row(
+                    children: [
+                      Text("Overall Freshness Score",style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: Color(0xFF334155),
+                      ),),
+                      Spacer(),
+                      Text(
+                        "${_freshnessScore.toInt()}/100",
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          color: Color(0xFF00A896),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  LinearPercentIndicator(
+                    percent: _freshnessScore / 100,
+                    lineHeight: 10,
+                    backgroundColor: Color(0xFFE2E8F0),
+                    progressColor: Color(0xFF00A896),
+                    barRadius: Radius.circular(8),
+                    padding: EdgeInsets.zero,
+                  ),
+                  SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text("POOR", style: TextStyle(color: Color(0xFF94A3B8), fontSize: 10,fontFamily: 'Inter',fontWeight: FontWeight.w700)),
+                      Spacer(),
+                      Text("EXCELLENT", style: TextStyle(color: Color(0xFF94A3B8), fontSize: 10,fontFamily: 'Inter',fontWeight: FontWeight.w700)),
+                    ],
+                  ), 
+
+                  Block(),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(Icons.cancel_outlined),
+                          label: Text("Reject",style: TextStyle(fontFamily: 'Inter',fontWeight: FontWeight.w700,fontSize: 16,color: Colors.white)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFEF4444),
+                            foregroundColor: Colors.white,
+                            minimumSize: Size(double.infinity, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            shadowColor: Color(0xFFEF4444),
+                            elevation: 5,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(Icons.check_circle_outline),
+                          label: Text("Approve",style: TextStyle(fontFamily: 'Inter',fontWeight: FontWeight.w700,fontSize: 16, color: Colors.white),),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF10B981),
+                            foregroundColor: Colors.white,
+                            minimumSize: Size(double.infinity, 60),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            shadowColor: Color(0xFF10B981),
+                            elevation: 5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+
+
+
 
 
                 ],
