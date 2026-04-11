@@ -53,3 +53,4 @@ class HomeDataLoaded extends AuthState {
   @override
   List<Object?> get props => [data];
 }
+class PasswordUpdatedSuccess extends AuthState {}
