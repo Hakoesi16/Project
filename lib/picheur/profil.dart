@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projetsndcp/picheur/password.dart';
 import 'package:share_plus/share_plus.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
@@ -247,7 +248,10 @@ class _ProfilePageState extends State<ProfilePage> {
       decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
-          _settingsTile(Icons.lock_outline, "Change Password",isDark, trailing: const Icon(Icons.chevron_right, color: Colors.grey)),
+          _settingsTile(Icons.lock_outline, "Change Password",isDark, trailing: IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordPage(token: widget.token)));
+          },icon:  const Icon(Icons.chevron_right, color: Colors.grey,
+          ))),
           const Divider(height: 1),
           _settingsTile(Icons.notifications_none, "Notifications",isDark,
               trailing: Switch(value: _notifications, activeThumbColor: const Color(0xFF01A896), onChanged: (v) => setState(() => _notifications = v))),
