@@ -9,6 +9,7 @@ import 'package:projetsndcp/signin/signup/splage.dart';
 import 'package:projetsndcp/vitirinaire/interfacevit.dart';
 import 'package:projetsndcp/picheur/sosPage.dart';
 import 'consumer/setupconsumer.dart';
+import 'consumer/batchDetails.dart';
 
 void main() {
   runApp(

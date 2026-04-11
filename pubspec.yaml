@@ -60,3 +60,6 @@ flutter:
    - family: Inter
      fonts:
        - asset: fonts/Inter-VariableFont_opsz,wght.ttf
+   - family: work sanc
+     fonts:
+       - asset: fonts/WorkSans-VariableFont_wght.ttf 
