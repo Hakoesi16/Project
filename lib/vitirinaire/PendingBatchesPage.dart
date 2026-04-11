@@ -61,6 +61,7 @@ class _PendingBatchesPageState extends State<PendingBatchesPage> {
   @override
   Widget build(BuildContext context) { 
     return Scaffold(
+      backgroundColor: Color(0xFFF5F7F9),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {},
