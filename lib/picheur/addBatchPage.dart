@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Addbatchpage extends StatefulWidget {
   const Addbatchpage({super.key});
@@ -12,14 +15,59 @@ class Addbatchpage extends StatefulWidget {
 }
 
 class _AddBatchPageState extends State<Addbatchpage> {
+  final Map<String, List<String>> _fishByCategory = {
+    "Marine Fish": [
+      "Sardin",
+      "Tuna",
+      "Dentex (Bream)",
+      "Dorade (Sea Bream)",
+      "Mackerel",
+      "Sea Bass",
+      "Sole",
+      "Rockfish",
+      "Grouper",
+      "Garfish",
+    ],
+    "FreshWater Fish": ["Carp", "Tilapia", "Perch", "Catfish", "Barbel"],
+    "Molluscs": ["Octopus", "Squid", "Cuttlefish (Sepia)", "Mussel", "Oyster"],
+    "Crustaceans": [
+      "Crab",
+      "Shrimp",
+      "Lobster",
+      "Small Crabs",
+      "Langoustine / Norway Lobster",
+    ],
+  };
+
+  final List<String> _catchMethods = [
+    "Rod / Line fishing",
+    "Net Fishing",
+    "Spearfishing",
+    "Trolling",
+  ];
+
+  String? _selectedCategory;
+  String? _selectedFish;
+  bool _isOtherFish = false;
+  TextEditingController _otherFishController = TextEditingController();
+  String? _selectedCatchMethod;
+  TextEditingController _quantityController = TextEditingController();
+  TextEditingController _priceController = TextEditingController();
+  TextEditingController _notesController = TextEditingController();
+
   //
-  GoogleMapController? _mapController;
+  //GoogleMapController? _mapController;
   LatLng? _currentPosition;
   bool _locationLoaded = false;
 
   //
   Future<void> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+
     LocationPermission permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) return;
 
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
@@ -30,6 +78,7 @@ class _AddBatchPageState extends State<Addbatchpage> {
       _locationLoaded = true;
     });
   }
+
   //image
   List<File> _photos = [];
   final ImagePicker _picker = ImagePicker();
@@ -45,6 +94,7 @@ class _AddBatchPageState extends State<Addbatchpage> {
       });
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -80,7 +130,7 @@ class _AddBatchPageState extends State<Addbatchpage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SubTitle(subTitle: "CATCH DETAILS", icon: Icons.sailing_outlined),
+            SubTitle(subTitle: "BATCH DETAILS", icon: Icons.sailing_outlined),
             SizedBox(height: 20),
             Text(
               "Category",
@@ -92,9 +142,18 @@ class _AddBatchPageState extends State<Addbatchpage> {
               ),
             ),
             SizedBox(height: 7),
-            DropdownButtonFormField(
-              items: [],
-              onChanged: (value) {},
+            DropdownButtonFormField<String>(
+              value: _selectedCategory,
+              items: _fishByCategory.keys
+                  .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedCategory = value;
+                  _selectedFish = null;
+                  _isOtherFish = false;
+                });
+              },
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Color(0xFFFFFFFF),
@@ -128,9 +187,29 @@ class _AddBatchPageState extends State<Addbatchpage> {
               ),
             ),
             SizedBox(height: 7),
-            DropdownButtonFormField(
-              items: [],
-              onChanged: (value) {},
+            DropdownButtonFormField<String>(
+              value: _selectedFish,
+              items: [
+                ...?_fishByCategory[_selectedCategory]
+                    ?.map(
+                      (fish) =>
+                          DropdownMenuItem(value: fish, child: Text(fish)),
+                    )
+                    .toList(),
+                DropdownMenuItem(
+                  value: "Other",
+                  child: Text(
+                    "Other - Enter the name ..",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedFish = value;
+                  _isOtherFish = value == "Other";
+                });
+              },
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(13),
@@ -143,7 +222,7 @@ class _AddBatchPageState extends State<Addbatchpage> {
                 ),
               ),
               hint: Text(
-                "e.g.Lacha",
+                "e.g. Lacha",
                 style: TextStyle(
                   color: Color(0xFFA8A8A8),
                   fontFamily: "Inter",
@@ -156,6 +235,23 @@ class _AddBatchPageState extends State<Addbatchpage> {
                 color: Color(0xFFA8A8A8),
               ),
             ),
+            //
+            if (_isOtherFish) ...[
+              SizedBox(height: 8),
+              TextFormField(
+                controller: _otherFishController,
+                decoration: InputDecoration(
+                  hintText: "Enter fish name...",
+                  filled: true,
+                  fillColor: Colors.white,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ],
+            //
             Block(),
             Text(
               "Catch Method",
@@ -167,9 +263,17 @@ class _AddBatchPageState extends State<Addbatchpage> {
               ),
             ),
             SizedBox(height: 7),
-            DropdownButtonFormField(
-              items: [],
-              onChanged: (value) {},
+            DropdownButtonFormField<String>(
+              value: _selectedCatchMethod,
+              items: _catchMethods
+                  .map(
+                    (method) =>
+                        DropdownMenuItem(value: method, child: Text(method)),
+                  )
+                  .toList(),
+              onChanged: (value) {
+                setState(() => _selectedCatchMethod = value);
+              },
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Color(0xFFFFFFFF),
@@ -194,7 +298,6 @@ class _AddBatchPageState extends State<Addbatchpage> {
             ),
             Block(),
             Row(
-              spacing: 15,
               children: [
                 Expanded(
                   child: Column(
@@ -211,7 +314,8 @@ class _AddBatchPageState extends State<Addbatchpage> {
                       ),
                       SizedBox(height: 7),
                       TextFormField(
-                        onTap: () {},
+                        controller: _quantityController,
+                        keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(13),
@@ -222,21 +326,19 @@ class _AddBatchPageState extends State<Addbatchpage> {
                           ),
                           filled: true,
                           fillColor: Color(0xFFFFFFFF),
-                          hint: Text(
-                            "0.00",
-                            style: TextStyle(
-                              color: Color(0xFF6B7280),
-                              fontFamily: "Inter",
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16,
-                            ),
+                          hintText: "0.00",
+                          hintStyle: TextStyle(
+                            color: Color(0xFF6B7280),
+                            fontFamily: "Inter",
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
                           ),
                         ),
-                        keyboardType: .number,
                       ),
                     ],
                   ),
                 ),
+                SizedBox(width: 15),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,7 +354,8 @@ class _AddBatchPageState extends State<Addbatchpage> {
                       ),
                       SizedBox(height: 7),
                       TextFormField(
-                        onTap: () {},
+                        controller: _priceController,
+                        keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(13),
@@ -263,17 +366,14 @@ class _AddBatchPageState extends State<Addbatchpage> {
                           ),
                           filled: true,
                           fillColor: Color(0xFFFFFFFF),
-                          hint: Text(
-                            "0.00 DA",
-                            style: TextStyle(
-                              color: Color(0xFF6B7280),
-                              fontFamily: "Inter",
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16,
-                            ),
+                          hintText: "0.00 DA",
+                          hintStyle: TextStyle(
+                            color: Color(0xFF6B7280),
+                            fontFamily: "Inter",
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
                           ),
                         ),
-                        keyboardType: .number,
                       ),
                     ],
                   ),
@@ -291,12 +391,12 @@ class _AddBatchPageState extends State<Addbatchpage> {
                     onTap: _addPhoto,
                     child: Container(
                       decoration: BoxDecoration(
-                        border: BoxBorder.all(
+                        border: Border.all(
                           color: Color(0xFFE2E8F0),
                           style: BorderStyle.solid,
                         ),
                         color: Color(0xFFFFFFFF),
-                        borderRadius: BorderRadiusGeometry.circular(13),
+                        borderRadius: BorderRadius.circular(13),
                       ),
                       height: 100.33,
                       width: 111.33,
@@ -331,7 +431,10 @@ class _AddBatchPageState extends State<Addbatchpage> {
                     return Stack(
                       children: [
                         Container(
-                          margin: EdgeInsets.symmetric(vertical: 0,horizontal: 5),
+                          margin: EdgeInsets.symmetric(
+                            vertical: 0,
+                            horizontal: 5,
+                          ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: Image.file(
@@ -342,8 +445,6 @@ class _AddBatchPageState extends State<Addbatchpage> {
                             ),
                           ),
                         ),
-
-
                         Positioned(
                           top: 4,
                           right: 12,
@@ -358,58 +459,72 @@ class _AddBatchPageState extends State<Addbatchpage> {
                                 color: Colors.red,
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(Icons.close, color: Colors.white, size: 16),
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: 16,
+                              ),
                             ),
                           ),
                         ),
                       ],
                     );
-                  }),
-
-
+                  }).toList(),
                 ],
               ),
             ),
             SizedBox(height: 20),
-            SubTitle(
-              subTitle: "CATCH LOCATION",
-              icon: Icons.location_on_outlined,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SubTitle(subTitle: "CATCH LOCATION", icon: Icons.location_on),
+                Container(
+                  padding: EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Color(0xFFDCFCE7),
+                  ),
+                  child: Text("GPS ACTIVE",style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 10,
+                    color: Color(0xFF15803D),
+                  ),),
+                )
+              ],
             ),
             SizedBox(height: 10),
-            ///// FOR MAP
-            SizedBox(height: 160),
-            // _locationLoaded
-            //     ? SizedBox(
-            //         height: 160,
-            //         child: ClipRRect(
-            //           borderRadius: BorderRadius.circular(13),
-            //           child: GoogleMap(
-            //             initialCameraPosition: CameraPosition(
-            //               target: _currentPosition!,
-            //               zoom: 14,
-            //             ),
-            //             markers: {
-            //               Marker(
-            //                 markerId: MarkerId("current"),
-            //                 position: _currentPosition!,
-            //               ),
-            //             },
-            //             onMapCreated: (controller) {
-            //               _mapController = controller;
-            //             },
-            //             myLocationEnabled: true,
-            //             zoomControlsEnabled: false,
-            //           ),
-            //         ),
-            //       )
-            //     : Text("ok"),
-            //Center(child: CircularProgressIndicator()),
+            GestureDetector(
+              onTap: () => print("hello"),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: SizedBox(
+                  height: 180,
+                  width: double.infinity,
+                  child: _locationLoaded
+                      ? GestureDetector(
+                        onTap: () => {print("map")},
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(13),
+                          child: Image.asset(
+                            "images/map.png",
+                            width: double.infinity,
+                            height: 180,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      )
+                      : Container(
+                          color: Color(0xFFF5F7F9),
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                ),
+              ),
+            ),
             ////// FOR MAP
-            SizedBox(height: 20),
-            SubTitle(subTitle: "ADDITIONAL NOTES", icon: Icons.notes_outlined),
-            SizedBox(height: 10),
+            SizedBox(height: 15),
             TextFormField(
-              onTap: () {},
+              controller: _notesController,
               maxLines: 2,
               minLines: 1,
               decoration: InputDecoration(
@@ -419,20 +534,18 @@ class _AddBatchPageState extends State<Addbatchpage> {
                 ),
                 filled: true,
                 fillColor: Color(0xFFFFFFFF),
-                hint: Text(
-                  "Gear used, or weather\n conditions...",
-                  style: TextStyle(
-                    color: Color(0xFF6B7280),
-                    fontFamily: "Inter",
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
-                  ),
+                hintText: "Gear used, or weather\n conditions...",
+                hintStyle: TextStyle(
+                  color: Color(0xFF6B7280),
+                  fontFamily: "Inter",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 16,
                 ),
               ),
             ),
             SizedBox(height: 15),
             Container(
-              padding: EdgeInsetsGeometry.all(10),
+              padding: EdgeInsets.all(10),
               child: Column(
                 children: [
                   Container(
@@ -444,15 +557,15 @@ class _AddBatchPageState extends State<Addbatchpage> {
                         backgroundColor: Color(0xFF023E77),
                         foregroundColor: Color(0xFFFFFFFF),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusGeometry.circular(13),
+                          borderRadius: BorderRadius.circular(13),
                         ),
-                        alignment: AlignmentGeometry.center,
+                        alignment: Alignment.center,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Sumbit Batch",
+                            "Submit Batch",
                             style: TextStyle(
                               fontFamily: "Inter",
                               fontWeight: FontWeight.w600,
@@ -475,9 +588,9 @@ class _AddBatchPageState extends State<Addbatchpage> {
                         backgroundColor: Color(0xFFA8A8A8),
                         foregroundColor: Color(0xFFFFFFFF),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadiusGeometry.circular(13),
+                          borderRadius: BorderRadius.circular(13),
                         ),
-                        alignment: AlignmentGeometry.center,
+                        alignment: Alignment.center,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -524,9 +637,9 @@ class SubTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      spacing: 5,
       children: [
         Icon(icon, color: Color(0xFF023E77)),
+        SizedBox(width: 5),
         Text(
           "$subTitle",
           style: TextStyle(

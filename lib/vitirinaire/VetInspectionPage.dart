@@ -47,6 +47,7 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF5F7F9),
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {},
@@ -121,11 +122,11 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
             ),
 
             Block(),
-            //SubTitle(subTitle: 'CATCH LOCATION'),
+            subTitle(title: 'CATCH LOCATION'),
             SizedBox(height: 130),
 
             Block(),
-            //SubTitle(subTitle: 'BATCH PHOTOS'),
+            subTitle(title: 'BATCH PHOTOS'),
             SizedBox(height: 140,),
 
             Block(),
@@ -526,14 +527,23 @@ class Block extends StatelessWidget {
   }
 }
 
-Widget subTitle(String subTitle) {
-  return Text(
-    subTitle,
-    style: TextStyle(
-      color: Color(0xFF94A3B8),
-      fontSize: 16,
-      fontWeight: FontWeight.w700,
-      letterSpacing: 0.6,
-    ),
-  );
+
+
+class subTitle extends StatelessWidget {
+  final String? title;
+  subTitle({super.key, this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      "$title",
+      style: TextStyle(
+        fontFamily: 'Inter',
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.6,
+        color: Color(0xFF94A3B8)
+      ),
+    );
+  }
 }
