@@ -50,7 +50,7 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
       backgroundColor: Color(0xFFF5F7F9),
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () => Navigator.pop(context),
           icon: Icon(Icons.arrow_back),
           color: Color(0xFF0F172A),
         ),

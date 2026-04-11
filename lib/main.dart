@@ -7,8 +7,7 @@ import 'package:projetsndcp/signin/cubit/authcubit.dart';
 import 'package:projetsndcp/signin/cubit/themecubit.dart';
 import 'package:projetsndcp/signin/signup/splage.dart';
 import 'package:projetsndcp/vitirinaire/interfacevit.dart';
-
-
+import 'package:projetsndcp/picheur/sosPage.dart';
 import 'consumer/setupconsumer.dart';
 
 void main() {

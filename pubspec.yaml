@@ -53,6 +53,7 @@ flutter:
      - images/vitirinaire.svg
      - images/consumer.svg
      - images/map.png
+     - images/logoPolice.png
 
 
   fonts:
