@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:projetsndcp/picheur/picheur_Api.dart';
 
 class Addbatchpage extends StatefulWidget {
   const Addbatchpage({super.key});
@@ -15,6 +16,66 @@ class Addbatchpage extends StatefulWidget {
 }
 
 class _AddBatchPageState extends State<Addbatchpage> {
+  BatchModel? _batch;
+  bool _isLoading = false;
+  String _error = "";
+
+  Future<void> _getBatchDetails() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final data = await ApiService.get("/api/batches/widget.batchId"); //${widget.batchId}
+      setState(() {
+        _batch = BatchModel.fromJson(data);
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _submitBatch() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final fishName = _isOtherFish
+          ? _otherFishController.text
+          : _selectedFish ?? "";
+
+      await ApiService.postMultipart(
+        "/api/batches",
+        {
+          "category"     : _selectedCategory ?? "",
+          "fish_name"    : fishName,
+          "catch_method" : _selectedCatchMethod ?? "",
+          "quantity"     : _quantityController.text,
+          "price"        : _priceController.text,
+          "latitude"     : _currentPosition?.latitude.toString() ?? "",
+          "longitude"    : _currentPosition?.longitude.toString() ?? "",
+          "notes"        : _notesController.text,
+        },
+        _photos,
+        "photos",
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Batch submitted successfully!")),
+      );
+      Navigator.pop(context);
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    }
+
+    setState(() => _isLoading = false);
+  }
+
+  //
   final Map<String, List<String>> _fishByCategory = {
     "Marine Fish": [
       "Sardin",
@@ -67,7 +128,8 @@ class _AddBatchPageState extends State<Addbatchpage> {
 
     LocationPermission permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) return;
+        permission == LocationPermission.deniedForever)
+      return;
 
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
@@ -99,10 +161,14 @@ class _AddBatchPageState extends State<Addbatchpage> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    _getBatchDetails();
   }
 
   //
   Widget build(BuildContext context) {
+    if (_isLoading) return Center(child: CircularProgressIndicator());
+    if (_error.isNotEmpty) return Center(child: Text(_error));
+    if (_batch == null) return SizedBox();
     return Scaffold(
       backgroundColor: Color(0xFFF5F7F9),
       appBar: AppBar(
@@ -478,19 +544,23 @@ class _AddBatchPageState extends State<Addbatchpage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SubTitle(subTitle: "CATCH LOCATION", icon: Icons.location_on),
-                Container(
-                  padding: EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Color(0xFFDCFCE7),
+                if (_locationLoaded)
+                  Container(
+                    padding: EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Color(0xFFDCFCE7),
+                    ),
+                    child: Text(
+                      "GPS ACTIVE",
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 10,
+                        color: Color(0xFF15803D),
+                      ),
+                    ),
                   ),
-                  child: Text("GPS ACTIVE",style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10,
-                    color: Color(0xFF15803D),
-                  ),),
-                )
               ],
             ),
             SizedBox(height: 10),
@@ -503,17 +573,21 @@ class _AddBatchPageState extends State<Addbatchpage> {
                   width: double.infinity,
                   child: _locationLoaded
                       ? GestureDetector(
-                        onTap: () => {print("map")},
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(13),
-                          child: Image.asset(
-                            "images/map.png",
-                            width: double.infinity,
-                            height: 180,
-                            fit: BoxFit.cover,
+                          onTap: () => {print("map")},
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(13),
+                            child: Image.network(
+                              "https://maps.googleapis.com/maps/api/staticmap"
+                              "?center=${_currentPosition!.latitude},${_currentPosition!.longitude}"
+                              "&zoom=14&size=400x200"
+                              "&markers=${_currentPosition!.latitude},${_currentPosition!.longitude}"
+                              "&key=YOUR_API_KEY",
+                              width: double.infinity,
+                              height: 180,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      )
+                        )
                       : Container(
                           color: Color(0xFFF5F7F9),
                           child: Center(child: CircularProgressIndicator()),
@@ -552,7 +626,7 @@ class _AddBatchPageState extends State<Addbatchpage> {
                     height: 56,
                     width: 389,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => _submitBatch(),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF023E77),
                         foregroundColor: Color(0xFFFFFFFF),
