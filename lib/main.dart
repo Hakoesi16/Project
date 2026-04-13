@@ -11,6 +11,7 @@ import 'package:projetsndcp/vitirinaire/interfacevit.dart';
 import 'package:projetsndcp/picheur/sosPage.dart';
 import 'consumer/setupconsumer.dart';
 import 'consumer/batchDetails.dart';
+import 'consumer/batchReport.dart';
 
 void main() {
   runApp(
@@ -91,8 +92,10 @@ class MyApp extends StatelessWidget {
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
           home: const SplashPage(),
+          //BatchReportPage(),
+          //SplashPage(),
           //BatchDetails(),
-          //Addbatchpage(), 
+          //Addbatchpage(),
           //SplashPage(),
           // Interfacepage(token: '',),
         );
