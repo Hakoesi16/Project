@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projetsndcp/consumer/passwordchange.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../signin/cubit/authcubit.dart';
@@ -201,7 +202,9 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
       ),
       child: Column(
         children: [
-          _settingsTile(Icons.lock_outline, "Change Password", isDark, trailing: const Icon(Icons.chevron_right, color: Colors.grey)),
+          _settingsTile(Icons.lock_outline, "Change Password", isDark, trailing:MaterialButton(onPressed: (){
+             Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordConsPage(token: widget.token)));
+          },child:const Icon(Icons.chevron_right, color: Colors.grey) ,) ),
           const Divider(height: 1),
           _settingsTile(Icons.notifications_none, "Notifications", isDark,
               trailing: Switch(
