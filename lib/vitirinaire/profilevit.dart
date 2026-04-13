@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projetsndcp/vitirinaire/updatpaasword.dart';
 import 'package:share_plus/share_plus.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
@@ -223,7 +224,9 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
-          _settingsTile(Icons.lock_outline, "Change Password", trailing: const Icon(Icons.chevron_right, color: Colors.grey)),
+          _settingsTile(Icons.lock_outline, "Change Password", trailing: IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordVitPage(token: widget.token)));
+          }, icon: const Icon(Icons.chevron_right, color: Colors.grey))),
           const Divider(height: 1),
           _settingsTile(Icons.language, "Language", trailing: const Text("English >", style: TextStyle(color: Colors.grey))),
           const Divider(height: 1),
