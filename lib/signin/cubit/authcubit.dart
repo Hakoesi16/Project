@@ -172,6 +172,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String phone,
     required String homePort,
     required String boatName,
+    required String capacity,
   }) async {
     try {
       emit(AuthLoading());
@@ -187,6 +188,7 @@ class AuthCubit extends Cubit<AuthState> {
           "phone": phone,
           "homePort": homePort,
           "boatName": boatName,
+          "capacity": capacity,
         }),
       );
 
@@ -199,7 +201,6 @@ class AuthCubit extends Cubit<AuthState> {
       emit(ProfileError(e.toString()));
     }
   }
-
   // --- COMPLETE SETUP ---
   Future<void> submitSetup({
     required String token,
@@ -647,4 +648,39 @@ class AuthCubit extends Cubit<AuthState> {
       emit(ProfileError(e.toString()));
     }
   }
+  //edit profile consumer
+  Future<void> updateProfileConsumer({
+    required String token_cons,
+    required String name_cons,
+    required String phone_cons,
+    required String homePort_cons,
+    required String boatName_cons,
+  }) async {
+    try {
+      emit(AuthLoading());
+      final response = await http.put(
+        Uri.parse("$_baseUrl/auth/update-profile"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token_cons",
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: jsonEncode({
+          "fullName": name_cons,
+          "phone": phone_cons,
+          "homePort": homePort_cons,
+          "boatName": boatName_cons,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        emit(ProfileUpdatedSuccess());
+      } else {
+        emit(ProfileError("Update failed"));
+      }
+    } catch (e) {
+      emit(ProfileError(e.toString()));
+    }
+  }
+
 }
