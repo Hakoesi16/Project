@@ -21,6 +21,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _homePortController = TextEditingController();
   final TextEditingController _boatNameController = TextEditingController();
+  final TextEditingController _capacityController = TextEditingController();
 
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
@@ -39,6 +40,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _emailController.dispose();
     _homePortController.dispose();
     _boatNameController.dispose();
+    _capacityController.dispose();
     super.dispose();
   }
 
@@ -90,6 +92,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             _emailController.text = state.user["email"] ?? "";
             _homePortController.text = state.user["homePort"] ?? "";
             _boatNameController.text = state.user["boatName"] ?? "";
+            _capacityController.text = state.user["capacity"] ?? "";
             _isInitialized = true; // Empêche d'écraser les saisies de l'utilisateur
           }
           if (state is ProfileUpdatedSuccess) {
@@ -222,6 +225,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         _buildTextField("Home Port", _homePortController,isDark, prefixIcon: Icons.location_on_outlined),
         const SizedBox(height: 16),
         _buildTextField("Boat Name", _boatNameController,isDark, prefixIcon: Icons.directions_boat_outlined),
+        const SizedBox(height: 16),
+        _buildTextField("Fuel tank capacity(Litre)", _capacityController,isDark, prefixIcon: Icons.local_gas_station_outlined),
       ],
     );
   }
@@ -251,6 +256,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           phone: _phoneController.text,
           homePort: _homePortController.text,
           boatName: _boatNameController.text,
+          capacity:_capacityController.text,
         );
       },
       style: ElevatedButton.styleFrom(
