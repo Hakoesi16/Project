@@ -19,7 +19,7 @@ dependencies:
   checkmark: ^0.0.2+1
   equatable: ^2.0.7
   image_picker: ^1.0.7
-  url_launcher: ^6.2.5
+  url_launcher: ^6.3.2
   
   # Remplacement de timelines (trop vieux) par un package moderne sur pub.dev
   another_stepper: ^1.2.1
@@ -51,9 +51,14 @@ flutter:
      - images/boat.svg
      - images/vitirinaire.svg
      - images/consumer.svg
+     - images/map.png
+     - images/logoPolice.png
 
 
   fonts:
    - family: Inter
      fonts:
        - asset: fonts/Inter-VariableFont_opsz,wght.ttf
+   - family: work sanc
+     fonts:
+       - asset: fonts/WorkSans-VariableFont_wght.ttf 

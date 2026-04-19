@@ -4,7 +4,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
 import 'package:projetsndcp/picheur/profil.dart';
 import 'dart:convert';
-
+import 'package:projetsndcp/picheur/sosPage.dart';
 import '../signin/cubit/authcubit.dart';
 import 'homepage.dart';
 import 'myBatches.dart';
@@ -201,7 +201,7 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
       children: [
         Expanded(
           child: ElevatedButton(
-            onPressed: () => _getWeather(),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>SosPage())),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFDC2626),
               foregroundColor: Colors.white,
