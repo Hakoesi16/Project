@@ -4,7 +4,10 @@ import 'package:share_plus/share_plus.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 import '../signin/cubit/themecubit.dart';
+import 'Weather&Safety.dart';
+import 'addBatchPage.dart';
 import 'editprofile.dart';
+import 'myBatches.dart';
 import 'password.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -319,11 +322,21 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.anchor, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.person, color: isDark ? const Color(0xFF01A896) : const Color(0xFF013D73), size: 30)),
+          IconButton(onPressed: () {
+
+          }, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => WeatherSafetypage()));
+          }, icon: const Icon(Icons.anchor, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MyBatchesPage()));
+          }, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Addbatchpage()));
+          }, icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage()));
+          }, icon: Icon(Icons.person, color: isDark ? const Color(0xFF01A896) : const Color(0xFF013D73), size: 30)),
         ],
       ),
     );
