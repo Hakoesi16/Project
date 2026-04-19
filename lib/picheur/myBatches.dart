@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:projetsndcp/picheur/batchDetailsPage.dart';
 import 'package:projetsndcp/picheur/objects.dart';
+import 'package:projetsndcp/picheur/profil.dart';
+import 'Weather&Safety.dart';
+import 'homepage.dart';
 
 class MyBatchesPage extends StatefulWidget {
   const MyBatchesPage({super.key});
@@ -10,7 +13,7 @@ class MyBatchesPage extends StatefulWidget {
 }
 
 class _MyBatchesPageState extends State<MyBatchesPage> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
   String _selectedFilter = "All";
 
@@ -22,13 +25,13 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
       pricePerKg: 320.50,
       total: 1370.50,
       status: "APPROVED",
-      //imageUrl: "",
     ),
   ];
+
   List<BatchItem> get _filteredBatches => _batches.where((batch) {
     final matchFilter =
         _selectedFilter == "All" ||
-        batch.status == _selectedFilter.toUpperCase();
+            batch.status == _selectedFilter.toUpperCase();
     final matchSearch = batch.fishName.toLowerCase().contains(
       _searchQuery.toLowerCase(),
     );
@@ -85,34 +88,28 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Form(
-              child: TextFormField(
-                controller: _searchController,
-                onChanged: (value) {
-                  setState(() {
-                    _searchQuery = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: "Search batches...",
-                  prefixIcon: Icon(Icons.search, color: Colors.grey),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(13),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(13),
-                    borderSide: BorderSide.none,
-                  ),
+            TextFormField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: "Search batches...",
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(13),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
-            Block(),
+            const Block(),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -162,8 +159,7 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          BatchDetailspage(batch: _filteredBatches[index]),
+                      builder: (context) => BatchDetailspage(batch: _filteredBatches[index]),
                     ),
                   );
                 },
@@ -174,6 +170,60 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
           ],
         ),
       ),
+      bottomNavigationBar: _buildBottomNavBar(),
+    );
+  }
+
+  Widget _buildBottomNavBar() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      height: 70,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(35),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          )
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IconButton(
+            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage())),
+            icon: _navIcon(Icons.home, false),
+          ),
+          IconButton(
+            onPressed: () {}, // Déjà sur cette page
+            icon: _navIcon(Icons.anchor, true),
+          ),
+          IconButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => WeatherSafetypage(),
+              ),);
+          }, icon: _navIcon(Icons.remove_red_eye, false)),
+          IconButton(onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(),
+              ),);
+          }, icon: _navIcon(Icons.person, false)),
+        ],
+      ),
+    );
+  }
+
+  Widget _navIcon(IconData icon, bool isActive) {
+    return Icon(
+      icon,
+      color: isActive ? const Color(0xFF023E77) : Colors.grey,
+      size: isActive ? 30 : 24,
     );
   }
 }

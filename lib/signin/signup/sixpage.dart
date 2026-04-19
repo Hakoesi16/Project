@@ -1,6 +1,6 @@
 import 'package:checkmark/checkmark.dart';
 import 'package:flutter/material.dart';
-import '../userspage/usertype.dart';
+import 'package:projetsndcp/signin/signup/selectrole.dart';
 
 class Sixpage extends StatefulWidget {
   const Sixpage({super.key});
@@ -63,8 +63,8 @@ class _SixpageState extends State<Sixpage> {
                   borderRadius: BorderRadius.circular(15),
                 ),
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => Userpage()),
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => RoleSelectionPage()),
                   );
                 },
                 child: const Text(

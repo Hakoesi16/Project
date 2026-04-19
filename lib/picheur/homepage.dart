@@ -4,11 +4,15 @@ import 'package:projetsndcp/picheur/profil.dart';//appel aux profile papge
 
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
+import 'Weather&Safety.dart';
+import 'addBatchPage.dart';
+import 'batchDetailsPage.dart';
+import 'myBatches.dart';
 
 class HomePage extends StatefulWidget {
-  final String token;
 
-  const HomePage({super.key, required this.token});
+
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,13 +22,16 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchHomeData(widget.token);
+    context.read<AuthCubit>().fetchHomeData();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Theme.of(context).primaryColor;
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F9),
+      // backgroundColor: const Color(0xFFF5F7F9),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
@@ -42,23 +49,23 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildHeader(data["userName"]),
+                          _buildHeader(data["userName"],isDark),
                           const SizedBox(height: 24),
                           _buildAddBatchCard(),
                           const SizedBox(height: 16),
-                          _buildQuickActions(),
+                          _buildQuickActions(isDark),
                           const SizedBox(height: 24),
                           _buildSectionHeader(Icons.analytics_outlined, "Performance Overview"),
                           const SizedBox(height: 12),
-                          _buildPerformanceGrid(data),
+                          _buildPerformanceGrid(data,isDark),
                           const SizedBox(height: 24),
                           _buildSectionHeader(Icons.inventory_2_outlined, "Batch Status Tracker"),
                           const SizedBox(height: 12),
-                          _buildStatusTracker(data),
+                          _buildStatusTracker(data,isDark),
                           const SizedBox(height: 24),
                           _buildSectionHeader(Icons.storefront_outlined, "Market Highlights", trailing: "View Market"),
                           const SizedBox(height: 12),
-                          _buildMarketCard(data["marketItem"]),
+                          _buildMarketCard(data["marketItem"],isDark),
                           const SizedBox(height: 100), // Space for navbar
                         ],
                       ),
@@ -71,11 +78,11 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
+      bottomNavigationBar: _buildBottomNavBar(isDark),
     );
   }
 
-  Widget _buildHeader(String name) {
+  Widget _buildHeader(String name,bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -88,16 +95,16 @@ class _HomePageState extends State<HomePage> {
         children: [
           Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 22,
-                backgroundColor: Color(0xFFE3F2FD),
-                child: Icon(Icons.person, color: Color(0xFF013D73)),
+                backgroundColor:isDark?Colors.white10: const Color(0xFFE3F2FD),
+                child: const Icon(Icons.person, color: Color(0xFF013D73)),
               ),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Welcome back,", style: TextStyle(color: Colors.grey, fontSize: 13)),
+                  Text("Welcome back,", style: TextStyle(color:isDark?Colors.white70: Colors.grey, fontSize: 13)),
                   Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF011A33))),
                 ],
               ),
@@ -105,10 +112,10 @@ class _HomePageState extends State<HomePage> {
           ),
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)]),
+            decoration: BoxDecoration(color: Theme.of(context).cardColor, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)]),
             child: const Stack(
               children: [
-                Icon(Icons.notifications_outlined, color: Colors.black),
+                Icon(Icons.notifications_outlined,),
                 Positioned(
                   right: 2,
                   top: 2,
@@ -139,7 +146,12 @@ class _HomePageState extends State<HomePage> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [BoxShadow(color: const Color(0xFF013D73).withValues(alpha: 0.3), blurRadius: 15, offset: const Offset(0, 8))],
         ),
-        child: Row(
+        child:MaterialButton(onPressed: (){
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Addbatchpage(),
+          ));
+        },child:Row(
           children: [
             Container(
               padding: const EdgeInsets.all(10),
@@ -158,12 +170,13 @@ class _HomePageState extends State<HomePage> {
             ),
             const Icon(Icons.chevron_right, color: Colors.white),
           ],
-        ),
+        ) ,)
+
       ),
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(bool isDark) {
     return Row(
       children: [
         Expanded(child: _buildActionItem(Icons.anchor, "Register Arrival")),
@@ -171,12 +184,12 @@ class _HomePageState extends State<HomePage> {
         Expanded(
           child: InkWell(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const MyBatchesPage(),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MyBatchesPage(),
+                ),
+              );
             },
             child: _buildActionItem(Icons.list_alt, "My Batches"),
           ),
@@ -186,7 +199,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildActionItem(IconData icon, String title) {
-    return Container(
+    return MaterialButton(onPressed: (){
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => BatchDetailspage(batch: null),
+      //   ));
+    },child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10)]),
       child: Column(
@@ -196,7 +215,8 @@ class _HomePageState extends State<HomePage> {
           Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
         ],
       ),
-    );
+    ),)
+      ;
   }
 
   Widget _buildSectionHeader(IconData icon, String title, {String? trailing}) {
@@ -211,32 +231,32 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildPerformanceGrid(Map<String, dynamic> data) {
+  Widget _buildPerformanceGrid(Map<String, dynamic> data,bool isDark) {
     return Row(
       children: [
-        Expanded(child: _buildStatCard("TOTAL EARNINGS", data["earnings"], data["earningsTrend"], Colors.green)),
+        Expanded(child: _buildStatCard("TOTAL EARNINGS", data["earnings"], data["earningsTrend"], isDark)),
         const SizedBox(width: 16),
-        Expanded(child: _buildStatCard("TOTAL WEIGHT", data["weight"], data["weightTrend"], Colors.green)),
+        Expanded(child: _buildStatCard("TOTAL WEIGHT", data["weight"], data["weightTrend"], isDark)),
       ],
     );
   }
 
-  Widget _buildStatCard(String label, String value, String trend, Color trendColor) {
+  Widget _buildStatCard(String label, String value, String trend, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.grey, fontSize: 11, fontWeight: FontWeight.bold)),
+          Text(label, style: TextStyle(color:isDark?Colors.white54: Colors.grey, fontSize: 11, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           FittedBox(child: Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
           const SizedBox(height: 8),
           Row(
             children: [
-              Icon(Icons.trending_up, size: 14, color: trendColor),
+              Icon(Icons.trending_up, size: 14, color: Colors.green),
               const SizedBox(width: 4),
-              Text(trend, style: TextStyle(color: trendColor, fontSize: 12, fontWeight: FontWeight.bold)),
+              Text(trend, style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
             ],
           ),
         ],
@@ -244,7 +264,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildStatusTracker(Map<String, dynamic> data) {
+  Widget _buildStatusTracker(Map<String, dynamic> data,bool isDark) {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -264,7 +284,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildStatusItem(IconData icon, String count, String label, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
       child: Row(
         children: [
           Container(
@@ -286,10 +306,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildMarketCard(Map<String, dynamic> item) {
+  Widget _buildMarketCard(Map<String, dynamic> item,bool isDark) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(16)),
       child: Row(
         children: [
           ClipRRect(
@@ -303,7 +323,7 @@ class _HomePageState extends State<HomePage> {
                 width: 60,
                 height: 60,
                 color: Colors.grey[200],
-                child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                child: Icon(Icons.image_not_supported, color: isDark?Colors.white:Colors.grey),
               ),
             ),
           ),
@@ -313,7 +333,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(item["name"], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), overflow: TextOverflow.ellipsis),
-                Text("${item["grade"]} - ${item["demand"]}", style: const TextStyle(color: Colors.grey, fontSize: 12), overflow: TextOverflow.ellipsis),
+                Text("${item["grade"]} - ${item["demand"]}", style: TextStyle(color:isDark?Colors.white54: Colors.grey, fontSize: 12), overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 4),
                 Row(
                   children: [
@@ -333,12 +353,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildBottomNavBar() {
+  Widget _buildBottomNavBar(bool isDark) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       height: 70,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(35),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 5))],
       ),
@@ -346,15 +366,15 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           GestureDetector(
-            onTap: () => context.read<AuthCubit>().fetchHomeData(widget.token),
+            onTap: () => context.read<AuthCubit>().fetchHomeData(),
             child: _navIcon(Icons.home, true),
           ),
           GestureDetector(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => BatchPage(token: widget.token)),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyBatchesPage()),
+              );
             },
             child: _navIcon(Icons.anchor, false),
           ),
@@ -369,19 +389,20 @@ class _HomePageState extends State<HomePage> {
           ),
           GestureDetector(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => EmailPage(token: widget.token)),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => WeatherSafetypage()),
+              );
             },
             child: _navIcon(Icons.remove_red_eye_outlined, false),
           ),
           GestureDetector(
             onTap: () {
               Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfilePage(token: widget.token)),
-              );
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(),
+                  ));
             },
             child: _navIcon(Icons.person_outline, false),
           ),

@@ -4,7 +4,7 @@ import 'firstpage.dart';
 
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({super.key});
+  const SplashPage({super.key});// super.key permit identifier le widget dans l’arbre Flutter
 
   @override
   State<SplashPage> createState() => _SplashPageState();
@@ -26,7 +26,7 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   @override
-  Widget build(BuildContext context) {//methode qui construit l'interface
+  Widget build(BuildContext context) {//methode qui construit l'interface graphic
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -47,26 +47,6 @@ class _SplashPageState extends State<SplashPage> {
           padding: EdgeInsets.symmetric(horizontal: 50),
           child: Center(
             child:Image.asset("images/Logo2.png"),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     Text(
-            //       "Let’s Fishing",
-            //       style: TextStyle(
-            //         fontFamily: 'Poppins',
-            //         fontSize: 30,
-            //         fontWeight: FontWeight.bold,
-            //         color: Colors.white,
-            //       ),
-            //     ),
-            //     const SizedBox(width: 10),
-            //     Icon(
-            //       Icons.set_meal, // icône poisson
-            //       color: Colors.white,
-            //       size: 32,
-            //     ),
-            //   ],
-            // ),
           ),
         ),
       ),

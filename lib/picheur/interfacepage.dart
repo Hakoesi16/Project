@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import 'filinfo.dart';
 
 class Interfacepage extends StatefulWidget {
-  final String token;
-  const Interfacepage({super.key, required this.token});
+
+  const Interfacepage({super.key});
 
   @override
   State<Interfacepage> createState() => _InterfacepageState();
@@ -14,22 +15,24 @@ class _InterfacepageState extends State<Interfacepage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final String assetname='images/boat.svg';
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F9),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text("Let's Fishing", style: TextStyle(
-            fontWeight: FontWeight.bold, color: Colors.black)),
+        title: Text("Let's Fishing", style: TextStyle(
+            fontWeight: FontWeight.bold, color:isDark?Colors.white: Colors.black)),
         actions: [
           Container(
             padding: EdgeInsets.all(15),
             decoration: BoxDecoration(
-              border: Border.fromBorderSide( const BorderSide(color: Colors.grey)),
+              border: Border.fromBorderSide( BorderSide(color:isDark?Colors.white12: Colors.grey)),
             ),
             child:Container(
                 padding: EdgeInsets.all(10),
-                child: IconButton(onPressed: (){}, icon: Icon(Icons.help_outline,color: Colors.grey,))),
+                child: IconButton(onPressed: (){}, icon: Icon(Icons.help_outline,color:isDark?Colors.white: Colors.grey,))),
           )
         ],
       ),
@@ -42,18 +45,19 @@ class _InterfacepageState extends State<Interfacepage> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white, width: 6),
-              image: DecorationImage(
-                image: AssetImage("images/sea.png"),
-                fit: BoxFit.cover,
-              ),
+            ),
+            child: SvgPicture.asset(
+              assetname,
+              width: 300,
+              height: 300,
+              fit: BoxFit.cover,
             ),
           ),
           const SizedBox(height: 50),
-          _textcenter("Let's Complete"),
-          _textcenter("Your Profil"),
-          _text("To start trading in the marketplace,"),
-          _text("we need a few more details about you"),
-          _text("and your vessel"),
+          _textcenter("Welcome Captain!",isDark),
+          _text("To start trading in the marketplace,",isDark),
+          _text("we need a few more details about you",isDark),
+          _text("and your vessel",isDark),
           const SizedBox(height: 16),
           ElevatedButton(
               onPressed: (){},
@@ -63,7 +67,7 @@ class _InterfacepageState extends State<Interfacepage> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: MaterialButton(onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Infopage(token: widget.token)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Infopage()));
               },child: const Text("Start Setup", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),)
           ),
         ],
@@ -72,12 +76,12 @@ class _InterfacepageState extends State<Interfacepage> {
   }
 }
 
-Widget _textcenter(String txt){
+Widget _textcenter(String txt,bool isDark){
   return Center(
     child: RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        style: TextStyle(fontSize: 11, color: Colors.black),
+        style: TextStyle(fontSize: 11, color:isDark?Colors.white: Colors.black),
         children: [
           TextSpan(text:txt,style: TextStyle(fontWeight: FontWeight.w800,fontSize: 36)),
         ],
@@ -87,12 +91,12 @@ Widget _textcenter(String txt){
 
 }
 
-Widget _text(String text){
+Widget _text(String text,bool isDark){
   return Center(
     child: RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        style: TextStyle(fontSize: 11, color: Colors.grey),
+        style: TextStyle(fontSize: 11, color:isDark?Colors.white54: Colors.grey),
         children: [
           TextSpan(text:text,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Color(0xFF475569))),
         ],
@@ -101,3 +105,109 @@ Widget _text(String text){
   );
 
 }
+
+
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+//
+// import 'filinfo.dart';
+//
+// class Interfacepage extends StatefulWidget {
+//   final String token;
+//   const Interfacepage({super.key, required this.token});
+//
+//   @override
+//   State<Interfacepage> createState() => _InterfacepageState();
+// }
+// class _InterfacepageState extends State<Interfacepage> {
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final isDark = Theme.of(context).brightness == Brightness.dark;
+//     return Scaffold(
+//       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+//       appBar: AppBar(
+//         // backgroundColor: Colors.white,
+//         elevation: 0,
+//         title: Text("Let's Fishing", style: TextStyle(
+//             fontWeight: FontWeight.bold, color:isDark?Colors.white: Colors.black)),
+//         actions: [
+//           Container(
+//             padding: EdgeInsets.all(15),
+//             decoration: BoxDecoration(
+//               border: Border.fromBorderSide( BorderSide(color:isDark?Colors.white12: Colors.grey)),
+//             ),
+//             child:Container(
+//                 padding: EdgeInsets.all(10),
+//                 child: IconButton(onPressed: (){}, icon: Icon(Icons.help_outline,color:isDark?Colors.white: Colors.grey,))),
+//           )
+//         ],
+//       ),
+//       body:Column(
+//         children: [
+//           const SizedBox(height: 16),
+//           Container(
+//             width: 300,
+//             height: 300,
+//             decoration: BoxDecoration(
+//               shape: BoxShape.circle,
+//               border: Border.all(color: Colors.white, width: 6),
+//               image: DecorationImage(
+//                 image: AssetImage("images/sea.png"),
+//                 fit: BoxFit.cover,
+//               ),
+//             ),
+//           ),
+//           const SizedBox(height: 50),
+//           _textcenter("Let's Complete",isDark),
+//           _textcenter("Your Profil",isDark),
+//           _text("To start trading in the marketplace,",isDark),
+//           _text("we need a few more details about you",isDark),
+//           _text("and your vessel",isDark),
+//           const SizedBox(height: 16),
+//           ElevatedButton(
+//               onPressed: (){},
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: const Color(0xFF033F78),
+//                 minimumSize: const Size(70, 56),
+//                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+//               ),
+//               child: MaterialButton(onPressed: (){
+//                 Navigator.push(context, MaterialPageRoute(builder: (context) => Infopage(token: widget.token)));
+//               },child: const Text("Start Setup", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),)
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// Widget _textcenter(String txt,bool isDark){
+//   return Center(
+//     child: RichText(
+//       textAlign: TextAlign.center,
+//       text: TextSpan(
+//         style: TextStyle(fontSize: 11, color:isDark?Colors.white: Colors.black),
+//         children: [
+//           TextSpan(text:txt,style: TextStyle(fontWeight: FontWeight.w800,fontSize: 36)),
+//         ],
+//       ),
+//     ),
+//   );
+//
+// }
+//
+// Widget _text(String text,bool isDark){
+//   return Center(
+//     child: RichText(
+//       textAlign: TextAlign.center,
+//       text: TextSpan(
+//         style: TextStyle(fontSize: 11, color:isDark?Colors.white54: Colors.grey),
+//         children: [
+//           TextSpan(text:text,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 18,color: Color(0xFF475569))),
+//         ],
+//       ),
+//     ),
+//   );
+//
+// }

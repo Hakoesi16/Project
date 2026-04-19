@@ -6,46 +6,44 @@ import 'package:image_picker/image_picker.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
-class EditProfilePage extends StatefulWidget {
+class  EditConsumerProfilePage extends StatefulWidget {
 
-  const EditProfilePage({super.key});
+  const EditConsumerProfilePage({super.key, });
 
   @override
-  State<EditProfilePage> createState() => _EditProfilePageState();
+  State<EditConsumerProfilePage> createState() => _EditConsumerProfilePageState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _homePortController = TextEditingController();
-  final TextEditingController _boatNameController = TextEditingController();
-  final TextEditingController _capacityController = TextEditingController();
+class _EditConsumerProfilePageState extends State<EditConsumerProfilePage> {
+  final TextEditingController _consumernameController = TextEditingController();
+  final TextEditingController _consumerphoneController = TextEditingController();
+  final TextEditingController _consumeremailController = TextEditingController();
+  final TextEditingController _consumerhomePortController = TextEditingController();
+  final TextEditingController _consumerboatNameController = TextEditingController();
 
   File? _imageFile;
-  final ImagePicker _picker = ImagePicker();
+  final ImagePicker _pickerconsumer = ImagePicker();
   bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchProfile();
+    context.read<AuthCubit>().fetchConsumerProfile();
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _phoneController.dispose();
-    _emailController.dispose();
-    _homePortController.dispose();
-    _boatNameController.dispose();
-    _capacityController.dispose();
+    _consumernameController.dispose();
+    _consumerphoneController.dispose();
+    _consumeremailController.dispose();
+    _consumerhomePortController.dispose();
+    _consumerboatNameController.dispose();
     super.dispose();
   }
 
   Future<void> _pickImage() async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(
+      final XFile? pickedFile = await _pickerconsumer.pickImage(
         source: ImageSource.gallery,
         maxWidth: 1000,
         maxHeight: 1000,
@@ -72,32 +70,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
         title: const Text(
           "Edit Profile",
           style: TextStyle(
-              // color: Color(0xFF011A33),
+            // color: Color(0xFF011A33),
               fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back,
-              // color: Colors.black
+            // color: Colors.black
           ),
         ),
       ),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is ProfileLoaded && !_isInitialized) {
-            _nameController.text = state.user["fullName"] ?? "";
-            _phoneController.text = state.user["phone"] ?? "";
-            _emailController.text = state.user["email"] ?? "";
-            _homePortController.text = state.user["homePort"] ?? "";
-            _boatNameController.text = state.user["boatName"] ?? "";
-            _capacityController.text = state.user["capacity"] ?? "";
-            _isInitialized = true; // Empêche d'écraser les saisies de l'utilisateur
+            _consumernameController.text = state.user["ConsumerName"] ?? "";
+            _consumerphoneController.text = state.user["Consumerphone"] ?? "";
+            _consumeremailController.text = state.user["Consumeremail"] ?? "";
+            _consumerhomePortController.text = state.user["ConsumerPort"] ?? "";
+            _consumerboatNameController.text = state.user["ConsumerboatName"] ?? "";
+            _isInitialized = true;
           }
           if (state is ProfileUpdatedSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Profile updated successfully"),
-                  // backgroundColor: Colors.green
+                // backgroundColor: Colors.green
               ),
             );
             Navigator.pop(context);
@@ -105,7 +102,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           if (state is ProfileError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message),
-                  // backgroundColor: Colors.red
+                // backgroundColor: Colors.red
               ),
             );
           }
@@ -140,7 +137,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Widget _buildProfileImage(AuthState state,bool isDark) {
     String? networkImage;
-    if (state is ProfileLoaded) networkImage = state.user["profilePicture"];
+    if (state is ProfileLoaded) networkImage = state.user["ConsumerprofilePicture"];
 
     return Column(
       children: [
@@ -156,9 +153,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   backgroundColor:isDark? Colors.white12: Color(0xFFE3F2FD),
                   backgroundImage: _imageFile != null
                       ? FileImage(_imageFile!)
-                      : (networkImage != null 
-                          ? NetworkImage(networkImage) 
-                          : const NetworkImage('https://via.placeholder.com/150')) as ImageProvider,
+                      : (networkImage != null
+                      ? NetworkImage(networkImage)
+                      : const NetworkImage('https://via.placeholder.com/150')) as ImageProvider,
                 ),
               ),
             ),
@@ -170,7 +167,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: const BoxDecoration(
-                    color: Color(0xFF013D73),
+                    color: Color(0xFFD5A439),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.camera_alt, color: Colors.white, size: 18),
@@ -184,7 +181,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           onTap: _pickImage,
           child: const Text(
             "Change Profile Photo",
-            style: TextStyle(color: Color(0xFF013D73), fontWeight: FontWeight.bold, fontSize: 14),
+            style: TextStyle(color: Color(0xFFD5A439), fontWeight: FontWeight.bold, fontSize: 14),
           ),
         )
       ],
@@ -196,13 +193,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
       isDark: isDark,
       title: "PERSONAL INFORMATION",
       children: [
-        _buildTextField("Full Name", _nameController,isDark),
+        _buildTextField("Full Name", _consumernameController,isDark),
         const SizedBox(height: 16),
-        _buildTextField("Phone Number", _phoneController,isDark),
+        _buildTextField("Phone Number", _consumerphoneController,isDark),
         const SizedBox(height: 16),
         _buildTextField(
           "Email Address",
-          _emailController,
+          _consumeremailController,
           isDark,
           enabled: false,
           suffixIcon: Icons.lock_outline,
@@ -219,13 +216,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget _buildVesselCard(bool isDark) {
     return _cardContainer(
       isDark: isDark,
-      title: "VESSEL & HOME PORT",
+      title: "ADDITIONAL INFORMATION",
       children: [
-        _buildTextField("Home Port", _homePortController,isDark, prefixIcon: Icons.location_on_outlined),
+        _buildTextField("Home Port", _consumerhomePortController,isDark, prefixIcon: Icons.location_on_outlined),
         const SizedBox(height: 16),
-        _buildTextField("Boat Name", _boatNameController,isDark, prefixIcon: Icons.directions_boat_outlined),
-        const SizedBox(height: 16),
-        _buildTextField("Fuel tank capacity(Litre)", _capacityController,isDark, prefixIcon: Icons.local_gas_station_outlined),
+        _buildTextField("Boat Name", _consumerboatNameController,isDark, prefixIcon: Icons.directions_boat_outlined),
       ],
     );
   }
@@ -236,7 +231,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       children: [
         const Icon(Icons.delete_outline, color: Color(0xFFFF5252), size: 20),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            // Navigator.push(context, MaterialPageRoute(builder: (context) => DeactivateAccountPage(token: widget.token)));
+          },
           child: const Text(
             "Deactivate Account",
             style: TextStyle(color: Color(0xFFFF5252), fontWeight: FontWeight.w600),
@@ -249,33 +246,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget _buildSaveButton(AuthState state,bool isDark) {
     return ElevatedButton(
       onPressed: state is AuthLoading ? null : () {
-        context.read<AuthCubit>().updateProfile(
-          name: _nameController.text,
-          phone: _phoneController.text,
-          homePort: _homePortController.text,
-          boatName: _boatNameController.text,
-          capacity:_capacityController.text,
+        context.read<AuthCubit>().updateProfileConsumer(
+          name_cons: _consumernameController.text,
+          phone_cons: _consumerphoneController.text,
+          homePort_cons: _consumerhomePortController.text,
+          boatName_cons: _consumerboatNameController.text,
         );
       },
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF013D73),
+        backgroundColor: const Color(0xFFD5A439),
         minimumSize: const Size(double.infinity, 56),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         elevation: 2,
       ),
-      child: state is AuthLoading 
-        ? const CircularProgressIndicator(color: Colors.white)
-        : const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.check_circle_outline, color: Colors.white),
-              SizedBox(width: 8),
-              Text(
-                "Save Changes",
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ],
+      child: state is AuthLoading
+          ? const CircularProgressIndicator(color: Colors.white)
+          : const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.check_circle_outline, color: Colors.white),
+          SizedBox(width: 8),
+          Text(
+            "Save Changes",
+            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
           ),
+        ],
+      ),
     );
   }
 
@@ -300,7 +296,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           enabled: enabled,
           style: TextStyle(color:isDark? Colors.white:(enabled ? Colors.black : const Color(0xFF7B8D9E))),
           decoration: InputDecoration(
-            prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: const Color(0xFF013D73)) : null,
+            prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: const Color(0xFFD5A439)) : null,
             suffixIcon: suffixIcon != null ? Icon(suffixIcon, color: const Color(0xFFBDC8D1), size: 18) : null,
             filled: true,
             fillColor:isDark? Colors.white12:( enabled ? Colors.white : const Color(0xFFF8FAFB)),
