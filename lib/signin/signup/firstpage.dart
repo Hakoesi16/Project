@@ -32,7 +32,7 @@ class _FirstpageState extends State<Firstpage> {
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10), // 👈 coins arrondis
+              borderRadius: BorderRadius.circular(10), //  coins arrondis
             ),
             width: double.infinity,
             height: 300,

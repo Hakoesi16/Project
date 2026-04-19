@@ -7,9 +7,8 @@ import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 import '../signin/cubit/themecubit.dart';
 class ProfileConsumerPage extends StatefulWidget {
-  final String token;
 
-  const ProfileConsumerPage({super.key, required this.token});
+  const ProfileConsumerPage({super.key});
 
   @override
   State<ProfileConsumerPage> createState() => _ProfileConsumerPageState();
@@ -21,7 +20,7 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchConsumerProfile(widget.token);
+    context.read<AuthCubit>().fetchConsumerProfile();
   }
 
   @override
@@ -50,7 +49,7 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
 
             return RefreshIndicator(
               onRefresh: () async {
-                await context.read<AuthCubit>().fetchConsumerProfile(widget.token);
+                await context.read<AuthCubit>().fetchConsumerProfile();
               },
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -80,7 +79,7 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
                 children: [
                   Text(state.message),
                   ElevatedButton(
-                    onPressed: () => context.read<AuthCubit>().fetchConsumerProfile(widget.token),
+                    onPressed: () => context.read<AuthCubit>().fetchConsumerProfile(),
                     child: const Text("Retry"),
                   )
                 ],
@@ -203,7 +202,7 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
       child: Column(
         children: [
           _settingsTile(Icons.lock_outline, "Change Password", isDark, trailing:MaterialButton(onPressed: (){
-             Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordConsPage(token: widget.token)));
+             Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordConsPage()));
           },child:const Icon(Icons.chevron_right, color: Colors.grey) ,) ),
           const Divider(height: 1),
           _settingsTile(Icons.notifications_none, "Notifications", isDark,

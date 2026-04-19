@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class Interfaceconsumerpage extends StatefulWidget {
-  final String token;
-  const Interfaceconsumerpage({super.key, required this.token});
+  const Interfaceconsumerpage({super.key});
 
   @override
   State<Interfaceconsumerpage> createState() => _InterfaceconsumerpageState();

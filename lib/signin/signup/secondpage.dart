@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projetsndcp/signin/signup/sixpage.dart';
 import 'package:projetsndcp/signin/signup/therdpage.dart';
 import '../cubit/authcubit.dart';
 import '../cubit/authstate.dart';
@@ -28,16 +29,18 @@ class _SecondpageState extends State<Secondpage> {
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is GooglePasswordRequired) {
-            // ✅ Navigation vers Fivepage après Google
+            // Navigation vers Fivepage après Google
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => Fivepage(email: state.email)),
             );
           } else if (state is AuthAuthenticated) {
-            // ✅ Navigation vers Homepage après Facebook ou Login direct
+            //  Navigation vers Homepage après Facebook ou Login direct
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (_) => HomePage(token: state.user['token'] ?? '')),
+              // MaterialPageRoute(builder: (_) => RoleSelectionPage()),
+              MaterialPageRoute(builder: (_) => Sixpage()),
+
             );
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(

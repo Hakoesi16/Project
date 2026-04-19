@@ -7,9 +7,8 @@ import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
 class EditProfilevitPage extends StatefulWidget {
-  final String token;
 
-  const EditProfilevitPage({super.key, required this.token});
+  const EditProfilevitPage({super.key});
 
   @override
   State<EditProfilevitPage> createState() => _EditProfilevitPageState();
@@ -28,7 +27,7 @@ class _EditProfilevitPageState extends State<EditProfilevitPage> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchvitProfile(widget.token);
+    context.read<AuthCubit>().fetchvitProfile();
   }
 
   @override
@@ -233,7 +232,6 @@ class _EditProfilevitPageState extends State<EditProfilevitPage> {
     return ElevatedButton(
       onPressed: () {
         context.read<AuthCubit>().updateProfilevit(
-          token: widget.token,
           name: _namevitController.text,
           phone: _phonevitController.text,
           homePort: _homePortvitController.text,

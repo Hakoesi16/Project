@@ -5,8 +5,7 @@ import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
 class ChangepasswordPage extends StatefulWidget {
-  final String token;
-  const ChangepasswordPage({super.key, required this.token});
+  const ChangepasswordPage({super.key});
 
   @override
   State<ChangepasswordPage> createState() => _ChangepasswordPageState();
@@ -93,7 +92,6 @@ class _ChangepasswordPageState extends State<ChangepasswordPage> {
     }
 
     context.read<AuthCubit>().updatePassword(
-      token: widget.token,
       password: newPass,
     );
   }

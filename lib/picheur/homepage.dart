@@ -10,9 +10,9 @@ import 'batchDetailsPage.dart';
 import 'myBatches.dart';
 
 class HomePage extends StatefulWidget {
-  final String token;
 
-  const HomePage({super.key, required this.token});
+
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchHomeData(widget.token);
+    context.read<AuthCubit>().fetchHomeData();
   }
 
   @override
@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MyBatchesPage(token: '',),
+                  builder: (context) => const MyBatchesPage(),
                 ),
               );
             },
@@ -366,14 +366,14 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           GestureDetector(
-            onTap: () => context.read<AuthCubit>().fetchHomeData(widget.token),
+            onTap: () => context.read<AuthCubit>().fetchHomeData(),
             child: _navIcon(Icons.home, true),
           ),
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyBatchesPage( token: widget.token)),
+                MaterialPageRoute(builder: (context) => MyBatchesPage()),
               );
             },
             child: _navIcon(Icons.anchor, false),
@@ -391,7 +391,7 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => WeatherSafetypage( token: widget.token)),
+                MaterialPageRoute(builder: (context) => WeatherSafetypage()),
               );
             },
             child: _navIcon(Icons.remove_red_eye_outlined, false),
@@ -401,7 +401,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfilePage(token: widget.token),
+                    builder: (context) => ProfilePage(),
                   ));
             },
             child: _navIcon(Icons.person_outline, false),

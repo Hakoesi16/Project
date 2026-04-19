@@ -6,6 +6,8 @@ import 'package:projetsndcp/picheur/interfacepage.dart';
 import 'package:projetsndcp/picheur/profil.dart';
 import 'package:projetsndcp/signin/cubit/authcubit.dart';
 import 'package:projetsndcp/signin/cubit/themecubit.dart';
+import 'package:projetsndcp/signin/signup/fivepage.dart';
+import 'package:projetsndcp/signin/signup/selectrole.dart';
 import 'package:projetsndcp/signin/signup/splage.dart';
 import 'package:projetsndcp/vitirinaire/interfacevit.dart';
 import 'package:projetsndcp/picheur/sosPage.dart';
@@ -90,10 +92,9 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const SplashPage(),
-          //BatchDetails(),
-          //Addbatchpage(), 
-          //SplashPage(),
+          home: const Fivepage( email: 'hakoben@gmail.com',)
+          // SetupConspage()
+          // SplashPage(),
           // Interfacepage(token: '',),
         );
       },

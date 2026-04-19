@@ -6,8 +6,7 @@ import 'Weather&Safety.dart';
 import 'homepage.dart';
 
 class MyBatchesPage extends StatefulWidget {
-  final String token;
-  const MyBatchesPage({super.key, required this.token});
+  const MyBatchesPage({super.key});
 
   @override
   State<MyBatchesPage> createState() => _MyBatchesPageState();
@@ -171,7 +170,7 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(
-            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage(token: widget.token))),
+            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage())),
             icon: _navIcon(Icons.home, false),
           ),
           IconButton(
@@ -182,14 +181,14 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => WeatherSafetypage(token: widget.token),
+                builder: (context) => WeatherSafetypage(),
               ),);
           }, icon: _navIcon(Icons.remove_red_eye, false)),
           IconButton(onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => ProfilePage(token: widget.token),
+                builder: (context) => ProfilePage(),
               ),);
           }, icon: _navIcon(Icons.person, false)),
         ],

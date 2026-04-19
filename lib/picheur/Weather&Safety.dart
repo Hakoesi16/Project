@@ -10,8 +10,7 @@ import 'homepage.dart';
 import 'myBatches.dart';
 
 class WeatherSafetypage extends StatefulWidget {
-  final String token;
-  const WeatherSafetypage({super.key, required this.token});
+  const WeatherSafetypage({super.key});
 
   @override
   State<WeatherSafetypage> createState() => _WeatherSafetyState();
@@ -245,7 +244,7 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage(token: widget.token)),
+                MaterialPageRoute(builder: (context) => HomePage()),
               );
             },
             child: _navIcon(Icons.home, false),
@@ -254,7 +253,7 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyBatchesPage( token: widget.token)),
+                MaterialPageRoute(builder: (context) => MyBatchesPage()),
               );
             },
             child: _navIcon(Icons.anchor, false),
@@ -263,7 +262,7 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => WeatherSafetypage( token: widget.token)),
+                MaterialPageRoute(builder: (context) => WeatherSafetypage( )),
               );
             },
             child: _navIcon(Icons.remove_red_eye_outlined, true),
@@ -273,7 +272,7 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfilePage(token: widget.token),
+                    builder: (context) => ProfilePage(),
                   ));
             },
             child: _navIcon(Icons.person_outline, false),

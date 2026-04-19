@@ -6,9 +6,8 @@ import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
 class ProfilevitPage extends StatefulWidget {
-  final String token;
 
-  const ProfilevitPage({super.key, required this.token});
+  const ProfilevitPage({super.key});
 
   @override
   State<ProfilevitPage> createState() => _ProfilevitPageState();
@@ -23,7 +22,7 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
   void initState() {
     super.initState();
     // Utilisation de la fonction fetchvitProfile que nous avons rendue dynamique
-    context.read<AuthCubit>().fetchvitProfile(widget.token);
+    context.read<AuthCubit>().fetchvitProfile();
   }
 
   @override
@@ -52,7 +51,7 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
             return RefreshIndicator(
               onRefresh: () async {
                 // Utilisation de la même fonction pour le rafraîchissement
-                await context.read<AuthCubit>().fetchvitProfile(widget.token);
+                await context.read<AuthCubit>().fetchvitProfile();
               },
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -88,7 +87,7 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
                   const SizedBox(height: 16),
                   Text(state.message),
                   TextButton(
-                    onPressed: () => context.read<AuthCubit>().fetchvitProfile(widget.token),
+                    onPressed: () => context.read<AuthCubit>().fetchvitProfile(),
                     child: const Text("Retry"),
                   )
                 ],
@@ -225,7 +224,7 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
       child: Column(
         children: [
           _settingsTile(Icons.lock_outline, "Change Password", trailing: IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordVitPage(token: widget.token)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordVitPage()));
           }, icon: const Icon(Icons.chevron_right, color: Colors.grey))),
           const Divider(height: 1),
           _settingsTile(Icons.language, "Language", trailing: const Text("English >", style: TextStyle(color: Colors.grey))),
