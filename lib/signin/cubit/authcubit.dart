@@ -208,6 +208,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String homePort,
     required String boatName,
     required String capacity,
+    File? profileImage
   }) async {
     try {
       emit(AuthLoading());
@@ -216,6 +217,7 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
+
       final response = await http.put(
         Uri.parse("$_baseUrl/auth/update-profile"),
         headers: {
@@ -648,7 +650,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
   Future<void> updatePassword({
-    required String password,
+    required String password, required String currentPassword,
   }) async {
     try {
       emit(AuthLoading());
@@ -665,6 +667,7 @@ class AuthCubit extends Cubit<AuthState> {
           "ngrok-skip-browser-warning": "true",
         },
         body: jsonEncode({
+          "currentPassword": currentPassword,
           "password": password,
         }),
       );

@@ -92,6 +92,7 @@ class _ChangepasswordPageState extends State<ChangepasswordPage> {
     }
 
     context.read<AuthCubit>().updatePassword(
+      currentPassword: currentPass,
       password: newPass,
     );
   }
