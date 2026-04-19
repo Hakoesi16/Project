@@ -1,38 +1,35 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
+  static const storage = FlutterSecureStorage();
 
-  //Save Token
+  // Save Token
   static Future<void> saveToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("token", token);
+    await storage.write(key: "token", value: token);
   }
 
   // getToken
   static Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString("token");
+    return await storage.read(key: "token");
   }
 
-  //delete Token after log out
+  // delete Token after log out
   static Future<void> clearToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove("token");
+    await storage.delete(key: "token");
   }
 }
 
 class ApiService {
-
   static const String baseUrl = "http://192.168.1.5:4010";
 
   // ── Headers ──────────────────────
   static Future<Map<String, String>> _headers() async {
     final token = await AuthService.getToken();
     return {
-      "Content-Type" : "application/json",
+      "Content-Type": "application/json",
       "Authorization": "Bearer $token",
     };
   }
@@ -91,7 +88,6 @@ class ApiService {
       final response = await request.send();
       final body = await response.stream.bytesToString();
       return jsonDecode(body);
-
     } catch (e) {
       throw Exception("No internet connection");
     }
@@ -145,35 +141,33 @@ class BatchModel {
   // ── من JSON إلى Object ← للـ GET ──────────
   factory BatchModel.fromJson(Map<String, dynamic> json) {
     return BatchModel(
-      id          : json["id"],
-      category    : json["category"],
-      fishName    : json["fish_name"],
-      catchMethod : json["catch_method"],
-      quantity    : json["quantity"].toDouble(),
-      price       : json["price"].toDouble(),
-      total       : json["total"]?.toDouble(),
-      latitude    : json["latitude"].toDouble(),
-      longitude   : json["longitude"].toDouble(),
-      notes       : json["notes"],
-      status      : json["status"],
-      date        : json["date"],
-      photos      : json["photos"] != null
-          ? List<String>.from(json["photos"])
-          : [],
+      id: json["id"],
+      category: json["category"],
+      fishName: json["fish_name"],
+      catchMethod: json["catch_method"],
+      quantity: (json["quantity"] as num).toDouble(),
+      price: (json["price"] as num).toDouble(),
+      total: json["total"] != null ? (json["total"] as num).toDouble() : null,
+      latitude: (json["latitude"] as num).toDouble(),
+      longitude: (json["longitude"] as num).toDouble(),
+      notes: json["notes"],
+      status: json["status"],
+      date: json["date"],
+      photos: json["photos"] != null ? List<String>.from(json["photos"]) : [],
     );
   }
 
   // ── من Object إلى JSON ← للـ POST ─────────
   Map<String, String> toFields() {
     return {
-      "category"     : category,
-      "fish_name"    : fishName,
-      "catch_method" : catchMethod,
-      "quantity"     : quantity.toString(),
-      "price"        : price.toString(),
-      "latitude"     : latitude.toString(),
-      "longitude"    : longitude.toString(),
-      "notes"        : notes ?? "",
+      "category": category,
+      "fish_name": fishName,
+      "catch_method": catchMethod,
+      "quantity": quantity.toString(),
+      "price": price.toString(),
+      "latitude": latitude.toString(),
+      "longitude": longitude.toString(),
+      "notes": notes ?? "",
     };
   }
 }
