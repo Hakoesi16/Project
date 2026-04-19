@@ -92,10 +92,10 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const SplashPage(),
+          home: const ProfilePage()
+          // SplashPage(),
           // Fivepage( email: 'hakoben@gmail.com',)
           // SetupConspage()
-          // Interfacepage(token: '',),
         );
       },
     );
