@@ -92,8 +92,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const ProfilePage()
-          // SplashPage(),
+          home: const SplashPage(),
           // Fivepage( email: 'hakoben@gmail.com',)
           // SetupConspage()
         );
