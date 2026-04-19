@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:projetsndcp/picheur/password.dart';
 import 'package:share_plus/share_plus.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 import '../signin/cubit/themecubit.dart';
-import 'Weather&Safety.dart';
-import 'addBatchPage.dart';
-import 'batchDetailsPage.dart';
 import 'editprofile.dart';
-import 'homepage.dart';
-import 'myBatches.dart';
-import 'objects.dart';
+import 'password.dart';
 
 class ProfilePage extends StatefulWidget {
-  final String token;
 
-  const ProfilePage({super.key, required this.token});
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -24,12 +17,12 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool _notifications = true;
-  // bool _darkMode = false;
 
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchProfile(widget.token);
+    // Correction : Ajout du token requis par le Cubit
+    context.read<AuthCubit>().fetchProfile();
   }
 
   @override
@@ -37,19 +30,13 @@ class _ProfilePageState extends State<ProfilePage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      // backgroundColor: const Color(0xFFF5F7F9),
       appBar: AppBar(
-        // backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text("Profile", style: TextStyle(
-            // color: Colors.black,
-            fontWeight: FontWeight.bold)),
+        title: const Text("Profile", style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back,
-              // color: Colors.black
-          ),
+          icon: const Icon(Icons.arrow_back),
         ),
       ),
       body: BlocBuilder<AuthCubit, AuthState>(
@@ -63,18 +50,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
             return RefreshIndicator(
               onRefresh: () async {
-                await context.read<AuthCubit>().fetchProfile(widget.token);
+                await context.read<AuthCubit>().fetchProfile();
               },
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildHeaderCard(user,isDark),
+                    _buildHeaderCard(user, isDark),
                     const SizedBox(height: 24),
                     _buildSectionHeader("ACCOUNT INFO"),
                     const SizedBox(height: 8),
-                    _buildAccountInfoCard(user,isDark),
+                    _buildAccountInfoCard(user, isDark),
                     const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         )
                       ],
                     ),
-                    _buildDocumentsCard(user,isDark),
+                    _buildDocumentsCard(user, isDark),
                     const SizedBox(height: 24),
                     _buildSectionHeader("SETTINGS"),
                     const SizedBox(height: 8),
@@ -105,8 +92,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(state.message),
+                  const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => context.read<AuthCubit>().fetchProfile(widget.token),
+                    onPressed: () => context.read<AuthCubit>().fetchProfile(),
                     child: const Text("Retry"),
                   )
                 ],
@@ -128,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildHeaderCard(Map<String, dynamic> user,bool isDark) {
+  Widget _buildHeaderCard(Map<String, dynamic> user, bool isDark) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -141,21 +129,21 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           CircleAvatar(
             radius: 50,
-            backgroundColor:isDark? Colors.grey[800]: Color(0xFFE3F2FD),
+            backgroundColor: isDark ? Colors.grey[800] : const Color(0xFFE3F2FD),
             backgroundImage: user["profilePicture"] != null ? NetworkImage(user["profilePicture"]) : null,
-            child: user["profilePicture"] == null ? Icon(Icons.person, size: 60, color:isDark?Colors.white: const Color(0xFF013D73)) : null,
+            child: user["profilePicture"] == null ? Icon(Icons.person, size: 60, color: isDark ? Colors.white : const Color(0xFF013D73)) : null,
           ),
           const SizedBox(height: 12),
           Text(user["fullName"] ?? "Unknown", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          Text("ID: ${user["id"] ?? "N/A"} | LICENSE: ${user["license"] ?? "N/A"}", 
-            style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
+          Text("ID: ${user["id"] ?? "N/A"} | LICENSE: ${user["license"] ?? "N/A"}",
+              style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage(token: widget.token)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilePage()));
                 },
                 icon: const Icon(Icons.edit, size: 18, color: Colors.white),
                 label: const Text("Edit Profile", style: TextStyle(color: Colors.white)),
@@ -166,37 +154,23 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(width: 12),
               Container(
-                decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), borderRadius: BorderRadius.circular(10)),
-                child:
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    await SharePlus.instance.share(
-                      ShareParams(
-                        text: "🐟 Découvre Let's Fishing !\n"
-                            "L'app du marché de poisson en Algérie.\n\n"
-                            "📱 Télécharge ici :\n"
-                            "https://play.google.com/store/apps/details?id=com.example.projetsndcp\n\n"
-                            "Rejoins-moi sur l'app !",
-                        subject: "Let's Fishing App",
-                      ),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white10 : const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    // Correction : Utilisation correcte de Share
+                    Share.share(
+                      "🐟 Découvre Let's Fishing !\n"
+                      "L'app du marché de poisson en Algérie.\n\n"
+                      "📱 Télécharge ici :\n"
+                      "https://play.google.com/store/apps/details?id=com.example.projetsndcp",
+                      subject: "Let's Fishing App",
                     );
                   },
                   icon: const Icon(Icons.share, color: Color(0xFF475569)),
-                  label: const Text(
-                    "",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF1F5F9),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
                 ),
-                // IconButton(onPressed: () {}, icon: const Icon(Icons.share, color: Colors.grey)),
               )
             ],
           )
@@ -205,39 +179,39 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildAccountInfoCard(Map<String, dynamic> user,bool isDark) {
+  Widget _buildAccountInfoCard(Map<String, dynamic> user, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Theme.of(context).cardColor,borderRadius: BorderRadius.circular(15)),
+      decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
-          _infoTile(Icons.directions_boat, "Boat Name", user["boatName"] ?? "N/A",isDark, trailing: _statusBadge()),
+          _infoTile(Icons.directions_boat, "Boat Name", user["boatName"] ?? "N/A", isDark, trailing: _statusBadge()),
           const Divider(),
           Row(
             children: [
-              Expanded(child: _infoTile(null, "Registration", user["registrationNumber"] ?? "N/A",isDark)),
-              Container(width: 1, height: 40, color:isDark?Colors.white10: Colors.grey.shade300),
+              Expanded(child: _infoTile(null, "Registration", user["registrationNumber"] ?? "N/A", isDark)),
+              Container(width: 1, height: 40, color: isDark ? Colors.white10 : Colors.grey.shade300),
               const SizedBox(width: 8),
-              Expanded(child: _infoTile(null, "Home Port", user["homePort"] ?? "N/A",isDark)),
+              Expanded(child: _infoTile(null, "Home Port", user["homePort"] ?? "N/A", isDark)),
             ],
           ),
           const Divider(),
-          _infoTile(Icons.email_outlined, "Email Address", user["email"] ?? "N/A",isDark),
+          _infoTile(Icons.email_outlined, "Email Address", user["email"] ?? "N/A", isDark),
           const Divider(),
-          _infoTile(Icons.calendar_today_outlined, "License Expiry", user["licenseExpiry"] ?? "N/A",isDark),
+          _infoTile(Icons.calendar_today_outlined, "License Expiry", user["licenseExpiry"] ?? "N/A", isDark),
         ],
       ),
     );
   }
 
-  Widget _buildDocumentsCard(Map<String, dynamic> user,bool isDark) {
+  Widget _buildDocumentsCard(Map<String, dynamic> user, bool isDark) {
     return Container(
       decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
-          _docTile(Icons.description, "Fishing License", "Valid until ${user["licenseExpiry"] ?? "N/A"}",isDark),
+          _docTile(Icons.description, "Fishing License", "Valid until ${user["licenseExpiry"] ?? "N/A"}", isDark),
           const Divider(height: 1),
-          _docTile(Icons.directions_boat, "Boat Registration", "Verified on ${user["registration_date"] ?? "N/A"}",isDark),
+          _docTile(Icons.directions_boat, "Boat Registration", "Verified on ${user["registration_date"] ?? "N/A"}", isDark),
         ],
       ),
     );
@@ -248,27 +222,52 @@ class _ProfilePageState extends State<ProfilePage> {
       decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
-          _settingsTile(Icons.lock_outline, "Change Password",isDark, trailing: IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordPage(token: widget.token)));
-          },icon:  const Icon(Icons.chevron_right, color: Colors.grey,
-          ))),
+          _settingsTile(
+            Icons.lock_outline,
+            "Change Password",
+            isDark,
+            trailing: IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordPage()));
+              },
+              icon: const Icon(Icons.chevron_right, color: Colors.grey),
+            ),
+          ),
           const Divider(height: 1),
-          _settingsTile(Icons.notifications_none, "Notifications",isDark,
-              trailing: Switch(value: _notifications, activeThumbColor: const Color(0xFF01A896), onChanged: (v) => setState(() => _notifications = v))),
+          _settingsTile(
+            Icons.notifications_none,
+            "Notifications",
+            isDark,
+            trailing: Switch(
+              value: _notifications,
+              activeThumbColor: const Color(0xFF01A896),
+              onChanged: (v) => setState(() => _notifications = v),
+            ),
+          ),
           const Divider(height: 1),
-          _settingsTile(Icons.dark_mode_outlined, "Dark Mode",isDark,
-              trailing: Switch(value: isDark, activeThumbColor: const Color(0xFF01A896), onChanged: (v) {context.read<ThemeCubit>().toggleTheme();})),
+          _settingsTile(
+            Icons.dark_mode_outlined,
+            "Dark Mode",
+            isDark,
+            trailing: Switch(
+              value: isDark,
+              activeThumbColor: const Color(0xFF01A896),
+              onChanged: (v) {
+                context.read<ThemeCubit>().toggleTheme();
+              },
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _infoTile(IconData? icon, String label, String value,bool isDark, {Widget? trailing}) {
+  Widget _infoTile(IconData? icon, String label, String value, bool isDark, {Widget? trailing}) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: icon != null ? Icon(icon, color:isDark?Color(0xFF01A896): Color(0xFF013D73)) : null,
+      leading: icon != null ? Icon(icon, color: isDark ? const Color(0xFF01A896) : const Color(0xFF013D73)) : null,
       title: Text(label, style: const TextStyle(color: Color(0xFF64748B), fontSize: 12, fontWeight: FontWeight.w400)),
-      subtitle: Text(value, style: TextStyle(fontWeight: FontWeight.w600, color:isDark?Colors.white: const Color(0xFF0F172A))),
+      subtitle: Text(value, style: TextStyle(fontWeight: FontWeight.w600, color: isDark ? Colors.white : const Color(0xFF0F172A))),
       trailing: trailing,
     );
   }
@@ -281,12 +280,12 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _docTile(IconData icon, String title, String sub,bool isDark) {
+  Widget _docTile(IconData icon, String title, String sub, bool isDark) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color:isDark?Colors.white12: Color(0xFFE3F2FD), borderRadius: BorderRadius.circular(8)),
-        child: Icon(icon, color:isDark?Color(0xFF01A896): Color(0xFF013D73)),
+        decoration: BoxDecoration(color: isDark ? Colors.white12 : const Color(0xFFE3F2FD), borderRadius: BorderRadius.circular(8)),
+        child: Icon(icon, color: isDark ? const Color(0xFF01A896) : const Color(0xFF013D73)),
       ),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Text(sub, style: const TextStyle(fontSize: 12)),
@@ -294,9 +293,9 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _settingsTile(IconData icon, String title,bool isDark, {required Widget trailing}) {
+  Widget _settingsTile(IconData icon, String title, bool isDark, {required Widget trailing}) {
     return ListTile(
-      leading: Icon(icon, color: isDark?Color(0xFF01A896): Color(0xFF013D73)),
+      leading: Icon(icon, color: isDark ? const Color(0xFF01A896) : const Color(0xFF013D73)),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
       trailing: trailing,
     );
@@ -309,31 +308,24 @@ class _ProfilePageState extends State<ProfilePage> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(35),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 5))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          )
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(token: widget.token))
-                // HomePage(token: widget.token)
-            );
-
-          }, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>MyBatchesPage( token: widget.token)));
-          }, icon: const Icon(Icons.anchor, color: Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WeatherSafetypage( token: widget.token),
-                ));
-          }, icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey)),
-          IconButton(onPressed: () {}, icon:  Icon(Icons.person, color:isDark?Color(0xFF01A896): Color(0xFF013D73), size: 30)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.anchor, color: Colors.grey)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {}, icon: Icon(Icons.person, color: isDark ? const Color(0xFF01A896) : const Color(0xFF013D73), size: 30)),
         ],
       ),
     );
   }
 }
-

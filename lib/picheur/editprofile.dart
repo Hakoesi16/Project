@@ -7,9 +7,8 @@ import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
 class EditProfilePage extends StatefulWidget {
-  final String token;
 
-  const EditProfilePage({super.key, required this.token});
+  const EditProfilePage({super.key});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
@@ -30,7 +29,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchProfile(widget.token);
+    context.read<AuthCubit>().fetchProfile();
   }
 
   @override
@@ -251,7 +250,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return ElevatedButton(
       onPressed: state is AuthLoading ? null : () {
         context.read<AuthCubit>().updateProfile(
-          token: widget.token,
           name: _nameController.text,
           phone: _phoneController.text,
           homePort: _homePortController.text,

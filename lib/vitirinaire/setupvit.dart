@@ -7,8 +7,7 @@ import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
 class SetupVitpage extends StatefulWidget {
-  final String token;
-  const SetupVitpage({super.key, required this.token});
+  const SetupVitpage({super.key});
 
   @override
   State<SetupVitpage> createState() => _SetupVitpageState();
@@ -64,7 +63,6 @@ class _SetupVitpageState extends State<SetupVitpage> {
     }
 
     context.read<AuthCubit>().submitSetupVit(
-      token: widget.token,
       fullNameVit: _fullNameVitController.text.trim(),
       nationalIdVit: _nationalIdVitController.text.trim(),
       phoneVit: _phoneVitController.text.trim(),

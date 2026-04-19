@@ -5,8 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'filinfo.dart';
 
 class Interfacepage extends StatefulWidget {
-  final String token;
-  const Interfacepage({super.key, required this.token});
+
+  const Interfacepage({super.key});
 
   @override
   State<Interfacepage> createState() => _InterfacepageState();
@@ -39,23 +39,6 @@ class _InterfacepageState extends State<Interfacepage> {
       body:Column(
         children: [
           const SizedBox(height: 16),
-          // Container(
-          //   width: 300,
-          //   height: 300,
-          //   decoration: BoxDecoration(
-          //     shape: BoxShape.circle,
-          //     border: Border.all(color: Colors.white, width: 6),
-          //     image: DecorationImage(
-          //       image: SvgPicture.asset(
-          //         assetname,
-          //         width: 300,
-          //         height: 300,
-          //       ),
-          //       // AssetImage("images/sea.png"),
-          //       fit: BoxFit.cover,
-          //     ),
-          //   ),
-          // ),
           Container(
             width: 300,
             height: 300,
@@ -71,8 +54,6 @@ class _InterfacepageState extends State<Interfacepage> {
             ),
           ),
           const SizedBox(height: 50),
-          // _textcenter("Let's Complete",isDark),
-          // _textcenter("Your Profil",isDark),
           _textcenter("Welcome Captain!",isDark),
           _text("To start trading in the marketplace,",isDark),
           _text("we need a few more details about you",isDark),
@@ -86,7 +67,7 @@ class _InterfacepageState extends State<Interfacepage> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: MaterialButton(onPressed: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Infopage(token: widget.token)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Infopage()));
               },child: const Text("Start Setup", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),)
           ),
         ],
