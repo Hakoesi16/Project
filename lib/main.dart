@@ -92,8 +92,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const ProfilePage()
-          // SplashPage(),
+          home: const SplashPage(),
           // Fivepage( email: 'hakoben@gmail.com',)
           // SetupConspage()
         );
@@ -101,24 +100,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-// void main() {
-//   runApp(BlocProvider(
-//     create: (_) => AuthCubit(),
-//     child: MyApp(),
-//   ));
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: SplashPage(),
-//       // ProfilePage(token: '',),
-//
-//     );
-//   }
-// }
-//
