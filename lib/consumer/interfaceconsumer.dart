@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:projetsndcp/consumer/setupconsumer.dart';
 
 class Interfaceconsumerpage extends StatefulWidget {
   const Interfaceconsumerpage({super.key});
@@ -80,7 +81,7 @@ class _InterfaceconsumerpageState extends State<Interfaceconsumerpage> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: MaterialButton(onPressed: (){
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => Infoconsumerpage(token: widget.token)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => SetupConspage()));
               },child: const Text("Start Setup", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),)
           ),
         ],

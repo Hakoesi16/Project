@@ -66,6 +66,9 @@ class _InfopageState extends State<Infopage> {
       );
       return;
     }
+    else{
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+    }
 
     context.read<AuthCubit>().submitSetup(
       fullName: _fullNameController.text.trim(),

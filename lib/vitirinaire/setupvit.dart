@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:projetsndcp/vitirinaire/profilevit.dart';
 
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
@@ -60,6 +61,9 @@ class _SetupVitpageState extends State<SetupVitpage> {
         const SnackBar(content: Text("Please fill all required fields")),
       );
       return;
+    }
+    else{
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilevitPage()));
     }
 
     context.read<AuthCubit>().submitSetupVit(

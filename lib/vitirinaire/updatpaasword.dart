@@ -88,6 +88,7 @@ class _ChangepasswordVitPageState extends State<ChangepasswordVitPage> {
     }
 
     context.read<AuthCubit>().updatePasswordVit(
+      currentpasswordVit: currentPassVit,
       passwordVit: newPassVit,
     );
   }

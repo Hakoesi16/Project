@@ -173,35 +173,49 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   // --- PROFIL ---
-  Future<void> fetchProfile() async {
-    try {
-      emit(AuthLoading());
-      String? token = await _getToken();
-      if (token == null) {
-        emit(AuthError("No token found"));
-        return;
-      }
-      final response = await http.get(
-        Uri.parse("$_baseUrl/auth/profile-fishmen"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
-      );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        emit(ProfileLoaded(data));
-      } else {
-        emit(ProfileError("Failed to load profile"));
-      }
-    } catch (e) {
-      emit(ProfileError(e.toString()));
-    }
+  Future<void> fetchProfile() async {
+    emit(ProfileLoaded({
+      "name": "Captain Ahmed",
+      "email": "ahmed@mail.com",
+      "boatName": "Sea Explorer",
+      "registration": "MAR-9999",
+      "homePort": "Oran",
+      "licenseExpiry": "2026",
+    }));
   }
+  // Future<void> fetchProfile() async {
+  //   try {
+  //     emit(AuthLoading());
+  //     String? token = await _getToken();
+  //     if (token == null) {
+  //       emit(AuthError("No token found"));
+  //       return;
+  //     }
+  //     final response = await http.get(
+  //       Uri.parse("$_baseUrl/auth/profile-fishmen"),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": "Bearer $token",
+  //         "ngrok-skip-browser-warning": "true",
+  //       },
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       emit(ProfileLoaded(data));
+  //     } else {
+  //       emit(ProfileError("Failed to load profile"));
+  //     }
+  //   } catch (e) {
+  //     emit(ProfileError(e.toString()));
+  //   }
+  // }
+
 
   // --- UPDATE PROFIL ---
+
+  //edit profil
   Future<void> updateProfile({
     required String name,
     required String phone,
@@ -325,34 +339,46 @@ class AuthCubit extends Cubit<AuthState> {
 
   // --- VET PROFILE ---
   Future<void> fetchvitProfile() async {
-    try {
-      emit(AuthLoading());
-      String? token = await _getToken();
-      if (token == null) {
-        emit(AuthError("No token found"));
-        return;
-      }
-      final response = await http.get(
-        Uri.parse("$_baseUrl/auth/profile-vit"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        emit(ProfileLoaded(data));
-      } else {
-        emit(ProfileError("Failed to load vet profile: ${response.statusCode}"));
-      }
-    } catch (e) {
-      emit(ProfileError(e.toString()));
-    }
+    emit(ProfileLoaded({
+      "name": "Captain hako",
+      "email": "hako@mail.com",
+      "boatName": "Sea Explorer",
+      "registration": "MAR-9999",
+      "homePort": "Oran",
+      "licenseExpiry": "2026",
+    }));
   }
+  // Future<void> fetchvitProfile() async {
+  //   try {
+  //     emit(AuthLoading());
+  //     String? token = await _getToken();
+  //     if (token == null) {
+  //       emit(AuthError("No token found"));
+  //       return;
+  //     }
+  //     final response = await http.get(
+  //       Uri.parse("$_baseUrl/auth/profile-vit"),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": "Bearer $token",
+  //         "ngrok-skip-browser-warning": "true",
+  //       },
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       emit(ProfileLoaded(data));
+  //     } else {
+  //       emit(ProfileError("Failed to load vet profile: ${response.statusCode}"));
+  //     }
+  //   } catch (e) {
+  //     emit(ProfileError(e.toString()));
+  //   }
+  // }
 
   // --- UPDATE VET PROFILE ---
+
+  //edite profile de vitirinaire
   Future<void> updateProfilevit({
     required String name,
     required String phone,
@@ -552,61 +578,110 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
+
+
+// home page
   Future<void> fetchHomeData() async {
     try {
       emit(AuthLoading());
-      String? token = await _getToken();
-      if (token == null) {
-        emit(AuthError("No token found"));
-        return;
-      }
-      // Simulation d'un appel API
+
+      // Simulation d'un délai réseau
       await Future.delayed(const Duration(seconds: 1));
-      final response = await http.get(
-        Uri.parse("https://yourbackend.com/api/profile"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
+
+      // ✅ Données simulées directement dans le code
+      emit(HomeDataLoaded({
+        "userName": "Ali Ahmed",
+        "earnings": "45,230 DZD",
+        "earningsTrend": "+12% this month",
+        "weight": "1,240 kg",
+        "weightTrend": "+5% this month",
+        "pendingBatches": 3,
+        "approvedBatches": 12,
+        "rejectedBatches": 2,
+        "expiredBatches": 1,
+        "marketItem": {
+          "name": "Sardine",
+          "grade": "Grade A",
+          "demand": "High Demand",
+          "price": "320 DZD/kg",
+          "tag": "IN SEASON",
         },
-      );
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        emit(ProfileLoaded(data));
-      } else {
-        emit(AuthError("Failed to load Home page"));
-      }
+      }));
+
     } catch (e) {
       emit(AuthError(e.toString()));
     }
   }
+  // Future<void> fetchHomeData() async {
+  //   try {
+  //     emit(AuthLoading());
+  //     String? token = await _getToken();
+  //     if (token == null) {
+  //       emit(AuthError("No token found"));
+  //       return;
+  //     }
+  //     // Simulation d'un appel API
+  //     await Future.delayed(const Duration(seconds: 1));
+  //     final response = await http.get(
+  //       Uri.parse("https://yourbackend.com/api/profile"),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": "Bearer $token",
+  //         "ngrok-skip-browser-warning": "true",
+  //       },
+  //     );
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       emit(ProfileLoaded(data));
+  //     } else {
+  //       emit(AuthError("Failed to load Home page"));
+  //     }
+  //   } catch (e) {
+  //     emit(AuthError(e.toString()));
+  //   }
+  // }
+
+  //profile de consumer
   Future<void> fetchConsumerProfile() async {
-    try {
-      emit(AuthLoading());
-      String? token = await _getToken();
-      if (token == null) {
-        emit(AuthError("No token found"));
-        return;
-      }
-
-      final response = await http.get(
-        Uri.parse("https://api.example.com/profileConsumer"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        emit(ProfileLoaded(data));
-      } else {
-        emit(ProfileError("Failed to load profile"));
-      }
-    } catch (e) {
-      emit(ProfileError(e.toString()));
-    }
+    emit(ProfileLoaded({
+      "name": "Captain hako",
+      "email": "hako@mail.com",
+      "boatName": "Sea Explorer",
+      "registration": "MAR-9999",
+      "homePort": "Oran",
+      "licenseExpiry": "2026",
+    }));
   }
+  // Future<void> fetchConsumerProfile() async {
+  //   try {
+  //     emit(AuthLoading());
+  //     String? token = await _getToken();
+  //     if (token == null) {
+  //       emit(AuthError("No token found"));
+  //       return;
+  //     }
+  //
+  //     final response = await http.get(
+  //       Uri.parse("https://api.example.com/profileConsumer"),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": "Bearer $token",
+  //       },
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(response.body);
+  //       emit(ProfileLoaded(data));
+  //     } else {
+  //       emit(ProfileError("Failed to load profile"));
+  //     }
+  //   } catch (e) {
+  //     emit(ProfileError(e.toString()));
+  //   }
+  // }
+
+
+
   //Fill information of Consumer
   Future<void> submitSetupCons({
     required String fullNameCons,
@@ -686,6 +761,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> updatePasswordVit({
     required String passwordVit,
+    required String currentpasswordVit,
   }) async {
     try {
       emit(AuthLoading());
@@ -703,6 +779,7 @@ class AuthCubit extends Cubit<AuthState> {
           "ngrok-skip-browser-warning": "true",
         },
         body: jsonEncode({
+          "currentpasswordVit":currentpasswordVit,
           "passwordVit": passwordVit,
         }),
       );
@@ -718,6 +795,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
   Future<void> updatePasswordCons({
     required String passwordCons,
+    required String currentpasswordCons,
   }) async {
     try {
       emit(AuthLoading());
@@ -735,6 +813,7 @@ class AuthCubit extends Cubit<AuthState> {
           "ngrok-skip-browser-warning": "true",
         },
         body: jsonEncode({
+          "currentpaaswordCons":currentpasswordCons,
           "passwordCons": passwordCons,
         }),
       );
@@ -844,4 +923,35 @@ class AuthCubit extends Cubit<AuthState> {
 
     }
     }
+  Future<void> submitAdmin({
+    required String emailvet,
+    required String passwordvet,
+    required String homePortvet,
+  }) async {
+    try {
+      emit(SetupLoading());
+      String? token = await _getToken();
+      if (token == null) {
+        emit(AuthError("No token found"));
+        return;
+      }
+      final response = await http.post(
+          Uri.parse("$_baseUrl/auth/code_verification"),
+          headers:
+          {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+            "ngrok-skip-browser-warning": "true",
+          },
+          body: jsonEncode({"emailvet": emailvet, "passwordvet": passwordvet, "homePortvet": homePortvet,}));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        emit(VetCreatedSuccess());
+      } else {
+        emit(AuthError("Setup failed: ${response.body}"));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
 }

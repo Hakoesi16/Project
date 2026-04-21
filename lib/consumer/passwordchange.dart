@@ -91,6 +91,7 @@ class _ChangepasswordConsPageState extends State<ChangepasswordConsPage> {
     }
 
     context.read<AuthCubit>().updatePasswordCons(
+      currentpasswordCons: currentPasscons,
       passwordCons: newPasscons,
     );
   }
