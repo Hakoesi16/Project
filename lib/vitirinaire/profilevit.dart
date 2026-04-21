@@ -4,6 +4,7 @@ import 'package:projetsndcp/vitirinaire/updatpaasword.dart';
 import 'package:share_plus/share_plus.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
+import 'editeprofilevit.dart';
 
 class ProfilevitPage extends StatefulWidget {
 
@@ -135,7 +136,9 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilevitPage()));
+                },
                 icon: const Icon(Icons.edit, size: 18, color: Colors.white),
                 label: const Text("Edit Profile", style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
@@ -294,7 +297,9 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilevitPage()));
+          }, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.access_time, color: Colors.grey)),
           IconButton(onPressed: () {}, icon: Icon(Icons.person, color: primaryTeal, size: 30)),
         ],

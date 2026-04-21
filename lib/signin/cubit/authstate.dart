@@ -59,3 +59,4 @@ class RoleSelectedSuccess extends AuthState {
   final String role;
   RoleSelectedSuccess(this.role);
 }
+class VetCreatedSuccess extends AuthState {}

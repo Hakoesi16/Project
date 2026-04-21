@@ -6,6 +6,8 @@ import 'package:share_plus/share_plus.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 import '../signin/cubit/themecubit.dart';
+import 'batchDetails.dart';
+import 'editeconsumer.dart';
 class ProfileConsumerPage extends StatefulWidget {
 
   const ProfileConsumerPage({super.key});
@@ -129,7 +131,7 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => EditConsumerProfilePage(token: widget.token)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditConsumerProfilePage()));
                 },
                 icon: const Icon(Icons.edit, size: 18, color: Colors.white),
                 label: const Text("Edit Profile", style: TextStyle(color: Colors.white)),
@@ -259,7 +261,9 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
           IconButton(onPressed: () {
             // Navigator.push(context, MaterialPageRoute(builder: (context) => HomeConsumerPage(token: widget.token)));
           }, icon: Icon(Icons.home_outlined, color: isDark ? Colors.white54 : Colors.grey)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.list_alt_outlined, color: isDark ? Colors.white54 : Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => BatchDetails()));
+          }, icon: Icon(Icons.list_alt_outlined, color: isDark ? Colors.white54 : Colors.grey)),
           IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart, color: isDark ? Colors.white54 : Colors.grey)),
           IconButton(onPressed: () {}, icon: Icon(Icons.person, color: isDark ? const Color(0xFF01A896) : const Color(0xFFD5A439), size: 30)),
         ],

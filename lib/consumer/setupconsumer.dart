@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:projetsndcp/consumer/profilconsumer.dart';
 
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
@@ -37,7 +38,10 @@ class _SetupConpageState extends State<SetupConspage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill all required fields")),
       );
+
       return;
+    }else{
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileConsumerPage()));
     }
 
     context.read<AuthCubit>().submitSetupCons(
