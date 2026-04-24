@@ -14,6 +14,7 @@ import 'package:projetsndcp/picheur/sosPage.dart';
 import 'admin/addvet.dart';
 import 'consumer/setupconsumer.dart';
 import 'consumer/batchDetails.dart';
+import 'consumer/batchReport.dart';
 
 void main() {
   runApp(
