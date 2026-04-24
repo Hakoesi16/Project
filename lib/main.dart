@@ -11,10 +11,12 @@ import 'package:projetsndcp/signin/signup/fivepage.dart';
 import 'package:projetsndcp/signin/signup/selectrole.dart';
 import 'package:projetsndcp/signin/signup/splage.dart';
 import 'package:projetsndcp/vitirinaire/interfacevit.dart';
+import 'package:projetsndcp/vitirinaire/succesverfc.dart';
 import 'admin/addvet.dart';
 import 'consumer/setupconsumer.dart';
 import 'consumer/batchDetails.dart';
 import 'consumer/batchReport.dart';
+import 'package:projetsndcp/vitirinaire/VetInspectionPage.dart';
 
 void main() {
   runApp(
@@ -94,9 +96,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const MyBatchesPage(),
-          // RoleSelectionPage()
-          // SplashPage(),
+          home: const vetInspectionPage(),
           // Fivepage( email: 'hakoben@gmail.com',)
           // SetupConspage()
         );
