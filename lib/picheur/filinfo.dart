@@ -9,8 +9,8 @@ import 'homepage.dart';
 
 
 class Infopage extends StatefulWidget {
-  final String token;
-  const Infopage({super.key, required this.token});
+
+  const Infopage({super.key});
 
   @override
   State<Infopage> createState() => _InfopageState();
@@ -60,15 +60,17 @@ class _InfopageState extends State<Infopage> {
   }
 
   void _submit() {
-    if (_fullNameController.text.isEmpty || _boatNameController.text.isEmpty || _licenseController.text.isEmpty) {
+    if (_fullNameController.text.isEmpty || _boatNameController.text.isEmpty || _licenseController.text.isEmpty || _expiryController.text.isEmpty || _fishingLicenseFile == null || _boatRegistrationFile == null || _homePortController.text.isEmpty || _registrationController.text.isEmpty || _phoneController.text.isEmpty || _emailController.text.isEmpty || _nationalIdController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill all required fields"), backgroundColor: Colors.red),
       );
       return;
     }
+    else{
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+    }
 
     context.read<AuthCubit>().submitSetup(
-      token: widget.token,
       fullName: _fullNameController.text.trim(),
       nationalId: _nationalIdController.text.trim(),
       phone: _phoneController.text.trim(),
@@ -96,7 +98,7 @@ class _InfopageState extends State<Infopage> {
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is SetupSuccess) {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage(token: widget.token)));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage()));
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message), backgroundColor: Colors.red),

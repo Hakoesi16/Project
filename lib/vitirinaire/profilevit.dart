@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projetsndcp/vitirinaire/updatpaasword.dart';
 import 'package:share_plus/share_plus.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
+import 'editeprofilevit.dart';
 
 class ProfilevitPage extends StatefulWidget {
-  final String token;
 
-  const ProfilevitPage({super.key, required this.token});
+  const ProfilevitPage({super.key});
 
   @override
   State<ProfilevitPage> createState() => _ProfilevitPageState();
@@ -22,7 +23,7 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
   void initState() {
     super.initState();
     // Utilisation de la fonction fetchvitProfile que nous avons rendue dynamique
-    context.read<AuthCubit>().fetchvitProfile(widget.token);
+    context.read<AuthCubit>().fetchvitProfile();
   }
 
   @override
@@ -51,7 +52,7 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
             return RefreshIndicator(
               onRefresh: () async {
                 // Utilisation de la même fonction pour le rafraîchissement
-                await context.read<AuthCubit>().fetchvitProfile(widget.token);
+                await context.read<AuthCubit>().fetchvitProfile();
               },
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -87,7 +88,7 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
                   const SizedBox(height: 16),
                   Text(state.message),
                   TextButton(
-                    onPressed: () => context.read<AuthCubit>().fetchvitProfile(widget.token),
+                    onPressed: () => context.read<AuthCubit>().fetchvitProfile(),
                     child: const Text("Retry"),
                   )
                 ],
@@ -135,7 +136,9 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfilevitPage()));
+                },
                 icon: const Icon(Icons.edit, size: 18, color: Colors.white),
                 label: const Text("Edit Profile", style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(
@@ -223,7 +226,9 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15)),
       child: Column(
         children: [
-          _settingsTile(Icons.lock_outline, "Change Password", trailing: const Icon(Icons.chevron_right, color: Colors.grey)),
+          _settingsTile(Icons.lock_outline, "Change Password", trailing: IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordVitPage()));
+          }, icon: const Icon(Icons.chevron_right, color: Colors.grey))),
           const Divider(height: 1),
           _settingsTile(Icons.language, "Language", trailing: const Text("English >", style: TextStyle(color: Colors.grey))),
           const Divider(height: 1),
@@ -292,7 +297,9 @@ class _ProfilevitPageState extends State<ProfilevitPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilevitPage()));
+          }, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
           IconButton(onPressed: () {}, icon: const Icon(Icons.access_time, color: Colors.grey)),
           IconButton(onPressed: () {}, icon: Icon(Icons.person, color: primaryTeal, size: 30)),
         ],

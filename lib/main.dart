@@ -6,9 +6,12 @@ import 'package:projetsndcp/picheur/interfacepage.dart';
 import 'package:projetsndcp/picheur/profil.dart';
 import 'package:projetsndcp/signin/cubit/authcubit.dart';
 import 'package:projetsndcp/signin/cubit/themecubit.dart';
+import 'package:projetsndcp/signin/signup/fivepage.dart';
+import 'package:projetsndcp/signin/signup/selectrole.dart';
 import 'package:projetsndcp/signin/signup/splage.dart';
 import 'package:projetsndcp/vitirinaire/interfacevit.dart';
 import 'package:projetsndcp/picheur/sosPage.dart';
+import 'admin/addvet.dart';
 import 'consumer/setupconsumer.dart';
 import 'consumer/batchDetails.dart';
 import 'consumer/batchReport.dart';
@@ -91,36 +94,13 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const SplashPage(),
-          //BatchReportPage(),
-          //SplashPage(),
-          //BatchDetails(),
-          //Addbatchpage(),
-          //SplashPage(),
-          // Interfacepage(token: '',),
+          home: const Addvet(),
+          // RoleSelectionPage()
+          // SplashPage(),
+          // Fivepage( email: 'hakoben@gmail.com',)
+          // SetupConspage()
         );
       },
     );
   }
 }
-
-// void main() {
-//   runApp(BlocProvider(
-//     create: (_) => AuthCubit(),
-//     child: MyApp(),
-//   ));
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: SplashPage(),
-//       // ProfilePage(token: '',),
-//
-//     );
-//   }
-// }
-//

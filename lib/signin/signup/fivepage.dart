@@ -40,6 +40,7 @@ class _FivepageState extends State<Fivepage> {
                 backgroundColor: Colors.green, // Vert pour succès
               ),
             );
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Sixpage()));
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -61,6 +62,7 @@ class _FivepageState extends State<Fivepage> {
                   TextField(
                     controller: _passwordController,
                     obscureText: !_isPasswordVisible,
+                    onChanged: (value) => setState(() {}),
                     decoration: InputDecoration(
                       hintText: "Enter a strong password",
                       border: OutlineInputBorder(
@@ -76,9 +78,7 @@ class _FivepageState extends State<Fivepage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text("- minimum 6 characters and maximum 20 characters", style: TextStyle(color: Colors.grey, fontSize: 13)),
-                  const Text("- must have at least one symbol (@, #, &, ...)", style: TextStyle(color: Colors.grey, fontSize: 13)),
-                  const Text("- must have numbers", style: TextStyle(color: Colors.grey, fontSize: 13)),
+                  _buildhelppassword(_passwordController.text),
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.infinity,
@@ -141,4 +141,58 @@ class _FivepageState extends State<Fivepage> {
       ),
     );
   }
+}
+Widget _buildhelppassword(String text) {
+
+  // Les 3 conditions
+  bool isLengthValid = text.length >= 6 && text.length <= 20;
+  bool hasNumber     = text.contains(RegExp(r'[0-9]'));
+  bool hasSymbol     = text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _buildIndicatorRow("minimum 6 and maximum 20 characters", isLengthValid),
+      const SizedBox(height: 8),
+      _buildIndicatorRow("must have at least one number", hasNumber),
+      const SizedBox(height: 8),
+      _buildIndicatorRow("must have at least one symbol (@, #, &, ...)", hasSymbol),
+    ],
+  );
+}
+
+// ✅ Widget réutilisable pour chaque indicateur
+Widget _buildIndicatorRow(String text, bool isValid) {
+  return Row(
+    children: [
+      // ─── Cercle avec icône ────────────────────────────
+      AnimatedContainer(
+        duration: const Duration(milliseconds: 300), // ← animation douce
+        width: 20,
+        height: 20,
+        decoration: BoxDecoration(
+          color: isValid ? Colors.green : Colors.grey[300],
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: isValid
+        // ✅ Valide → icône coche blanche
+            ? const Icon(Icons.check, color: Colors.white, size: 14)
+        // ❌ Invalide → icône croix grise
+            : const Icon(Icons.close, color: Colors.transparent, size: 14),
+      ),
+
+      const SizedBox(width: 10),
+
+      // ─── Texte ────────────────────────────────────────
+      Text(
+        text,
+        style: TextStyle(
+          color: isValid ? Colors.black : Colors.grey,
+          fontSize: 13,
+          // ✅ Gras si valide
+          fontWeight: isValid ? FontWeight.w500 : FontWeight.normal,
+        ),
+      ),
+    ],
+  );
 }

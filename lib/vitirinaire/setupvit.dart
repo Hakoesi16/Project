@@ -2,13 +2,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:projetsndcp/vitirinaire/profilevit.dart';
 
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
 class SetupVitpage extends StatefulWidget {
-  final String token;
-  const SetupVitpage({super.key, required this.token});
+  const SetupVitpage({super.key});
 
   @override
   State<SetupVitpage> createState() => _SetupVitpageState();
@@ -62,9 +62,11 @@ class _SetupVitpageState extends State<SetupVitpage> {
       );
       return;
     }
+    else{
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilevitPage()));
+    }
 
     context.read<AuthCubit>().submitSetupVit(
-      token: widget.token,
       fullNameVit: _fullNameVitController.text.trim(),
       nationalIdVit: _nationalIdVitController.text.trim(),
       phoneVit: _phoneVitController.text.trim(),

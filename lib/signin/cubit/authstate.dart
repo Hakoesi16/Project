@@ -53,3 +53,10 @@ class HomeDataLoaded extends AuthState {
   @override
   List<Object?> get props => [data];
 }
+class PasswordUpdatedSuccess extends AuthState {}
+// Ajouter cet état → indique que le rôle a été sauvegardé avec succès
+class RoleSelectedSuccess extends AuthState {
+  final String role;
+  RoleSelectedSuccess(this.role);
+}
+class VetCreatedSuccess extends AuthState {}

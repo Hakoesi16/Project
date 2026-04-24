@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:projetsndcp/consumer/profilconsumer.dart';
 
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 import 'interfaceconsumer.dart';
 
 class SetupConspage extends StatefulWidget {
-  final String token;
-  const SetupConspage({super.key, required this.token});
+  const SetupConspage({super.key});
 
   @override
   State<SetupConspage> createState() => _SetupConpageState();
@@ -38,11 +38,13 @@ class _SetupConpageState extends State<SetupConspage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill all required fields")),
       );
+
       return;
+    }else{
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileConsumerPage()));
     }
 
     context.read<AuthCubit>().submitSetupCons(
-      token: widget.token,
       fullNameCons: _fullNameConsController.text.trim(),
       nationalIdCons: _nationalIdConsController.text.trim(),
       phoneCons: _phoneConsController.text.trim(),
@@ -72,7 +74,7 @@ class _SetupConpageState extends State<SetupConspage> {
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is SetupSuccess) {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Interfaceconsumerpage(token: widget.token)));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Interfaceconsumerpage()));
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
           }

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projetsndcp/consumer/passwordchange.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 import '../signin/cubit/themecubit.dart';
+import 'batchDetails.dart';
+import 'editeconsumer.dart';
 class ProfileConsumerPage extends StatefulWidget {
-  final String token;
 
-  const ProfileConsumerPage({super.key, required this.token});
+  const ProfileConsumerPage({super.key});
 
   @override
   State<ProfileConsumerPage> createState() => _ProfileConsumerPageState();
@@ -20,7 +22,7 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchConsumerProfile(widget.token);
+    context.read<AuthCubit>().fetchConsumerProfile();
   }
 
   @override
@@ -49,7 +51,7 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
 
             return RefreshIndicator(
               onRefresh: () async {
-                await context.read<AuthCubit>().fetchConsumerProfile(widget.token);
+                await context.read<AuthCubit>().fetchConsumerProfile();
               },
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -79,7 +81,7 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
                 children: [
                   Text(state.message),
                   ElevatedButton(
-                    onPressed: () => context.read<AuthCubit>().fetchConsumerProfile(widget.token),
+                    onPressed: () => context.read<AuthCubit>().fetchConsumerProfile(),
                     child: const Text("Retry"),
                   )
                 ],
@@ -129,7 +131,7 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
             children: [
               ElevatedButton.icon(
                 onPressed: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) => EditConsumerProfilePage(token: widget.token)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditConsumerProfilePage()));
                 },
                 icon: const Icon(Icons.edit, size: 18, color: Colors.white),
                 label: const Text("Edit Profile", style: TextStyle(color: Colors.white)),
@@ -201,7 +203,9 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
       ),
       child: Column(
         children: [
-          _settingsTile(Icons.lock_outline, "Change Password", isDark, trailing: const Icon(Icons.chevron_right, color: Colors.grey)),
+          _settingsTile(Icons.lock_outline, "Change Password", isDark, trailing:MaterialButton(onPressed: (){
+             Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordConsPage()));
+          },child:const Icon(Icons.chevron_right, color: Colors.grey) ,) ),
           const Divider(height: 1),
           _settingsTile(Icons.notifications_none, "Notifications", isDark,
               trailing: Switch(
@@ -257,7 +261,9 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
           IconButton(onPressed: () {
             // Navigator.push(context, MaterialPageRoute(builder: (context) => HomeConsumerPage(token: widget.token)));
           }, icon: Icon(Icons.home_outlined, color: isDark ? Colors.white54 : Colors.grey)),
-          IconButton(onPressed: () {}, icon: Icon(Icons.list_alt_outlined, color: isDark ? Colors.white54 : Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => BatchDetails()));
+          }, icon: Icon(Icons.list_alt_outlined, color: isDark ? Colors.white54 : Colors.grey)),
           IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart, color: isDark ? Colors.white54 : Colors.grey)),
           IconButton(onPressed: () {}, icon: Icon(Icons.person, color: isDark ? const Color(0xFF01A896) : const Color(0xFFD5A439), size: 30)),
         ],

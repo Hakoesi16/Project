@@ -8,9 +8,8 @@ import '../signin/cubit/authstate.dart';
 
 class FailedvetPage extends StatefulWidget {
   final String batchId;
-  final String token;
 
-  const FailedvetPage({super.key, required this.batchId, required this.token});
+  const FailedvetPage({super.key, required this.batchId});
 
   @override
   State<FailedvetPage> createState() => _FailedvetPageState();
@@ -26,7 +25,7 @@ class _FailedvetPageState extends State<FailedvetPage> {
   }
 
   void _loadData() {
-    context.read<AuthCubit>().fetchInspectionDetails(widget.batchId, widget.token);
+    context.read<AuthCubit>().fetchInspectionDetails(widget.batchId);
   }
 
   @override
@@ -40,7 +39,6 @@ class _FailedvetPageState extends State<FailedvetPage> {
       context.read<AuthCubit>().sendRejectionReason(
         batchId: widget.batchId,
         reason: _rejectionController.text,
-        token: widget.token,
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

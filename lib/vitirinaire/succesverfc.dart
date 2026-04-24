@@ -8,9 +8,8 @@ import '../signin/cubit/authstate.dart';
 
 class VetInspectionPage extends StatefulWidget {
   final String batchId;
-  final String token;
 
-  const VetInspectionPage({super.key, required this.batchId, required this.token});
+  const VetInspectionPage({super.key, required this.batchId});
 
   @override
   State<VetInspectionPage> createState() => _VetInspectionPageState();
@@ -24,7 +23,7 @@ class _VetInspectionPageState extends State<VetInspectionPage> {
   }
 
   void _loadData() {
-    context.read<AuthCubit>().fetchInspectionDetails(widget.batchId, widget.token);
+    context.read<AuthCubit>().fetchInspectionDetails(widget.batchId);
   }
 
   Future<void> _downloadCertificate(String? url) async {

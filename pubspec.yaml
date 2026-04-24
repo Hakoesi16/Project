@@ -18,19 +18,12 @@ dependencies:
   flutter_facebook_auth: ^6.0.0
   checkmark: ^0.0.2+1
   equatable: ^2.0.7
-  image_picker: ^1.0.7
-  url_launcher: ^6.3.2
-  
-  # Remplacement de timelines (trop vieux) par un package moderne sur pub.dev
-  another_stepper: ^1.2.1
-  google_maps_flutter: ^2.5.3
-  geolocator: ^10.1.0
+  image_picker: ^1.2.1
+  google_maps_flutter: ^2.15.0
+  geolocator: ^14.0.2
   percent_indicator: ^4.2.3
-  flutter_svg: ^2.2.4
-  share_plus: ^12.0.2
-  latlong2: ^0.9.1
-  dotted_border: ^3.1.0
-  shared_preferences: ^2.5.5
+  timelines_plus: ^2.0.0
+
 
 dev_dependencies:
   flutter_test:
@@ -50,11 +43,6 @@ flutter:
      - images/fish2.png
      - images/fish3.jpg
      - images/grey.jpg
-     - images/boat.svg
-     - images/vitirinaire.svg
-     - images/consumer.svg
-     - images/map.png
-     - images/logoPolice.png
 
 
   fonts:

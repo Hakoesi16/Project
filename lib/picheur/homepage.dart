@@ -8,11 +8,12 @@ import 'Weather&Safety.dart';
 import 'addBatchPage.dart';
 import 'batchDetailsPage.dart';
 import 'myBatches.dart';
+import 'objects.dart';
 
 class HomePage extends StatefulWidget {
-  final String token;
 
-  const HomePage({super.key, required this.token});
+
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchHomeData(widget.token);
+    context.read<AuthCubit>().fetchHomeData();
   }
 
   @override
@@ -132,12 +133,12 @@ class _HomePageState extends State<HomePage> {
   Widget _buildAddBatchCard() {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => const BatchPage(),
-        //   ),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Addbatchpage(),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -179,15 +180,15 @@ class _HomePageState extends State<HomePage> {
   Widget _buildQuickActions(bool isDark) {
     return Row(
       children: [
-        Expanded(child: _buildActionItem(Icons.anchor, "Register Arrival")),
-        const SizedBox(width: 16),
+        // Expanded(child: _buildActionItem(Icons.anchor, "Register Arrival")),
+        // const SizedBox(width: 16),
         Expanded(
           child: InkWell(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MyBatchesPage(token: '',),
+                  builder: (context) => const MyBatchesPage(),
                 ),
               );
             },
@@ -200,11 +201,11 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildActionItem(IconData icon, String title) {
     return MaterialButton(onPressed: (){
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => BatchDetailspage(batch: null),
-      //   ));
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => BatchDetailspage(batch: BatchItem(fishName: "Sardine", quantity: 45.5, date: "Oct 24, 05:30 AM", pricePerKg: 320.50, total: 1370.50, status: "APPROVED",)),
+        ));
     },child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10)]),
@@ -366,24 +367,24 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           GestureDetector(
-            onTap: () => context.read<AuthCubit>().fetchHomeData(widget.token),
+            onTap: () => context.read<AuthCubit>().fetchHomeData(),
             child: _navIcon(Icons.home, true),
           ),
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyBatchesPage( token: widget.token)),
+                MaterialPageRoute(builder: (context) => MyBatchesPage()),
               );
             },
             child: _navIcon(Icons.anchor, false),
           ),
           GestureDetector(
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => MarketPage(token: widget.token)),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Addbatchpage()),
+              );
             },
             child: _navIcon(Icons.storefront_outlined, false),
           ),
@@ -391,7 +392,7 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => WeatherSafetypage( token: widget.token)),
+                MaterialPageRoute(builder: (context) => WeatherSafetypage()),
               );
             },
             child: _navIcon(Icons.remove_red_eye_outlined, false),
@@ -401,7 +402,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfilePage(token: widget.token),
+                    builder: (context) => ProfilePage(),
                   ));
             },
             child: _navIcon(Icons.person_outline, false),
