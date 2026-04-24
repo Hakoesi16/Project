@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:projetsndcp/picheur/profil.dart';//appel aux profile papge
@@ -50,7 +51,7 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildHeader(data["userName"],isDark),
+                          _buildHeader(data,isDark),
                           const SizedBox(height: 24),
                           _buildAddBatchCard(),
                           const SizedBox(height: 16),
@@ -66,7 +67,20 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(height: 24),
                           _buildSectionHeader(Icons.storefront_outlined, "Market Highlights", trailing: "View Market"),
                           const SizedBox(height: 12),
-                          _buildMarketCard(data["marketItem"],isDark),
+                          _buildpartieHeader(
+                            "Fish Type Distribution",
+                            subtitle: "Last 7 days",
+                          ),
+                          const SizedBox(height: 12),
+                          _buildFishDistribution(data, isDark),
+                          const SizedBox(height: 12,),
+                          _buildpartieHeader(
+                            "Batch Status",
+                            subtitle: "Last 7 days",
+                          ),
+                          const SizedBox(height: 12),
+                          _buildDonutChart(data),
+                          // _buildMarketCard(data["marketItem"],isDark),
                           const SizedBox(height: 100), // Space for navbar
                         ],
                       ),
@@ -83,7 +97,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildHeader(String name,bool isDark) {
+  Widget _buildHeader(Map<String, dynamic> data,bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -98,15 +112,20 @@ class _HomePageState extends State<HomePage> {
             children: [
               CircleAvatar(
                 radius: 22,
-                backgroundColor:isDark?Colors.white10: const Color(0xFFE3F2FD),
-                child: const Icon(Icons.person, color: Color(0xFF013D73)),
+                backgroundColor: isDark ? Colors.white10 : const Color(0xFFE3F2FD),
+                backgroundImage: data["profilePicture"] != null
+                    ? NetworkImage(data["profilePicture"])
+                    : null,
+                child: data["profilePicture"] == null
+                    ? Icon(Icons.person, color: Colors.grey)
+                    : null,
               ),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Welcome back,", style: TextStyle(color:isDark?Colors.white70: Colors.grey, fontSize: 13)),
-                  Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF011A33))),
+                  Text(data["userName"], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF011A33))),
                 ],
               ),
             ],
@@ -129,7 +148,254 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+//WIDGET DE DENOTE
+  Widget _buildDonutChart(Map<String, dynamic> user) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // ─── Cercle donut ───────────────────────────
+          SizedBox(
+            height: 150,
+            width: 150,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                PieChart(
+                  PieChartData(
+                    sectionsSpace: 3,
+                    centerSpaceRadius: 45,
+                    sections: [
+                      PieChartSectionData(
+                        value: (user["batch_approved"] as num).toDouble(),
+                        color: const Color(0xFF0F6E56),
+                        radius: 28,
+                        showTitle: false,
+                      ),
+                      PieChartSectionData(
+                        value: (user["batch_expired"] as num).toDouble(),
+                        color: const Color(0xFF888780),
+                        radius: 28,
+                        showTitle: false,
+                      ),
+                      PieChartSectionData(
+                        value: (user["batch_pending"] as num).toDouble(),
+                        color: const Color(0xFFEF9F27),
+                        radius: 28,
+                        showTitle: false,
+                      ),
+                      PieChartSectionData(
+                        value: (user["batch_rejected"] as num).toDouble(),
+                        color: const Color(0xFFE24B4A),
+                        radius: 28,
+                        showTitle: false,
+                      ),
+                    ],
+                  ),
+                ),
+                // Texte au centre
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      user["batch"],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "TOTALLEDGER",
+                      style: TextStyle(
+                        fontSize: 7,
+                        color: Colors.grey[500],
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 20),
+          // ─── Légende ────────────────────────────────
+          Expanded(
+            child: Column(
+              children: [
+                _buildLegendItem(
+                  color: const Color(0xFF0F6E56),
+                  label: "Approved",
+                  percent: user["approved_label"],
+                ),
+                _buildLegendItem(
+                  color: const Color(0xFF888780),
+                  label: "Expired",
+                  percent: user["expired_label"],
+                ),
+                _buildLegendItem(
+                  color: const Color(0xFFEF9F27),
+                  label: "Pending",
+                  percent: user["pending_label"],
+                ),
+                _buildLegendItem(
+                  color: const Color(0xFFE24B4A),
+                  label: "Rejected",
+                  percent: user["rejected_label"],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
+  // ─── Item de légende ────────────────────────────────────
+  Widget _buildLegendItem({
+    required Color color,
+    required String label,
+    required String percent,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 10, height: 10,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 13),
+            ),
+          ),
+          Text(
+            percent,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Distribution par type de poisson ───────────────────
+  Widget _buildFishDistribution(
+      Map<String, dynamic> user, bool isDark) {
+    final List<Map<String, dynamic>> fishData = [
+      {
+        "name": "SARDINE",
+        "pct": (user["sardine_pct"] as num).toDouble(),
+        "label": user["sardine_label"],
+        "color": const Color(0xFF0F6E56),
+      },
+      {
+        "name": "SALMON",
+        "pct": (user["salmon_pct"] as num).toDouble(),
+        "label": user["salmon_label"],
+        "color": const Color(0xFF0F6E56),
+      },
+      {
+        "name": "TUNA",
+        "pct": (user["tuna_pct"] as num).toDouble(),
+        "label": user["tuna_label"],
+        "color": const Color(0xFF888780),
+      },
+      {
+        "name": "SEA BASS",
+        "pct": (user["seabass_pct"] as num).toDouble(),
+        "label": user["seabass_label"],
+        "color": const Color(0xFFE24B4A),
+      },
+      {
+        "name": "OTHER",
+        "pct": (user["other_pct"] as num).toDouble(),
+        "label": user["other_label"],
+        "color": const Color(0xFF888780),
+      },
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: fishData.map((fish) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      fish["name"],
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    Text(
+                      fish["label"],
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: LinearProgressIndicator(
+                    value: fish["pct"] / 100,
+                    minHeight: 6,
+                    backgroundColor: isDark
+                        ? Colors.white10
+                        : Colors.grey[200],
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      fish["color"],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+  //---------------END OF WIDGET DENOT-----------------
   Widget _buildAddBatchCard() {
     return GestureDetector(
       onTap: () {
@@ -178,12 +444,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildQuickActions(bool isDark) {
-    return Row(
-      children: [
-        // Expanded(child: _buildActionItem(Icons.anchor, "Register Arrival")),
-        // const SizedBox(width: 16),
-        Expanded(
-          child: InkWell(
+    return Container(
+      child:
+           InkWell(
             onTap: () {
               Navigator.push(
                 context,
@@ -194,8 +457,6 @@ class _HomePageState extends State<HomePage> {
             },
             child: _buildActionItem(Icons.list_alt, "My Batches"),
           ),
-        )
-      ],
     );
   }
 
@@ -207,6 +468,7 @@ class _HomePageState extends State<HomePage> {
           builder: (context) => BatchDetailspage(batch: BatchItem(fishName: "Sardine", quantity: 45.5, date: "Oct 24, 05:30 AM", pricePerKg: 320.50, total: 1370.50, status: "APPROVED",)),
         ));
     },child: Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10)]),
       child: Column(
@@ -414,5 +676,29 @@ class _HomePageState extends State<HomePage> {
 
   Widget _navIcon(IconData icon, bool isActive) {
     return Icon(icon, color: isActive ? const Color(0xFF013D73) : Colors.grey.shade400, size: 28);
+  }
+  Widget _buildpartieHeader(String title, {String? subtitle}) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: Color(0xFF001E40),
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+        ),
+        if (subtitle != null) ...[
+          const SizedBox(width: 6),
+          Text(
+            "($subtitle)",
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ],
+    );
   }
 }

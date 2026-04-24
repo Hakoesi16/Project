@@ -39,7 +39,7 @@ class AuthCubit extends Cubit<AuthState> {
     await storage.delete(key: "token");
     await storage.delete(key: "role");
   }
-  // --- LOGIN GOOGLE ---
+  // --- LOGIN GOOGLE+API ---
   Future<void> signInWithGoogle() async {
     try {
       emit(AuthLoading());
@@ -90,7 +90,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // --- LOGIN FACEBOOK ---
+  // --- LOGIN FACEBOOK+API ---
   Future<void> signInWithFacebook() async {
     try {
       emit(AuthLoading());
@@ -123,7 +123,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // --- LOGIN CLASSIQUE ---
+  // --- LOGIN CLASSIQUE+API ---
   Future<void> login(String email, String password) async {
     try {
       emit(AuthLoading());
@@ -147,7 +147,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
-  // --- INSCRIPTION ---
+  // --- INSCRIPTION+API ---
   Future<void> registerUser(String email, String password) async {
     try {
       emit(AuthLoading());
@@ -174,48 +174,50 @@ class AuthCubit extends Cubit<AuthState> {
 
   // --- PROFIL ---
 
-  Future<void> fetchProfile() async {
-    emit(ProfileLoaded({
-      "name": "Captain Ahmed",
-      "email": "ahmed@mail.com",
-      "boatName": "Sea Explorer",
-      "registration": "MAR-9999",
-      "homePort": "Oran",
-      "licenseExpiry": "2026",
-    }));
-  }
   // Future<void> fetchProfile() async {
-  //   try {
-  //     emit(AuthLoading());
-  //     String? token = await _getToken();
-  //     if (token == null) {
-  //       emit(AuthError("No token found"));
-  //       return;
-  //     }
-  //     final response = await http.get(
-  //       Uri.parse("$_baseUrl/auth/profile-fishmen"),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Authorization": "Bearer $token",
-  //         "ngrok-skip-browser-warning": "true",
-  //       },
-  //     );
-  //
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //       emit(ProfileLoaded(data));
-  //     } else {
-  //       emit(ProfileError("Failed to load profile"));
-  //     }
-  //   } catch (e) {
-  //     emit(ProfileError(e.toString()));
-  //   }
+  //   emit(ProfileLoaded({
+  //     "name": "Captain Ahmed",
+  //     "email": "ahmed@mail.com",
+  //     "boatName": "Sea Explorer",
+  //     "registration": "MAR-9999",
+  //     "homePort": "Oran",
+  //     "licenseExpiry": "2026",
+  //   }));
   // }
 
 
-  // --- UPDATE PROFIL ---
+  // --- PROFIL FISHERMAN+API ---
+  Future<void> fetchProfile() async {
+    try {
+      emit(AuthLoading());
+      String? token = await _getToken();
+      if (token == null) {
+        emit(AuthError("No token found"));
+        return;
+      }
+      final response = await http.get(
+        Uri.parse("$_baseUrl/auth/get-profile-fishmen"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "ngrok-skip-browser-warning": "true",
+        },
+      );
 
-  //edit profil
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        emit(ProfileLoaded(data));
+      } else {
+        emit(ProfileError("Failed to load profile"));
+      }
+    } catch (e) {
+      emit(ProfileError(e.toString()));
+    }
+  }
+
+
+
+  //Edit profil FISHERMAN+API
   Future<void> updateProfile({
     required String name,
     required String phone,
@@ -233,7 +235,7 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       final response = await http.put(
-        Uri.parse("$_baseUrl/auth/update-profile"),
+        Uri.parse("$_baseUrl/auth/get-Edit-profile-fishmen"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -257,7 +259,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(ProfileError(e.toString()));
     }
   }
-  // --- COMPLETE SETUP ---
+  // --- COMPLETE SETUP+API ---
   Future<void> submitSetup({
     required String fullName,
     required String nationalId,
@@ -271,6 +273,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String expiryDate,
     File? fishingLicense,
     File? boatRegistration,
+    File? Idcard,
   }) async {
     try {
       emit(SetupLoading());
@@ -302,6 +305,9 @@ class AuthCubit extends Cubit<AuthState> {
       if (boatRegistration != null) {
         request.files.add(await http.MultipartFile.fromPath('boatRegistration', boatRegistration.path));
       }
+      if (Idcard != null) {
+        request.files.add(await http.MultipartFile.fromPath('Id-Card', Idcard.path));
+      }
 
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
@@ -316,7 +322,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // --- LOGOUT ---
+  // --- LOGOUT+api ---
   Future<void> logout() async {
     try {
       String? token = await _getToken();
@@ -415,12 +421,12 @@ class AuthCubit extends Cubit<AuthState> {
       emit(ProfileError(e.toString()));
     }
   }
-  // --- EMAIL & CODE ---
+  // --- EMAIL & CODE +API---
   Future<void> sendEmail(String email) async {
     try {
       emit(AuthLoading());
       final response = await http.post(
-        Uri.parse("$_baseUrl/api/send-email"),
+        Uri.parse("$_baseUrl/auth/send-email-fishmen"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email}),
       );
@@ -578,36 +584,52 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
-
-
-// home page
+  // --- HOME DATA FISHERMAN ---
   Future<void> fetchHomeData() async {
     try {
       emit(AuthLoading());
-
-      // Simulation d'un délai réseau
+      // String? token = await _getToken();
+      // if (token == null) {
+      //   emit(AuthError("No token found"));
+      //   return;
+      // }
       await Future.delayed(const Duration(seconds: 1));
-
-      // ✅ Données simulées directement dans le code
       emit(HomeDataLoaded({
-        "userName": "Ali Ahmed",
-        "earnings": "45,230 DZD",
-        "earningsTrend": "+12% this month",
-        "weight": "1,240 kg",
-        "weightTrend": "+5% this month",
-        "pendingBatches": 3,
-        "approvedBatches": 12,
-        "rejectedBatches": 2,
-        "expiredBatches": 1,
-        "marketItem": {
-          "name": "Sardine",
-          "grade": "Grade A",
-          "demand": "High Demand",
-          "price": "320 DZD/kg",
-          "tag": "IN SEASON",
-        },
-      }));
+        "userName":        "Capt. Ahmed",
+        "earnings":        "12,450.00 DA",
+        "earningsTrend":   "8.4%",
+        "weight":          "4,250 kg",
+        "weightTrend":     "5.2%",
+        "pendingBatches":  24,
+        "approvedBatches": 85,
+        "rejectedBatches": 12,
+        "expiredBatches":  7,
 
+        // ✅ Donut — valeurs numériques
+        "batch_approved":  72.0,
+        "batch_expired":   18.0,
+        "batch_pending":    4.0,
+        "batch_rejected":   6.0,
+
+        // ✅ Donut — labels String
+        "approved_label": "72%",
+        "expired_label":  "18%",
+        "pending_label":   "4%",
+        "rejected_label":  "6%",
+        "batch":          "105",   // ← nombre au centre
+
+        // ✅ Fish distribution
+        "sardine_pct":    42.5,
+        "salmon_pct":     28.1,
+        "tuna_pct":       15.4,
+        "seabass_pct":     9.2,
+        "other_pct":       4.8,
+        "sardine_label":  "42.5%",
+        "salmon_label":   "28.1%",
+        "tuna_label":     "15.4%",
+        "seabass_label":   "9.2%",
+        "other_label":     "4.8%",
+      }));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -683,6 +705,7 @@ class AuthCubit extends Cubit<AuthState> {
 
 
   //Fill information of Consumer
+  //SUBMIT SETUP CONSUMER
   Future<void> submitSetupCons({
     required String fullNameCons,
     required String nationalIdCons,
@@ -724,6 +747,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
+  // --- UPDATE PASSWORD FISHERMAN+API ---
   Future<void> updatePassword({
     required String password, required String currentPassword,
   }) async {
@@ -735,7 +759,7 @@ class AuthCubit extends Cubit<AuthState> {
         return;
       }
       final response = await http.put(
-        Uri.parse("$_baseUrl/auth/update-profile"),
+        Uri.parse("$_baseUrl/auth/change-password"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -758,7 +782,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
 
-
+// --- UPDATE PASSWORD VET ---
   Future<void> updatePasswordVit({
     required String passwordVit,
     required String currentpasswordVit,
@@ -793,6 +817,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(ProfileError(e.toString()));
     }
   }
+  // --- UPDATE PASSWORD CONSUMER ---
   Future<void> updatePasswordCons({
     required String passwordCons,
     required String currentpasswordCons,
@@ -902,11 +927,12 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
+  // --- VÉRIFICATION CODE+API ---
   Future<void> verifyCode(String email, String code) async {
     try {
       emit(AuthLoading());
       final response = await http.post(
-          Uri.parse("$_baseUrl/auth/code_verification"),
+          Uri.parse("$_baseUrl/auth/verify-code-fishmen"),
           headers:
           {
             "Content-Type": "application/json",
@@ -923,6 +949,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     }
     }
+    // --- ADMIN AUTHENTICATION ---
   Future<void> submitAdmin({
     required String emailvet,
     required String passwordvet,
@@ -949,6 +976,55 @@ class AuthCubit extends Cubit<AuthState> {
         emit(VetCreatedSuccess());
       } else {
         emit(AuthError("Setup failed: ${response.body}"));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+  //---FETCH ADMIN---
+  Future<void> fetchadmin() async {
+  try {
+    emit(AuthLoading());
+    String? token = await _getToken();
+    if (token == null) {
+      emit(AuthError("No token found"));
+      return;
+    }
+    // Simulation d'un appel API
+    await Future.delayed(const Duration(seconds: 1));
+    final response = await http.get(
+      Uri.parse("https://yourbackend.com/api/profile"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        "ngrok-skip-browser-warning": "true",
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      emit(AdminLoaded(data));
+    } else {
+      emit(AuthError("Failed to load Admin page"));
+    }
+  } catch (e) {
+    emit(AuthError(e.toString()));
+  }
+}
+//---Reset password+API---
+  Future<void> resetPassword(String email) async {
+    try {
+      emit(AuthLoading());
+
+      final response = await http.post(
+        Uri.parse("$_baseUrl/auth/reset-password-fishmen"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"email": email}),
+      );
+
+      if (response.statusCode == 200) {
+        emit(ResetPasswordEmailSent());
+      } else {
+        emit(AuthError("Failed to send reset email"));
       }
     } catch (e) {
       emit(AuthError(e.toString()));

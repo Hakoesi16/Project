@@ -60,3 +60,10 @@ class RoleSelectedSuccess extends AuthState {
   RoleSelectedSuccess(this.role);
 }
 class VetCreatedSuccess extends AuthState {}
+class AdminLoaded extends AuthState {
+  final Map<String, dynamic> user;
+  AdminLoaded(this.user);
+  @override
+  List<Object?> get props => [user];
+}
+class ResetPasswordEmailSent extends AuthState {}
