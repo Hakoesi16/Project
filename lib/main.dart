@@ -15,6 +15,7 @@ import 'admin/addvet.dart';
 import 'consumer/setupconsumer.dart';
 import 'consumer/batchDetails.dart';
 import 'consumer/batchReport.dart';
+import 'package:projetsndcp/vitirinaire/VetInspectionPage.dart';
 
 void main() {
   runApp(
