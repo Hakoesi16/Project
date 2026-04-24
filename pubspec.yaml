@@ -23,6 +23,13 @@ dependencies:
   geolocator: ^14.0.2
   percent_indicator: ^4.2.3
   timelines_plus: ^2.0.0
+  url_launcher: ^6.3.2
+  flutter_svg: ^2.2.4
+  share_plus: ^12.0.2
+  latlong2: ^0.9.1
+  dotted_border: ^3.1.0
+  shared_preferences: ^2.5.5
+  flutter_dotenv: ^6.0.0
 
 
 dev_dependencies:
@@ -43,6 +50,13 @@ flutter:
      - images/fish2.png
      - images/fish3.jpg
      - images/grey.jpg
+     - images/boat.svg
+     - images/vitirinaire.svg
+     - images/consumer.svg
+     - images/map.png
+     - images/logoPolice.png
+     - .env
+     - images/mapLocation.jpg
 
 
   fonts:

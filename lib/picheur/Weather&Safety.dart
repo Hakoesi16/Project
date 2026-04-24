@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:projetsndcp/picheur/profil.dart';
 import 'dart:convert';
-import 'package:projetsndcp/picheur/sosPage.dart';
 import '../signin/cubit/authcubit.dart';
 import 'homepage.dart';
 import 'myBatches.dart';
@@ -34,36 +34,67 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
       }
 
       Position position = await Geolocator.getCurrentPosition();
-      
+
       final response = await http.get(
-        Uri.parse("https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=00267594af2060e6f2b24e9db3d63478&units=metric"),
+        Uri.parse(
+          "https://api.openweathermap.org/data/2.5/weather?lat=${position.latitude}&lon=${position.longitude}&appid=00267594af2060e6f2b24e9db3d63478&units=metric",
+        ),
       );
-      
+
       final response1 = await http.get(
-        Uri.parse("https://marine-api.open-meteo.com/v1/marine?latitude=${position.latitude}&longitude=${position.longitude}&current=wave_height"),
+        Uri.parse(
+          "https://marine-api.open-meteo.com/v1/marine?latitude=${position.latitude}&longitude=${position.longitude}&current=wave_height",
+        ),
       );
 
       final response2 = await http.get(
-        Uri.parse("https://api.open-meteo.com/v1/forecast?latitude=${position.latitude}&longitude=${position.longitude}&daily=sunrise,sunset&timezone=auto"),
+        Uri.parse(
+          "https://api.open-meteo.com/v1/forecast?latitude=${position.latitude}&longitude=${position.longitude}&daily=sunrise,sunset&timezone=auto",
+        ),
       );
 
       final response3 = await http.get(
-        Uri.parse("https://api.stormglass.io/v2/tide/extremes/point?lat=${position.latitude}&&lng=${position.longitude}&type=high,low"),
+        Uri.parse(
+          "https://api.stormglass.io/v2/tide/extremes/point?lat=${position.latitude}&&lng=${position.longitude}&type=high,low",
+        ),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final data1 = jsonDecode(response1.body);
-        final data2 = jsonDecode(response2.body);
-        final data3 = jsonDecode(response3.body);
-
         setState(() {
           _temp = data["main"]["temp"];
           _wind = data["wind"]["speed"];
           _visibility = (data["visibility"] as int) / 1000;
+          _lastUpdated = DateTime.now().toString();
+          _weatherLoaded = true;
+        });
+      }
+
+      if (response1.statusCode == 200) {
+        final data1 = jsonDecode(response1.body);
+
+        setState(() {
           _waveHeight = data1["current"]["wave_height"];
+          _lastUpdated = DateTime.now().toString();
+          _weatherLoaded = true;
+        });
+      }
+
+      if (response2.statusCode == 200) {
+        final data2 = jsonDecode(response2.body);
+
+        setState(() {
           _sunrise = data2["daily"]["sunrise"][0];
           _sunset = data2["daily"]["sunset"][0];
+          _lastUpdated = DateTime.now().toString();
+          _weatherLoaded = true;
+        });
+      }
+
+      if (response3.statusCode == 200) {
+        final data3 = jsonDecode(response3.body);
+
+        setState(() {
           _highTide = data3["data"]?[0]?["high"]?.toString();
           _lowTide = data3["data"]?[0]?["low"]?.toString();
           _lastUpdated = DateTime.now().toString();
@@ -82,8 +113,16 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
     final difference = DateTime.now().difference(lastTime);
 
     if (difference.inMinutes < 1) return "Updated just now";
-    if (difference.inMinutes < 60) return "Updated ${difference.inMinutes}m ago";
+    if (difference.inMinutes < 60)
+      return "Updated ${difference.inMinutes}m ago";
     return "Updated ${difference.inHours}h ago";
+  }
+
+  Future<void> _makeCall() async {
+    final url = Uri.parse("tel:1548");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    }
   }
 
   @override
@@ -104,7 +143,11 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
         ),
         title: const Text(
           "Weather & Safety",
-          style: TextStyle(color: Color(0xFF0F172A), fontWeight: FontWeight.w700, fontSize: 24),
+          style: TextStyle(
+            color: Color(0xFF0F172A),
+            fontWeight: FontWeight.w700,
+            fontSize: 24,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -117,40 +160,95 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("CURRENT WEATHER", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
-                Text(_getUpdatedTime(), style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
+                const Text(
+                  "CURRENT WEATHER",
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                ),
+                Text(
+                  _getUpdatedTime(),
+                  style: const TextStyle(
+                    color: Color(0xFF64748B),
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 20),
             Row(
               children: [
-                Expanded(child: WeatherInfo(title: "temp", value: "${_temp ?? "--"}°C", icon1: Icons.thermostat)),
+                Expanded(
+                  child: WeatherInfo(
+                    title: "temp",
+                    value: "${_temp ?? "--"}°C",
+                    icon1: Icons.thermostat,
+                  ),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: WeatherInfo(title: "wind", value: "${_wind ?? "--"}m/s", icon1: Icons.air_outlined)),
+                Expanded(
+                  child: WeatherInfo(
+                    title: "wind",
+                    value: "${_wind ?? "--"}m/s",
+                    icon1: Icons.air_outlined,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 12),
             Row(
               children: [
-                Expanded(child: WeatherInfo(title: "waves", value: "${_waveHeight ?? "--"}m", icon1: Icons.waves)),
+                Expanded(
+                  child: WeatherInfo(
+                    title: "waves",
+                    value: "${_waveHeight ?? "--"}m",
+                    icon1: Icons.waves,
+                  ),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: WeatherInfo(title: "visibility", value: "${_visibility ?? "--"}km", icon1: Icons.visibility)),
+                Expanded(
+                  child: WeatherInfo(
+                    title: "visibility",
+                    value: "${_visibility ?? "--"}km",
+                    icon1: Icons.visibility,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 20),
-            const Text("Navigation Map", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22)),
+            const Text(
+              "Navigation Map",
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
+            ),
             const SizedBox(height: 336),
-            _buildFuelIndicator(),
             const SizedBox(height: 20),
             _buildSOSButtons(),
             const SizedBox(height: 20),
             Row(
               children: [
-                Expanded(child: cardInfo(const Color(0xFF033F78), Icons.waves_outlined, "TIDE TIME", "High", _formatTime(_highTide), "Low", _formatTime(_lowTide))),
+                Expanded(
+                  child: cardInfo(
+                    const Color(0xFF033F78),
+                    Icons.waves_outlined,
+                    "TIDE TIME",
+                    "High",
+                    _formatTime(_highTide),
+                    "Low",
+                    _formatTime(_lowTide),
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Expanded(child: cardInfo(const Color(0xFFF97316), Icons.wb_sunny_outlined, "DAILY LIGHT", "RISE", _formatTime(_sunrise), "SET", _formatTime(_sunset))),
+                Expanded(
+                  child: cardInfo(
+                    const Color(0xFFF97316),
+                    Icons.wb_sunny_outlined,
+                    "DAILY LIGHT",
+                    "RISE",
+                    _formatTime(_sunrise),
+                    "SET",
+                    _formatTime(_sunset),
+                  ),
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -163,67 +261,40 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
     return time.substring(11, 16);
   }
 
-  Widget _buildFuelIndicator() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(13),
-        border: Border.all(color: const Color(0xFFE2E8F0), width: 0.5),
-      ),
-      child: Column(
-        children: [
-          const Row(
-            children: [
-              Icon(Icons.local_gas_station_outlined, color: Color(0xFF94A3B8)),
-              SizedBox(width: 5),
-              Text("Fuel level", style: TextStyle(color: Color(0xFF94A3B8), fontWeight: FontWeight.w700)),
-              Spacer(),
-              Text("75%", style: TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          LinearPercentIndicator(
-            percent: 0.75,
-            lineHeight: 10,
-            backgroundColor: const Color(0xFFF1F5F9),
-            progressColor: const Color(0xFF033F78),
-            barRadius: const Radius.circular(5),
-            padding: EdgeInsets.zero,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSOSButtons() {
     return Row(
       children: [
         Expanded(
           child: ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>SosPage())),
+            onPressed: _makeCall,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFDC2626),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(13),
+              ),
             ),
             child: const Column(
               children: [
-                Text("SOS", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(
+                  "SOS",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 Text("EMERGENCY SOS", style: TextStyle(fontSize: 10)),
               ],
             ),
           ),
         ),
         const SizedBox(width: 10),
-        Column(
-          children: [
-            _actionBtn(Icons.navigation_outlined, "Navigate to\nPort", const Color(0xFF0F172A), Colors.white),
-            const SizedBox(height: 10),
-            _actionBtn(Icons.bookmark_border_outlined, "Save\nLocation", Colors.white, const Color(0xFF1E293B)),
-          ],
-        )
+        _actionBtn(
+            Icons.navigation_outlined,
+            "Navigate to\nPort",
+            const Color(0xFF0F172A),
+            Colors.white,
+          ), 
+        
+        
       ],
     );
   }
@@ -235,7 +306,13 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(35),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 5))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -244,7 +321,9 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage()),
+                MaterialPageRoute(
+                  builder: (context) => HomePage(),
+                ),
               );
             },
             child: _navIcon(Icons.home, false),
@@ -253,7 +332,9 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyBatchesPage()),
+                MaterialPageRoute(
+                  builder: (context) => MyBatchesPage(),
+                ),
               );
             },
             child: _navIcon(Icons.anchor, false),
@@ -262,7 +343,9 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => WeatherSafetypage( )),
+                MaterialPageRoute(
+                  builder: (context) => WeatherSafetypage(),
+                ),
               );
             },
             child: _navIcon(Icons.remove_red_eye_outlined, true),
@@ -270,10 +353,11 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
           GestureDetector(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProfilePage(),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(),
+                ),
+              );
             },
             child: _navIcon(Icons.person_outline, false),
           ),
@@ -281,40 +365,54 @@ class _WeatherSafetyState extends State<WeatherSafetypage> {
       ),
     );
   }
+
   Widget _navIcon(IconData icon, bool isActive) {
-    return Icon(icon, color: isActive ? const Color(0xFF013D73) : Colors.grey.shade400, size: 28);
+    return Icon(
+      icon,
+      color: isActive ? const Color(0xFF013D73) : Colors.grey.shade400,
+      size: 28,
+    );
   }
 }
 
-  Widget _actionBtn(IconData icon, String label, Color bg, Color text) {
-    return SizedBox(
-      width: 160,
-      child: ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: bg,
-          foregroundColor: text,
-          padding: const EdgeInsets.all(10),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: const Color(0xFF033F78)),
-            const SizedBox(width: 8),
-            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-          ],
-        ),
+Widget _actionBtn(IconData icon, String label, Color bg, Color text) {
+  return SizedBox(
+    width: 200,
+    height: 56,
+    child: ElevatedButton(
+      onPressed: () {},
+      style: ElevatedButton.styleFrom(
+        backgroundColor: bg,
+        foregroundColor: text,
+        padding: const EdgeInsets.all(10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
       ),
-    );
-  }
-
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: const Color(0xFF033F78)),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
 class WeatherInfo extends StatelessWidget {
   final String title;
   final String value;
   final IconData icon1;
-  const WeatherInfo({super.key, required this.title, required this.value, required this.icon1});
+  const WeatherInfo({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.icon1,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -332,15 +430,28 @@ class WeatherInfo extends StatelessWidget {
             children: [
               Icon(icon1, color: const Color(0xFF033F78), size: 20),
               const SizedBox(width: 6),
-              Text(title, style: const TextStyle(color: Color(0xFF64748B), fontSize: 13)),
+              Text(
+                title,
+                style: const TextStyle(color: Color(0xFF64748B), fontSize: 13),
+              ),
             ],
           ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(value, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-              const Icon(Icons.arrow_forward_ios_outlined, color: Color(0xFFA8A8A8), size: 14),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 18,
+                ),
+              ),
+              const Icon(
+                Icons.arrow_forward_ios_outlined,
+                color: Color(0xFFA8A8A8),
+                size: 14,
+              ),
             ],
           ),
         ],
@@ -349,7 +460,15 @@ class WeatherInfo extends StatelessWidget {
   }
 }
 
-Widget cardInfo(Color color, IconData icon, String title, String i1, String v1, String i2, String v2) {
+Widget cardInfo(
+  Color color,
+  IconData icon,
+  String title,
+  String i1,
+  String v1,
+  String i2,
+  String v2,
+) {
   return Container(
     padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
@@ -363,7 +482,14 @@ Widget cardInfo(Color color, IconData icon, String title, String i1, String v1, 
           children: [
             Icon(icon, color: color, size: 15),
             const SizedBox(width: 6),
-            Text(title, style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.bold, fontSize: 10)),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Color(0xFF64748B),
+                fontWeight: FontWeight.bold,
+                fontSize: 10,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -379,8 +505,14 @@ Widget _rowInfo(String label, String value) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text(label, style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
-      Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+      Text(
+        label,
+        style: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+      ),
+      Text(
+        value,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+      ),
     ],
   );
 }
