@@ -10,7 +10,7 @@ class BatchItem {
   final double? latitude;
   final double? longitude;
   final String? extraInfo;
-  final String? imageUrl;
+  final List<String> pictures;
 
   BatchItem({
     required this.fishName,
@@ -19,7 +19,7 @@ class BatchItem {
     required this.pricePerKg,
     required this.total,
     required this.status,
-    this.imageUrl = "images/grey.jpg",
+    this.pictures = const ["images/grey.jpg","images/fish1.png"],
     this.category,
     this.catchMethod,
     this.latitude,

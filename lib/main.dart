@@ -4,6 +4,7 @@ import 'package:projetsndcp/picheur/Weather&Safety.dart';
 import 'package:projetsndcp/picheur/addBatchPage.dart';
 import 'package:projetsndcp/picheur/homepage.dart';
 import 'package:projetsndcp/picheur/interfacepage.dart';
+import 'package:projetsndcp/picheur/myBatches.dart';
 import 'package:projetsndcp/picheur/profil.dart';
 import 'package:projetsndcp/signin/cubit/authcubit.dart';
 import 'package:projetsndcp/signin/cubit/themecubit.dart';
@@ -11,10 +12,11 @@ import 'package:projetsndcp/signin/signup/fivepage.dart';
 import 'package:projetsndcp/signin/signup/selectrole.dart';
 import 'package:projetsndcp/signin/signup/splage.dart';
 import 'package:projetsndcp/vitirinaire/interfacevit.dart';
-import 'package:projetsndcp/picheur/sosPage.dart';
 import 'admin/addvet.dart';
 import 'consumer/setupconsumer.dart';
 import 'consumer/batchDetails.dart';
+import 'consumer/batchReport.dart';
+import 'package:projetsndcp/vitirinaire/VetInspectionPage.dart';
 
 void main() {
   runApp(
