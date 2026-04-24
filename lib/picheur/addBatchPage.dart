@@ -190,6 +190,8 @@ class _AddBatchPageState extends State<Addbatchpage> {
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
+        shadowColor: Colors.black,
+        elevation: 3,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),

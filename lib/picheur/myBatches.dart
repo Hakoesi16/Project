@@ -69,8 +69,8 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
-        shadowColor: Color(0x40013D73),
-        elevation: 1,
+        shadowColor: Colors.black,
+        elevation: 3,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 15),
@@ -96,6 +96,7 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
             ),
           ),
         ],
+        
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
