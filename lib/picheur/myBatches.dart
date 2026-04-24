@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projetsndcp/picheur/batchDetailsPage.dart';
 import 'package:projetsndcp/picheur/objects.dart';
 import 'package:projetsndcp/picheur/profil.dart';
+import 'package:projetsndcp/picheur/addBatchPage.dart';
 import 'Weather&Safety.dart';
 import 'homepage.dart';
 
@@ -16,27 +17,34 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
   String _selectedFilter = "All";
+  bool _isLoading = true;
+  List<BatchItem> _batches = [];
 
-  final List<BatchItem> _batches = [
-    BatchItem(
-      fishName: "Sardine",
-      quantity: 45.5,
-      date: "Oct 24, 05:30 AM",
-      pricePerKg: 320.50,
-      total: 1370.50,
-      status: "APPROVED",
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadBatches();
+  }
+
+  void _loadBatches() {
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   List<BatchItem> get _filteredBatches => _batches.where((batch) {
-    final matchFilter =
-        _selectedFilter == "All" ||
-            batch.status == _selectedFilter.toUpperCase();
-    final matchSearch = batch.fishName.toLowerCase().contains(
-      _searchQuery.toLowerCase(),
-    );
-    return matchFilter && matchSearch;
+    return _matchesFilter(batch) && _matchesSearch(batch);
   }).toList();
+
+  bool _matchesFilter(BatchItem batch) {
+    return _selectedFilter == "All" ||
+        batch.status.toLowerCase() == _selectedFilter.toLowerCase();
+  }
+
+  bool _matchesSearch(BatchItem batch) {
+    if (_searchQuery.isEmpty) return true;
+    return batch.fishName.toLowerCase().contains(_searchQuery.toLowerCase());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,114 +72,140 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
         shadowColor: Color(0x40013D73),
         elevation: 1,
         actions: [
-        //   Container(
-        //     width: 30,
-        //     height: 30,
-        //     margin: EdgeInsets.only(right: 16),
-        //     padding: EdgeInsets.only(right: 11, bottom: 10),
-        //     decoration: BoxDecoration(
-        //       color: Color(0x1A0F68E6),
-        //       shape: BoxShape.circle,
-        //     ),
-        //     child: IconButton(
-        //       icon: Icon(Icons.add, color: Color(0xFF023E77)),
-        //       onPressed: () {},
-        //       //alignment: AlignmentGeometry.center,
-        //     ),
-        //   ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.add, color: Color(0xFF023E77)),
-            padding: EdgeInsets.only(right: 16),
-            
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _searchController,
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: "Search batches...",
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(13),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            const Block(),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: ["All", "Pending", "Approved", "Rejected"]
-                    .map(
-                      (filter) => GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedFilter = filter;
-                          });
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(right: 8),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _selectedFilter == filter
-                                ? Color(0xFF023E77)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            filter,
-                            style: TextStyle(
-                              color: _selectedFilter == filter
-                                  ? Colors.white
-                                  : Color(0xFF475569),
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-            Block(),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: _filteredBatches.length,
-              itemBuilder: (context, index) => InkWell(
+          Padding(
+            padding: const EdgeInsets.only(right: 15),
+            child: Material(
+              color: const Color(0x1A0F68E6),
+              borderRadius: BorderRadius.circular(50),
+              child: InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BatchDetailspage(batch: _filteredBatches[index]),
+                      builder: (context) => Addbatchpage(),
                     ),
                   );
                 },
-                borderRadius: BorderRadius.circular(12),
-                child: BatchCard(batch: _filteredBatches[index]),
+                borderRadius: BorderRadius.circular(50),
+                child: const SizedBox(
+                  width: 42,
+                  height: 42,
+                  child: Icon(Icons.add, color: Color(0xFF023E77)),
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _searchController,
+                    onChanged: _updateSearchQuery,
+                    decoration: InputDecoration(
+                      hintText: "Search batches...",
+                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                  const Block(),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children:
+                          ["All", "Pending", "Approved", "Rejected", "Expired"]
+                              .map(
+                                (filter) => GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedFilter = filter;
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(right: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _selectedFilter == filter
+                                          ? const Color(0xFF023E77)
+                                          : Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      filter,
+                                      style: TextStyle(
+                                        color: _selectedFilter == filter
+                                            ? Colors.white
+                                            : const Color(0xFF475569),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                    ),
+                  ),
+                  const Block(),
+                  if (_filteredBatches.isEmpty)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        'No batches found for that name.',
+                        style: TextStyle(
+                          color: Color(0xFF475569),
+                          fontSize: 14,
+                        ),
+                      ),
+                    )
+                  else
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _filteredBatches.length,
+                      itemBuilder: (context, index) => InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BatchDetailspage(
+                                batch: _filteredBatches[index],
+                              ),
+                            ),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: BatchCard(_filteredBatches[index]),
+                      ),
+                    ),
+                ],
+              ),
+            ),
       bottomNavigationBar: _buildBottomNavBar(),
     );
+  }
+
+  void _updateSearchQuery(String value) {
+    setState(() {
+      _searchQuery = value;
+    });
   }
 
   Widget _buildBottomNavBar() {
@@ -186,34 +220,45 @@ class _MyBatchesPageState extends State<MyBatchesPage> {
             color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 5),
-          )
+          ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(
-            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomePage())),
+            onPressed: () => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => HomePage()),
+            ),
             icon: _navIcon(Icons.home, false),
           ),
           IconButton(
             onPressed: () {}, // Déjà sur cette page
             icon: _navIcon(Icons.anchor, true),
           ),
-          IconButton(onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => WeatherSafetypage(),
-              ),);
-          }, icon: _navIcon(Icons.remove_red_eye, false)),
-          IconButton(onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ProfilePage(),
-              ),);
-          }, icon: _navIcon(Icons.person, false)),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WeatherSafetypage(),
+                ),
+              );
+            },
+            icon: _navIcon(Icons.remove_red_eye, false),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(),
+                ),
+              );
+            },
+            icon: _navIcon(Icons.person, false),
+          ),
         ],
       ),
     );
@@ -256,149 +301,123 @@ class Block extends StatelessWidget {
 //   });
 // }
 
-class BatchCard extends StatelessWidget {
-  final BatchItem batch;
+Widget BatchCard(BatchItem batch) {
+  Color bgColor;
+  Color textColor;
 
-  const BatchCard({super.key, required this.batch});
+  switch (batch.status) {
+    case "Approved":
+      bgColor = Color(0xFFECFDF5);
+      textColor = Color(0xFF065F46);
 
-  Color _statusColor() {
-    switch (batch.status) {
-      case "APPROVED":
-        return Color(0xFF047857);
-      case "PENDING":
-        return Color(0xFFB45309);
-      case "REJECTED":
-        return Color(0xFFBE123C);
-      default:
-        return Colors.grey;
-    }
+      break;
+    case "Rejected":
+      bgColor = Color(0xFFFFEBEC);
+      textColor = Color(0xFFBD3456);
+
+      break;
+    case "Pending":
+      bgColor = Color(0xFFFEF3C7);
+      textColor = Color(0xFFB45309);
+
+      break;
+    default:
+      bgColor = Color(0xFFE3E3E3);
+      textColor = Color(0xFF475569);
   }
 
-  Color _statusColorCon() {
-    switch (batch.status) {
-      case "APPROVED":
-        return Color(0xFFD1FAE5);
-      case "PENDING":
-        return Color(0xFFFEF3C7);
-      case "REJECTED":
-        return Color(0xFFFFE4E6);
-      default:
-        return Colors.grey;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 12),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              if (batch.imageUrl != null)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    batch.imageUrl!,
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              if (batch.imageUrl != null) SizedBox(width: 12),
-
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      batch.fishName,
-                      style: TextStyle(
-                        fontFamily: "Inter",
-                        color: Color(0xFF0F172A),
-                        fontWeight: FontWeight.w700,
-                        fontSize: 18,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      "${batch.quantity} kg\n${batch.date}",
-                      style: TextStyle(
-                        fontFamily: "Inter",
-                        color: Color(0xFF64748B),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
+  return Container(
+    margin: const EdgeInsets.only(bottom: 12),
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: Colors.grey[200]!),
+    ),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                batch.pictures.isNotEmpty
+                    ? batch.pictures[0]
+                    : "images/grey.jpg",
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
               ),
-
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: _statusColorCon(),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  batch.status,
-                  style: TextStyle(
-                    fontFamily: "Inter",
-                    color: _statusColor(),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12),
-          // Block(),
-          Row(
-            children: [
-              Text(
-                "${batch.pricePerKg} DA/kg",
-                style: TextStyle(
-                  fontFamily: "Inter",
-                  color: Color(0xFF94A3B8),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-              Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Total",
-                    style: TextStyle(
-                      fontFamily: "Inter",
-                      color: Color(0xFF94A3B8),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                    batch.fishName,
+                    style: const TextStyle(
+                      color: Color(0xFF0F172A),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
                   ),
+                  const SizedBox(height: 4),
                   Text(
-                    "${batch.total} DA",
-                    style: TextStyle(
-                      fontFamily: "Inter",
-                      fontWeight: FontWeight.w700,
+                    "${batch.quantity} kg\n${batch.date}",
+                    style: const TextStyle(
+                      color: Color(0xFF64748B),
                       fontSize: 14,
-                      color: Color(0xFF023E77),
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                batch.status,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Text(
+              "${batch.pricePerKg} DA/kg",
+              style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+            ),
+            const Spacer(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const Text(
+                  "Total",
+                  style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                ),
+                Text(
+                  "${batch.total} DA",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Color(0xFF023E77),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }
