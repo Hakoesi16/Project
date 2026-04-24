@@ -30,6 +30,7 @@ class _InfopageState extends State<Infopage> {
   String _selectedvesselType = "Trawler";
   File? _fishingLicenseFile;
   File? _boatRegistrationFile;
+  File? _IdcardFile;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -83,6 +84,7 @@ class _InfopageState extends State<Infopage> {
       expiryDate: _expiryController.text.trim(),
       fishingLicense: _fishingLicenseFile,
       boatRegistration: _boatRegistrationFile,
+      Idcard: _IdcardFile,
     );
   }
 
@@ -167,6 +169,8 @@ class _InfopageState extends State<Infopage> {
                     _buildUploadTile(Icons.description, "Fishing License", _fishingLicenseFile, () => _pickFile(true), isDark),
                     const SizedBox(height: 12),
                     _buildUploadTile(Icons.directions_boat, "Boat Registration", _boatRegistrationFile, () => _pickFile(false), isDark),
+                    const SizedBox(height: 12),
+                    _buildUploadTile(Icons.add_card_outlined, "ID_CARD", _IdcardFile, () => _pickFile(false), isDark),
                   ],
                 ),
                 const SizedBox(height: 30),

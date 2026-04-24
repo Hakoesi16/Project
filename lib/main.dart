@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:projetsndcp/picheur/Weather&Safety.dart';
 import 'package:projetsndcp/picheur/addBatchPage.dart';
+import 'package:projetsndcp/picheur/homepage.dart';
 import 'package:projetsndcp/picheur/interfacepage.dart';
 import 'package:projetsndcp/picheur/myBatches.dart';
 import 'package:projetsndcp/picheur/profil.dart';
@@ -95,7 +96,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const MyBatchesPage(),
+          home: const  HomePage(),
           // RoleSelectionPage()
           // SplashPage(),
           // Fivepage( email: 'hakoben@gmail.com',)
