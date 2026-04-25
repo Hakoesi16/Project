@@ -15,8 +15,8 @@ import 'package:projetsndcp/vitirinaire/interfacevit.dart';
 import 'admin/addvet.dart';
 import 'consumer/setupconsumer.dart';
 import 'consumer/batchDetails.dart';
-import 'consumer/batchReport.dart';
-import 'package:projetsndcp/vitirinaire/VetInspectionPage.dart';
+//import 'consumer/batchReport.dart';
+import 'package:projetsndcp/vitirinaire/batchReportPage.dart';
 
 void main() {
   runApp(
@@ -96,7 +96,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const  HomePage(),
+          home: const BatchReportPage(),
           // RoleSelectionPage()
           // SplashPage(),
           // Fivepage( email: 'hakoben@gmail.com',)

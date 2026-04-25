@@ -11,14 +11,12 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart' as
 import 'package:google_sign_in_android/google_sign_in_android.dart' as google_sign_in_android;
 import 'package:image_picker_android/image_picker_android.dart' as image_picker_android;
 import 'package:path_provider_android/path_provider_android.dart' as path_provider_android;
-import 'package:shared_preferences_android/shared_preferences_android.dart' as shared_preferences_android;
 import 'package:url_launcher_android/url_launcher_android.dart' as url_launcher_android;
 import 'package:geolocator_apple/geolocator_apple.dart' as geolocator_apple;
 import 'package:google_maps_flutter_ios/google_maps_flutter_ios.dart' as google_maps_flutter_ios;
 import 'package:google_sign_in_ios/google_sign_in_ios.dart' as google_sign_in_ios;
 import 'package:image_picker_ios/image_picker_ios.dart' as image_picker_ios;
 import 'package:path_provider_foundation/path_provider_foundation.dart' as path_provider_foundation;
-import 'package:shared_preferences_foundation/shared_preferences_foundation.dart' as shared_preferences_foundation;
 import 'package:url_launcher_ios/url_launcher_ios.dart' as url_launcher_ios;
 import 'package:file_selector_linux/file_selector_linux.dart' as file_selector_linux;
 import 'package:geolocator_linux/geolocator_linux.dart' as geolocator_linux;
@@ -26,7 +24,6 @@ import 'package:image_picker_linux/image_picker_linux.dart' as image_picker_linu
 import 'package:package_info_plus/package_info_plus.dart' as package_info_plus;
 import 'package:path_provider_linux/path_provider_linux.dart' as path_provider_linux;
 import 'package:share_plus/share_plus.dart' as share_plus;
-import 'package:shared_preferences_linux/shared_preferences_linux.dart' as shared_preferences_linux;
 import 'package:url_launcher_linux/url_launcher_linux.dart' as url_launcher_linux;
 import 'package:facebook_auth_desktop/facebook_auth_desktop.dart' as facebook_auth_desktop;
 import 'package:file_selector_macos/file_selector_macos.dart' as file_selector_macos;
@@ -34,7 +31,6 @@ import 'package:geolocator_apple/geolocator_apple.dart' as geolocator_apple;
 import 'package:google_sign_in_ios/google_sign_in_ios.dart' as google_sign_in_ios;
 import 'package:image_picker_macos/image_picker_macos.dart' as image_picker_macos;
 import 'package:path_provider_foundation/path_provider_foundation.dart' as path_provider_foundation;
-import 'package:shared_preferences_foundation/shared_preferences_foundation.dart' as shared_preferences_foundation;
 import 'package:url_launcher_macos/url_launcher_macos.dart' as url_launcher_macos;
 import 'package:file_selector_windows/file_selector_windows.dart' as file_selector_windows;
 import 'package:flutter_secure_storage_windows/flutter_secure_storage_windows.dart' as flutter_secure_storage_windows;
@@ -42,7 +38,6 @@ import 'package:image_picker_windows/image_picker_windows.dart' as image_picker_
 import 'package:package_info_plus/package_info_plus.dart' as package_info_plus;
 import 'package:path_provider_windows/path_provider_windows.dart' as path_provider_windows;
 import 'package:share_plus/share_plus.dart' as share_plus;
-import 'package:shared_preferences_windows/shared_preferences_windows.dart' as shared_preferences_windows;
 import 'package:url_launcher_windows/url_launcher_windows.dart' as url_launcher_windows;
 
 @pragma('vm:entry-point')
@@ -92,15 +87,6 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`path_provider_android` threw an error: $err. '
-          'The app may not function as expected until you remove this plugin from pubspec.yaml'
-        );
-      }
-
-      try {
-        shared_preferences_android.SharedPreferencesAndroid.registerWith();
-      } catch (err) {
-        print(
-          '`shared_preferences_android` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }
@@ -156,15 +142,6 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`path_provider_foundation` threw an error: $err. '
-          'The app may not function as expected until you remove this plugin from pubspec.yaml'
-        );
-      }
-
-      try {
-        shared_preferences_foundation.SharedPreferencesFoundation.registerWith();
-      } catch (err) {
-        print(
-          '`shared_preferences_foundation` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }
@@ -234,15 +211,6 @@ class _PluginRegistrant {
       }
 
       try {
-        shared_preferences_linux.SharedPreferencesLinux.registerWith();
-      } catch (err) {
-        print(
-          '`shared_preferences_linux` threw an error: $err. '
-          'The app may not function as expected until you remove this plugin from pubspec.yaml'
-        );
-      }
-
-      try {
         url_launcher_linux.UrlLauncherLinux.registerWith();
       } catch (err) {
         print(
@@ -307,15 +275,6 @@ class _PluginRegistrant {
       }
 
       try {
-        shared_preferences_foundation.SharedPreferencesFoundation.registerWith();
-      } catch (err) {
-        print(
-          '`shared_preferences_foundation` threw an error: $err. '
-          'The app may not function as expected until you remove this plugin from pubspec.yaml'
-        );
-      }
-
-      try {
         url_launcher_macos.UrlLauncherMacOS.registerWith();
       } catch (err) {
         print(
@@ -375,15 +334,6 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`share_plus` threw an error: $err. '
-          'The app may not function as expected until you remove this plugin from pubspec.yaml'
-        );
-      }
-
-      try {
-        shared_preferences_windows.SharedPreferencesWindows.registerWith();
-      } catch (err) {
-        print(
-          '`shared_preferences_windows` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }
