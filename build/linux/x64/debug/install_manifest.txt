@@ -29,6 +29,6 @@
 /home/laptop/Project/build/linux/x64/debug/bundle/data/flutter_assets/images/Bahr.png
 /home/laptop/Project/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin
 /home/laptop/Project/build/linux/x64/debug/bundle/data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
-/home/laptop/Project/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
 /home/laptop/Project/build/linux/x64/debug/bundle/data/flutter_assets/shaders/stretch_effect.frag
+/home/laptop/Project/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
 /home/laptop/Project/build/linux/x64/debug/bundle/data/flutter_assets/version.json
