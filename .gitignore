@@ -1,1 +1,39 @@
+# Flutter/Dart
+.dart_tool/
+.build/
+build/
+flutter_assets/
+*.dill
+*.snapshot
+*.lock
+
+# Android
+android/.gradle/
+android/local.properties
+android/.idea/
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Generated.xcconfig
+
+# MacOS
+macos/Pods/
+macos/.symlinks/
+
+# Web
+web/*.dart.js
+web/*.js.map
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Other
+*.log
+.DS_Store
 .env
+
