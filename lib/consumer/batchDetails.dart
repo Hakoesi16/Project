@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:projetsndcp/consumer/batchReportPageC.dart';
 
 class BatchDetails extends StatefulWidget {
   const BatchDetails({super.key});
@@ -28,8 +29,6 @@ class _BatchDetailsState extends State<BatchDetails> {
 
   double get _totalPrice => _quantity * _batch.pricePerKg;
 
-
-
   //
   String _deliveryAddress = "Rue El wiam, Sidi Bel Abbes";
 
@@ -46,15 +45,13 @@ class _BatchDetailsState extends State<BatchDetails> {
           controller: _addressController,
           decoration: InputDecoration(
             hintText: "Enter your address...",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("Cancel",style: TextStyle(color: Colors.black),),
+            child: Text("Cancel", style: TextStyle(color: Colors.black)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -446,7 +443,14 @@ class _BatchDetailsState extends State<BatchDetails> {
 
                   // View Batch Report
                   GestureDetector(
-                    onTap: () => {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BatchReportPage(),
+                        ),
+                      );
+                    },
                     child: Container(
                       padding: EdgeInsets.all(11),
                       decoration: BoxDecoration(
@@ -581,7 +585,11 @@ class _BatchDetailsState extends State<BatchDetails> {
                           ),
                           Text(
                             "Total Price",
-                            style: TextStyle(color: Color(0xFF9C9C9C), fontSize: 15,fontFamily: 'work sanc'),
+                            style: TextStyle(
+                              color: Color(0xFF9C9C9C),
+                              fontSize: 15,
+                              fontFamily: 'work sanc',
+                            ),
                           ),
                         ],
                       ),
@@ -615,7 +623,11 @@ class _BatchDetailsState extends State<BatchDetails> {
                       ),
                       GestureDetector(
                         onTap: _editDeliveryAddress, // ← هنا
-                        child: Icon(Icons.edit_outlined, color: Color(0xFFA2AFC1), size: 24),
+                        child: Icon(
+                          Icons.edit_outlined,
+                          color: Color(0xFFA2AFC1),
+                          size: 24,
+                        ),
                       ),
                     ],
                   ),
@@ -627,7 +639,9 @@ class _BatchDetailsState extends State<BatchDetails> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {print("add");},
+                          onPressed: () {
+                            print("add");
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFFADADAD),
                             foregroundColor: Colors.white,
