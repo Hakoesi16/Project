@@ -1,1 +1,45 @@
+cat > .gitignore << 'EOF'
+# Flutter/Dart
+.dart_tool/
+.build/
+build/
+flutter_assets/
+*.dill
+*.snapshot
+*.lock
+
+# Android
+android/.gradle/
+android/local.properties
+android/.idea/
+android/*.iml
+android/app/*.iml
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+
+# MacOS
+macos/Pods/
+macos/.symlinks/
+
+# Web
+web/*.dart.js
+web/*.js.map
+web/sound/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Other
+*.log
+*.lock
+EOF
 .env
