@@ -17,6 +17,7 @@ import 'consumer/batchDetails.dart';
 import 'consumer/batchReport.dart';
 import 'package:projetsndcp/vitirinaire/VetInspectionPage.dart';
 import 'package:projetsndcp/consumer/myOrderPage.dart';
+import 'package:projetsndcp/consumer/shoppingCartPage.dart';
 
 void main() {
   runApp(
@@ -96,7 +97,8 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const MyOrdersPage(), 
+          home: const ShoppingCartPage(),
+          //MyOrdersPage(), 
           //MyBatchesPage(),
           // RoleSelectionPage()
           // SplashPage(),
