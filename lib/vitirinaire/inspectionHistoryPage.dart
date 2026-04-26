@@ -13,69 +13,20 @@ class _InspectionHistoryPageState extends State<InspectionHistoryPage> {
   // Variables
   List<InspectionItem> _inspections = [];
   bool _isLoading = false;
-  String _selectedPeriod = "LAST 30 DAYS";
-  String _selectedStatus = "ALL";
-  String _selectedFishType = "ALL";
+  String _selectedFilter = "ALL";
 
   // filtring list
   List<InspectionItem> get _filteredInspections =>
     _inspections.where((item) {
-      if (_selectedStatus == "ALL") return true;
-      return item.status == _selectedStatus;
+      if (_selectedFilter == "ALL") return true;
+      return item.status.toLowerCase() == _selectedFilter.toLowerCase();
     }).toList();
 
-  // GET data
-  Future<void> _getInspections() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final response = await http.get(
-        Uri.parse("YOUR_BACKEND_URL/api/inspections"),
-        headers: {"Content-Type": "application/json"},
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        setState(() {
-          _inspections = data
-              .map((item) => InspectionItem.fromJson(item))
-              .toList();
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  //for trying
-  final List<InspectionItem> _inspectionsTab = [
-    InspectionItem(
-      batchNumber: "Batch #VET-2024-082",
-      date: "Jan 24, 2024 • 09:15 AM",
-      status: "APPROVED",
-    ),
-    InspectionItem(
-      batchNumber: "Batch #VET-2024-079",
-      date: "Jan 22, 2024 • 03:45 PM",
-      status: "REJECTED",
-    ),
-    InspectionItem(
-      batchNumber: "Batch #VET-2024-075",
-      date: "Jan 20, 2024 • 11:20 AM",
-      status: "APPROVED",
-    ),
-    InspectionItem(
-      batchNumber: "Batch #VET-2024-070",
-      date: "Jan 18, 2024 • 01:50 PM",
-      status: "APPROVED",
-    ),
-  ];
+  
 
   @override
   void initState() {
     super.initState();
-    //_getInspections();
   }
 
   @override
@@ -101,20 +52,53 @@ class _InspectionHistoryPageState extends State<InspectionHistoryPage> {
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
+        shadowColor: Colors.black,
+        elevation: 3,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
 
-            Row(
-              children: [
-                _filterChip("🗓 $_selectedPeriod ▾"),
-                SizedBox(width: 8),
-                _filterChip("STATUS: $_selectedStatus ▾"),
-                SizedBox(width: 8),
-                _filterChip("FISH TYPE: $_selectedFishType ▾"),
-              ],
-            ),
+            SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children:
+                          ["ALL", "APPROVED", "REJECTED"]
+                              .map(
+                                (filter) => GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedFilter = filter;
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(right: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: _selectedFilter == filter
+                                          ? const Color(0xFF01A896)
+                                          : Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      filter,
+                                      style: TextStyle(
+                                        color: _selectedFilter == filter
+                                            ? Colors.white
+                                            : const Color(0xFF334155),
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                    ),
+                  ),
 
             Block(),
 
@@ -136,29 +120,13 @@ class _InspectionHistoryPageState extends State<InspectionHistoryPage> {
               : ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: _inspectionsTab.length,
+                  itemCount:_filteredInspections.length,
                   itemBuilder: (context, index) => InspectionCard(
-                    inspection: _inspectionsTab[index],
+                    inspection: _filteredInspections[index],
                   ),
                 ),
           ],
         ),
-      ),
-    );
-  }
-
-  // Widget مستقل للفلتر
-  Widget _filterChip(String label) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(fontFamily: 'Inter',fontSize: 11, fontWeight: FontWeight.w500),
       ),
     );
   }
@@ -254,12 +222,10 @@ class InspectionCard extends StatelessWidget {
               icon: Icon(Icons.description_outlined, size: 18),
               label: Text("View Report"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: inspection.status == "APPROVED"
-                    ? Color(0xFF00A896)
-                    : Colors.grey[200],
-                foregroundColor: inspection.status == "APPROVED"
-                    ? Colors.white
-                    : Colors.black,
+                backgroundColor: Color(0xFF00A896),
+                    
+                foregroundColor:  Colors.white,
+                    
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -292,20 +258,7 @@ class InspectionItem {
   }
 }
 
-Widget _filterChip(String label) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-    decoration: BoxDecoration(
-      color: Color(0xFF00A896),
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Colors.grey[300]!),
-    ),
-    child: Text(
-      label,
-      style: TextStyle(fontFamily: 'Inter',color: Color(0xFF00A896),fontSize: 12, fontWeight: FontWeight.w600),
-    ),
-  );
-}
+
 
 
 class Block extends StatelessWidget {

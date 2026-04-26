@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:projetsndcp/picheur/Weather&Safety.dart';
 import 'package:projetsndcp/picheur/addBatchPage.dart';
+import 'package:projetsndcp/picheur/batchDetailsPage.dart';
+import 'package:projetsndcp/picheur/homepage.dart';
 import 'package:projetsndcp/picheur/interfacepage.dart';
 import 'package:projetsndcp/picheur/myBatches.dart';
 import 'package:projetsndcp/picheur/profil.dart';
@@ -14,10 +16,8 @@ import 'package:projetsndcp/vitirinaire/interfacevit.dart';
 import 'admin/addvet.dart';
 import 'consumer/setupconsumer.dart';
 import 'consumer/batchDetails.dart';
-import 'consumer/batchReport.dart';
-import 'package:projetsndcp/vitirinaire/VetInspectionPage.dart';
-import 'package:projetsndcp/consumer/myOrderPage.dart';
-import 'package:projetsndcp/consumer/shoppingCartPage.dart';
+import 'consumer/batchReportPageC.dart';
+//import 'package:projetsndcp/vitirinaire/batchReportPage.dart';
 
 void main() {
   runApp(
@@ -97,9 +97,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const ShoppingCartPage(),
-          //MyOrdersPage(), 
-          //MyBatchesPage(),
+          home: const BatchDetails(),
           // RoleSelectionPage()
           // SplashPage(),
           // Fivepage( email: 'hakoben@gmail.com',)

@@ -367,5 +367,3 @@ class OrderItem {
     required this.images,
   });
 }
-
-
