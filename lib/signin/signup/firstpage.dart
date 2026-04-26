@@ -21,18 +21,28 @@ class _FirstpageState extends State<Firstpage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFF001645),
-                  Color(0xFF0172B2),
+                  Color(0xFFB8D8E8),
+                  Color(0xFF5BA3C4),
+                  Color(0xFF3D8BAD),
                 ],
               ),
             ),
             width: double.infinity,
             height: double.infinity,
+            child: Center(
+              child: Image.asset(
+                'images/Bahr.png',
+                width: 280,
+                // ↑ ajuste selon la taille souhaitée
+                fit: BoxFit.contain,
+                // ↑ garde les proportions du logo
+              ),
+            ),
           ),
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10), // 👈 coins arrondis
+              borderRadius: BorderRadius.circular(10), //  coins arrondis
             ),
             width: double.infinity,
             height: 300,

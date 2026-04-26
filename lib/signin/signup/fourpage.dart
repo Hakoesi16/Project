@@ -102,7 +102,7 @@ class _FourpageState extends State<Fourpage> {
                     ),
                     onPressed: state is AuthLoading ? null : () {
                       // Décommentez ceci quand votre backend est prêt :
-                      // context.read<AuthCubit>().verifyCode(widget.email, _fullCode);
+                      context.read<AuthCubit>().verifyCode(widget.email, _fullCode);
                     },
                     child: state is AuthLoading
                         ? const CircularProgressIndicator(color: Colors.white)
