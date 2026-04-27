@@ -110,7 +110,14 @@ class _HomePageState extends State<HomePage> {
         children: [
           Row(
             children: [
-              CircleAvatar(
+              MaterialButton(onPressed: (){
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProfilePage(),
+                    ));
+              },
+              child:CircleAvatar(
                 radius: 22,
                 backgroundColor: isDark ? Colors.white10 : const Color(0xFFE3F2FD),
                 backgroundImage: data["profilePicture"] != null
@@ -119,7 +126,8 @@ class _HomePageState extends State<HomePage> {
                 child: data["profilePicture"] == null
                     ? Icon(Icons.person, color: Colors.grey)
                     : null,
-              ),
+              ),),
+
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
