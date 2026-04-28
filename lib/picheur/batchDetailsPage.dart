@@ -478,8 +478,8 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:projet2/picheur/objects.dart';
 
-import 'objects.dart';
 class BatchDetailspage extends StatefulWidget {
   final BatchItem batch;
   const BatchDetailspage({super.key, required this.batch});

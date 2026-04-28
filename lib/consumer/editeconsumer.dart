@@ -6,9 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
-
-
-
 class  EditConsumerProfilePage extends StatefulWidget {
 
   const EditConsumerProfilePage({super.key, });

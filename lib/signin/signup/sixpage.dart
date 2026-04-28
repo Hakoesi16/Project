@@ -43,7 +43,7 @@ class _SixpageState extends State<Sixpage> {
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
+             const Text(
               "Your account",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             ),

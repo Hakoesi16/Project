@@ -5,7 +5,7 @@ import '../cubit/authcubit.dart';
 import '../cubit/authstate.dart';
 
 class Fivepage extends StatefulWidget {
-  final String email;
+  final String email; 
   const Fivepage({super.key, required this.email});
 
   @override
@@ -14,7 +14,7 @@ class Fivepage extends StatefulWidget {
 
 class _FivepageState extends State<Fivepage> {
   final TextEditingController _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+  bool _isPasswordVisible = false; 
 
   bool _hasNumber(String password) {
     return password.contains(RegExp(r'[0-9]'));
@@ -105,7 +105,7 @@ class _FivepageState extends State<Fivepage> {
                           if (!isLengthValid) errorMsg = "Password must be 6-20 characters";
                           else if (!hasSymbol) errorMsg = "Password must have at least one symbol";
                           else if (!hasDigit) errorMsg = "Password must have at least one number";
-
+                          
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(errorMsg),
@@ -123,7 +123,7 @@ class _FivepageState extends State<Fivepage> {
                           : MaterialButton(
                         onPressed: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => Sixpage()),
+                             MaterialPageRoute(builder: (context) => Sixpage()),
                           );
                         },
                         child: const Text(

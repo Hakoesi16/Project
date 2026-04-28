@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:projet2/picheur/homepage.dart';
 import 'package:share_plus/share_plus.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
@@ -167,9 +166,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     // Correction : Utilisation correcte de Share
                     Share.share(
                       "🐟 Découvre Let's Fishing !\n"
-                          "L'app du marché de poisson en Algérie.\n\n"
-                          "📱 Télécharge ici :\n"
-                          "https://play.google.com/store/apps/details?id=com.example.projetsndcp",
+                      "L'app du marché de poisson en Algérie.\n\n"
+                      "📱 Télécharge ici :\n"
+                      "https://play.google.com/store/apps/details?id=com.example.projetsndcp",
                       subject: "Let's Fishing App",
                     );
                   },
@@ -324,11 +323,14 @@ class _ProfilePageState extends State<ProfilePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+
           }, icon: const Icon(Icons.home_outlined, color: Colors.grey)),
           IconButton(onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => WeatherSafetypage()));
           }, icon: const Icon(Icons.anchor, color: Colors.grey)),
+          IconButton(onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => MyBatchesPage()));
+          }, icon: const Icon(Icons.shopping_basket_outlined, color: Colors.grey)),
           IconButton(onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => Addbatchpage()));
           }, icon: const Icon(Icons.remove_red_eye_outlined, color: Colors.grey)),

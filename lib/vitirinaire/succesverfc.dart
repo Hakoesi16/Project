@@ -6,7 +6,6 @@ import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
 
-
 class VetInspectionPage extends StatefulWidget {
   final String batchId;
 

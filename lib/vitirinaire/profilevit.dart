@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:projet2/vitirinaire/updatpassword.dart';
+import 'package:projet2/vitirinaire/updatpaasword.dart';
 import 'package:share_plus/share_plus.dart';
-
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
-import 'editeprofileVit.dart';
-import 'editeprofilevit.dart' hide EditProfilevitPage;
+import 'editeprofilevit.dart';
 
 class ProfilevitPage extends StatefulWidget {
 

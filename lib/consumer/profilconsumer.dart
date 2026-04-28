@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:projet2/consumer/homePage.dart';
-import 'package:projet2/consumer/myOrderPage.dart';
 import 'package:projet2/consumer/passwordchange.dart';
-import 'package:projet2/consumer/shoppingCartPage.dart';
-
 import 'package:share_plus/share_plus.dart';
 
 import '../signin/cubit/authcubit.dart';
@@ -208,7 +204,7 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
       child: Column(
         children: [
           _settingsTile(Icons.lock_outline, "Change Password", isDark, trailing:MaterialButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordConsPage()));
+             Navigator.push(context, MaterialPageRoute(builder: (context) => ChangepasswordConsPage()));
           },child:const Icon(Icons.chevron_right, color: Colors.grey) ,) ),
           const Divider(height: 1),
           _settingsTile(Icons.notifications_none, "Notifications", isDark,
@@ -263,17 +259,13 @@ class _ProfileConsumerPageState extends State<ProfileConsumerPage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeConsPage()));
+            // Navigator.push(context, MaterialPageRoute(builder: (context) => HomeConsumerPage(token: widget.token)));
           }, icon: Icon(Icons.home_outlined, color: isDark ? Colors.white54 : Colors.grey)),
           IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrdersPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => BatchDetails()));
           }, icon: Icon(Icons.list_alt_outlined, color: isDark ? Colors.white54 : Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ShoppingCartPage()));
-          }, icon: Icon(Icons.shopping_cart, color: isDark ? Colors.white54 : Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileConsumerPage()));
-          }, icon: Icon(Icons.person, color: isDark ? const Color(0xFF01A896) : const Color(0xFFD5A439), size: 30)),
+          IconButton(onPressed: () {}, icon: Icon(Icons.shopping_cart, color: isDark ? Colors.white54 : Colors.grey)),
+          IconButton(onPressed: () {}, icon: Icon(Icons.person, color: isDark ? const Color(0xFF01A896) : const Color(0xFFD5A439), size: 30)),
         ],
       ),
     );

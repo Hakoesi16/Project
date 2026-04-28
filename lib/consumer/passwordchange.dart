@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
 
-
-
 class ChangepasswordConsPage extends StatefulWidget {
 
   const ChangepasswordConsPage({super.key});

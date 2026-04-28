@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class HomeConsPage extends StatefulWidget {
-  const HomeConsPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<HomeConsPage> createState() => _HomeConsPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeConsPageState extends State<HomeConsPage> {
+class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
   // Place this with your other variables (like _isLoading)
   String _selectedCategory = "All";
@@ -27,12 +27,12 @@ class _HomeConsPageState extends State<HomeConsPage> {
       // 1. Check Category Match
       bool matchesCategory =
           _selectedCategory == "All" ||
-              product.category.toLowerCase() == _selectedCategory.toLowerCase();
+          product.category.toLowerCase() == _selectedCategory.toLowerCase();
 
       // 2. Check Search Match (Fish Name or Fisher Name)
       bool matchesSearch =
           product.name.toLowerCase().contains(query) ||
-              product.fisher.toLowerCase().contains(query);
+          product.fisher.toLowerCase().contains(query);
 
       return matchesCategory && matchesSearch;
     }).toList();
@@ -134,12 +134,12 @@ class _HomeConsPageState extends State<HomeConsPage> {
         // Optional: Add a clear button when typing
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(
-          icon: const Icon(Icons.clear, size: 20),
-          onPressed: () {
-            _searchController.clear();
-            _onSearchChanged("");
-          },
-        )
+                icon: const Icon(Icons.clear, size: 20),
+                onPressed: () {
+                  _searchController.clear();
+                  _onSearchChanged("");
+                },
+              )
             : null,
       ),
     );

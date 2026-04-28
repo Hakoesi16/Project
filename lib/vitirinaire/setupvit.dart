@@ -6,6 +6,7 @@ import 'package:projet2/vitirinaire/profilevit.dart';
 
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
+
 class SetupVitpage extends StatefulWidget {
   const SetupVitpage({super.key});
 

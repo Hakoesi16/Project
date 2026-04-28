@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:projet2/consumer/homePage.dart';
-import 'package:projet2/consumer/myOrderPage.dart';
-import 'package:projet2/consumer/profilconsumer.dart';
 
 
 // final List<CartItem> _mockCartItems = [
@@ -46,9 +43,9 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
     super.initState();
   }
 
+  
 
-
-
+  
   double get _subtotal {
     return _cartItems.fold(0, (sum, item) => sum + item.totalPrice);
   }
@@ -57,7 +54,7 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
     return _subtotal + _deliveryFee;
   }
 
-
+  
   void _updateQuantity(int index, double change) {
     setState(() {
       double newWeight = _cartItems[index].weightKg + change;
@@ -75,7 +72,6 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7F9),
       appBar: AppBar(
@@ -101,55 +97,23 @@ class _ShoppingCartPageState extends State<ShoppingCartPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Item List using your ListView.builder pattern
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _cartItems.length,
-              itemBuilder: (context, index) => _buildCartCard(index),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Item List using your ListView.builder pattern
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _cartItems.length,
+                    itemBuilder: (context, index) => _buildCartCard(index),
+                  ),
+                  const Block(), // Vertical spacing widget re-used from your files
+                  _buildPromoCodeField(),
+                  const Block(),
+                  _buildSummaryCard(),
+                ],
+              ),
             ),
-            const Block(), // Vertical spacing widget re-used from your files
-            _buildPromoCodeField(),
-            const Block(),
-            _buildSummaryCard(),
-            const Block(),
-            _buildBottomNavBar(isDark),
-          ],
-        ),
-      ),
-    );
-  }
-
-  //---Navigator Button---
-  Widget _buildBottomNavBar(bool isDark) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-      height: 70,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(35),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 5))],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeConsPage()));
-          }, icon: Icon(Icons.home_outlined, color: isDark ? Colors.white54 : Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrdersPage()));
-          }, icon: Icon(Icons.list_alt_outlined, color: isDark ? Colors.white54 : Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ShoppingCartPage()));
-          }, icon: Icon(Icons.shopping_cart, color: isDark ? Colors.white54 : Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileConsumerPage()));
-          }, icon: Icon(Icons.person, color: isDark ? const Color(0xFF01A896) : const Color(0xFFD5A439), size: 30)),
-        ],
-      ),
     );
   }
 

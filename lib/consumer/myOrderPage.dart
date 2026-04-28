@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:projet2/consumer/homePage.dart';
-import 'package:projet2/consumer/profilconsumer.dart';
-import 'package:projet2/consumer/shoppingCartPage.dart';
 
 
 class MyOrdersPage extends StatefulWidget {
@@ -35,10 +32,10 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
     return _orders.where((order) {
       // Check if the name contains the search text
       bool matchesSearch = order.name.toLowerCase().contains(_searchQuery.toLowerCase());
-
+      
       // Check if the status matches the selected chip
-      bool matchesFilter = _selectedFilter == "All" ||
-          order.status == _selectedFilter.toUpperCase();
+      bool matchesFilter = _selectedFilter == "All" || 
+                          order.status == _selectedFilter.toUpperCase();
 
       return matchesSearch && matchesFilter;
     }).toList();
@@ -46,7 +43,6 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7F9),
       appBar: AppBar(
@@ -72,99 +68,71 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Search Bar - Styled like your myBatches.dart
-            TextFormField(
-              controller: _searchController,
-              onChanged: _updateSearchQuery,
-              decoration: InputDecoration(
-                hintText: "Search batches...",
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(13),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            const Block(),
-            // Filter Row
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+              padding: const EdgeInsets.all(16),
+              child: Column(
                 children: [
-                  "All",
-                  "Delivered",
-                  "Pending",
-                  "Processing",
-                ].map((filter) => _buildFilterChip(filter)).toList(),
+                  // Search Bar - Styled like your myBatches.dart
+                  TextFormField(
+                    controller: _searchController,
+                    onChanged: _updateSearchQuery,
+                    decoration: InputDecoration(
+                      hintText: "Search batches...",
+                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(13),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                  const Block(),
+                  // Filter Row
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        "All",
+                        "Delivered",
+                        "Pending",
+                        "Processing",
+                      ].map((filter) => _buildFilterChip(filter)).toList(),
+                    ),
+                  ),
+                  const Block(),
+                  if (_filteredOrders.isEmpty)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        'No Orderss found for that name.',
+                        style: TextStyle(
+                          color: Color(0xFF475569),
+                          fontSize: 14,
+                        ),
+                      ),
+                    )
+                  else
+                  // Orders List
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _filteredOrders.length,
+                    itemBuilder: (context, index) =>
+                        OrderCard(order: _filteredOrders[index]),
+                  ),
+                  // Skeleton loader placeholder (as seen in your image)
+                  //const OrderSkeleton(),
+                ],
               ),
             ),
-            const Block(),
-            if (_filteredOrders.isEmpty)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Text(
-                  'No Orderss found for that name.',
-                  style: TextStyle(
-                    color: Color(0xFF475569),
-                    fontSize: 14,
-                  ),
-                ),
-              )
-            else
-            // Orders List
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _filteredOrders.length,
-                itemBuilder: (context, index) =>
-                    OrderCard(order: _filteredOrders[index]),
-              ),
-            // Skeleton loader placeholder (as seen in your image)
-            //const OrderSkeleton(),
-            _buildBottomNavBar(isDark),
-          ],
-        ),
-      ),
     );
   }
-  Widget _buildBottomNavBar(bool isDark) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-      height: 70,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(35),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 5))],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeConsPage()));
-          }, icon: Icon(Icons.home_outlined, color: isDark ? Colors.white54 : Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrdersPage()));
-          }, icon: Icon(Icons.list_alt_outlined, color: isDark ? Colors.white54 : Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ShoppingCartPage()));
-          }, icon: Icon(Icons.shopping_cart, color: isDark ? Colors.white54 : Colors.grey)),
-          IconButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileConsumerPage()));
-          }, icon: Icon(Icons.person, color: isDark ? const Color(0xFF01A896) : const Color(0xFFD5A439), size: 30)),
-        ],
-      ),
-    );
-  }
+
   Widget _buildFilterChip(String filter) {
     bool isSelected = _selectedFilter == filter;
     return GestureDetector(

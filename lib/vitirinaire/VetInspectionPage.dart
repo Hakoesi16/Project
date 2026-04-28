@@ -291,13 +291,13 @@ class _VetInspectionPageState extends State<vetInspectionPage> {
                               items: _smellOptions
                                   .map(
                                     (option) => DropdownMenuItem(
-                                  value: option,
-                                  child: Text(
-                                    option,
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ),
-                              )
+                                      value: option,
+                                      child: Text(
+                                        option,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  )
                                   .toList(),
                               onChanged: (value) =>
                                   setState(() => _selectedSmell = value),
@@ -357,20 +357,20 @@ class _VetInspectionPageState extends State<vetInspectionPage> {
                               items: _gillColorOptions
                                   .map(
                                     (option) => DropdownMenuItem(
-                                  value: option,
-                                  child: Text(
-                                    option,
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ),
-                              )
+                                      value: option,
+                                      child: Text(
+                                        option,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  )
                                   .toList(),
                               onChanged: (value) =>
                                   setState(() => _selectedGillColor = value),
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: _selectedGillColor == null?
-                                Colors.white:_selectedGillColor == _gillColorOptions[0]
+                                    Colors.white:_selectedGillColor == _gillColorOptions[0]
                                     ? Color(0xFFD7FFE1)
                                     : _selectedGillColor == _gillColorOptions[1]
                                     ? Color(0xFFFFFCD7)
@@ -430,28 +430,28 @@ class _VetInspectionPageState extends State<vetInspectionPage> {
                               items: _fleshFirmnessOptions
                                   .map(
                                     (option) => DropdownMenuItem(
-                                  value: option,
-                                  child: Text(
-                                    option,
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ),
-                              )
+                                      value: option,
+                                      child: Text(
+                                        option,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  )
                                   .toList(),
                               onChanged: (value) => setState(
-                                    () => _selectedFleshFirmness = value,
+                                () => _selectedFleshFirmness = value,
                               ),
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: _selectedFleshFirmness == null?
-                                Colors.white:_selectedFleshFirmness ==
-                                    _fleshFirmnessOptions[0]
+                                    Colors.white:_selectedFleshFirmness ==
+                                        _fleshFirmnessOptions[0]
                                     ? Color(0xFFD7FFE1)
                                     : _selectedFleshFirmness ==
-                                    _fleshFirmnessOptions[1]
+                                          _fleshFirmnessOptions[1]
                                     ? Color(0xFFFFFCD7)
                                     : _selectedFleshFirmness ==
-                                    _fleshFirmnessOptions[2]
+                                          _fleshFirmnessOptions[2]
                                     ? Color(0xFFFFDFA0)
                                     : Color(0xFFFFD7D7),
                                 border: OutlineInputBorder(
@@ -501,26 +501,26 @@ class _VetInspectionPageState extends State<vetInspectionPage> {
                               items: _eyeClarityOptions
                                   .map(
                                     (option) => DropdownMenuItem(
-                                  value: option,
-                                  child: Text(
-                                    option,
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ),
-                              )
+                                      value: option,
+                                      child: Text(
+                                        option,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  )
                                   .toList(),
                               onChanged: (value) =>
                                   setState(() => _selectedEyeClarity = value),
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: _selectedEyeClarity == null?
-                                Colors.white:_selectedEyeClarity == _eyeClarityOptions[0]
+                                    Colors.white:_selectedEyeClarity == _eyeClarityOptions[0]
                                     ? Color(0xFFD7FFE1)
                                     : _selectedEyeClarity ==
-                                    _eyeClarityOptions[1]
+                                          _eyeClarityOptions[1]
                                     ? Color(0xFFFFFCD7)
                                     : _selectedEyeClarity ==
-                                    _eyeClarityOptions[2]
+                                          _eyeClarityOptions[2]
                                     ? Color(0xFFFFDFA0)
                                     : Color(0xFFFFD7D7),
                                 border: OutlineInputBorder(
@@ -574,7 +574,7 @@ class _VetInspectionPageState extends State<vetInspectionPage> {
                               controller: _tempController,
                               keyboardType: TextInputType.number,
                               onChanged: (value) => setState(
-                                    () => _internalTemp = double.parse(value),
+                                () => _internalTemp = double.parse(value),
                               ),
                               decoration: InputDecoration(
                                 filled: true,
@@ -620,7 +620,7 @@ class _VetInspectionPageState extends State<vetInspectionPage> {
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () => setState(
-                                          () => _parasitesPresent = true,
+                                      () => _parasitesPresent = true,
                                     ),
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
@@ -657,7 +657,7 @@ class _VetInspectionPageState extends State<vetInspectionPage> {
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () => setState(
-                                          () => _parasitesPresent = false,
+                                      () => _parasitesPresent = false,
                                     ),
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
@@ -862,7 +862,7 @@ class Block extends StatelessWidget {
 
 Widget subTitle (String title) {
 
-
+  
   return Text(
     title,
     style: TextStyle(

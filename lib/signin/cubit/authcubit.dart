@@ -10,10 +10,10 @@ import 'authstate.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
-
+  
   final String _baseUrl = "https://cushionless-buxomly-cherry.ngrok-free.dev/api";
   final FlutterSecureStorage storage = const FlutterSecureStorage();
-
+  
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     serverClientId: "936821595024-uek9ov9mlscdqvbg483dughq9b5u1ksi.apps.googleusercontent.com",
   );
@@ -450,24 +450,24 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-      final response = await http.post(
-        Uri.parse("$_baseUrl/api/reject-batch"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: jsonEncode({
-          "batchId": batchId,
-          "reason": reason,
-        }),
-      );
+    final response = await http.post(
+      Uri.parse("$_baseUrl/api/reject-batch"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: jsonEncode({
+        "batchId": batchId,
+        "reason": reason,
+      }),
+    );
 
-      if (response.statusCode == 200) {
-        // Vous pouvez émettre un état de succès ici
-        emit(InspectionDataLoaded(jsonDecode(response.body)));
-      } else {
-        emit(AuthError("Failed to send rejection"));
-      }
+    if (response.statusCode == 200) {
+      // Vous pouvez émettre un état de succès ici
+      emit(InspectionDataLoaded(jsonDecode(response.body)));
+    } else {
+      emit(AuthError("Failed to send rejection"));
+    }
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -948,8 +948,8 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
 
     }
-  }
-  // --- ADMIN AUTHENTICATION ---
+    }
+    // --- ADMIN AUTHENTICATION ---
   Future<void> submitAdmin({
     required String emailvet,
     required String passwordvet,
@@ -983,33 +983,33 @@ class AuthCubit extends Cubit<AuthState> {
   }
   //---FETCH ADMIN---
   Future<void> fetchadmin() async {
-    try {
-      emit(AuthLoading());
-      String? token = await _getToken();
-      if (token == null) {
-        emit(AuthError("No token found"));
-        return;
-      }
-      // Simulation d'un appel API
-      await Future.delayed(const Duration(seconds: 1));
-      final response = await http.get(
-        Uri.parse("https://yourbackend.com/api/profile"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
-      );
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        emit(AdminLoaded(data));
-      } else {
-        emit(AuthError("Failed to load Admin page"));
-      }
-    } catch (e) {
-      emit(AuthError(e.toString()));
+  try {
+    emit(AuthLoading());
+    String? token = await _getToken();
+    if (token == null) {
+      emit(AuthError("No token found"));
+      return;
     }
+    // Simulation d'un appel API
+    await Future.delayed(const Duration(seconds: 1));
+    final response = await http.get(
+      Uri.parse("https://yourbackend.com/api/profile"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        "ngrok-skip-browser-warning": "true",
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      emit(AdminLoaded(data));
+    } else {
+      emit(AuthError("Failed to load Admin page"));
+    }
+  } catch (e) {
+    emit(AuthError(e.toString()));
   }
+}
 //---Reset password+API---
   Future<void> resetPassword(String email) async {
     try {
@@ -1030,7 +1030,6 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
-  //---fetch Admin Vitirinaire---
   Future<void> fetchAdminvet() async {
     try {
       emit(AuthLoading());
@@ -1058,7 +1057,6 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
-  //---fetch Admin Pecheur---
   Future<void> fetchAdminpecheur() async {
     try {
       emit(AuthLoading());
