@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
-import '../signin/vitirinaire/setupvit.dart';
+import '../vitirinaire/setupvit.dart';
 
 class Addvet extends StatefulWidget {
   const Addvet({super.key});

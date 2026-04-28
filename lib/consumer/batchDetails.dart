@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../signin/vitirinaire/batchReportPageV.dart';
+import '../vitirinaire/batchReportPageV.dart';
 
 
 class BatchDetails extends StatefulWidget {

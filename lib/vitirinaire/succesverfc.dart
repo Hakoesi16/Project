@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../cubit/authcubit.dart';
-import '../cubit/authstate.dart';
+import '../signin/cubit/authcubit.dart';
+import '../signin/cubit/authstate.dart';
+
 
 
 class VetInspectionPage extends StatefulWidget {

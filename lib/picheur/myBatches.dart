@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:projet2/signin/picheur/profil.dart';
+import 'package:projet2/picheur/profil.dart';
 import 'Weather&Safety.dart';
 import 'addBatchPage.dart';
 import 'batchDetailsPage.dart';

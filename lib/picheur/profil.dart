@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
-import '../cubit/authcubit.dart';
-import '../cubit/authstate.dart';
-import '../cubit/themecubit.dart';
+import '../signin/cubit/authcubit.dart';
+import '../signin/cubit/authstate.dart';
+import '../signin/cubit/themecubit.dart';
 import 'Weather&Safety.dart';
 import 'addBatchPage.dart';
 import 'editprofile.dart';

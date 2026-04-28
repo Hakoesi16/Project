@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:http/http.dart' as http;
-import 'package:projet2/signin/picheur/profil.dart';
+import 'package:projet2/picheur/profil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'homepage.dart';

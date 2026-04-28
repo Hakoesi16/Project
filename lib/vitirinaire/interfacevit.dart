@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:projet2/signin/vitirinaire/setupvit.dart';
+import 'package:projet2/vitirinaire/setupvit.dart';
 class Interfacevitpage extends StatefulWidget {
   const Interfacevitpage({super.key});
 
