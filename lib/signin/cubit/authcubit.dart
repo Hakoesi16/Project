@@ -1030,4 +1030,60 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.toString()));
     }
   }
+  //---fetch Admin Vitirinaire---
+  Future<void> fetchAdminvet() async {
+    try {
+      emit(AuthLoading());
+      String? token = await _getToken();
+      if (token == null) {
+        emit(AuthError("No token found"));
+        return;
+      }
+      final response = await http.get(
+        Uri.parse("$_baseUrl/auth/profile-fishmen"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "ngrok-skip-browser-warning": "true",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        emit(AdminLoaded(data));
+      } else {
+        emit(AuthError("Failed to load profile"));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+  //---fetch Admin Pecheur---
+  Future<void> fetchAdminpecheur() async {
+    try {
+      emit(AuthLoading());
+      String? token = await _getToken();
+      if (token == null) {
+        emit(AuthError("No token found"));
+        return;
+      }
+      final response = await http.get(
+        Uri.parse("$_baseUrl/auth/profile-fishmen"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "ngrok-skip-browser-warning": "true",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        emit(AdminLoaded(data));
+      } else {
+        emit(AuthError("Failed to load profile"));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
 }

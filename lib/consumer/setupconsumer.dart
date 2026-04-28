@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:projet2/consumer/homePage.dart';
 import 'package:projet2/consumer/profilconsumer.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
@@ -40,7 +41,7 @@ class _SetupConpageState extends State<SetupConspage> {
 
       return;
     }else{
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileConsumerPage()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeConsPage()));
     }
 
     context.read<AuthCubit>().submitSetupCons(

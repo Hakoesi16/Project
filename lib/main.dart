@@ -123,6 +123,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projet2/picheur/profil.dart';
 import 'package:projet2/signin/cubit/authcubit.dart';
 import 'package:projet2/signin/cubit/themecubit.dart';
 import 'package:projet2/signin/signup/splage.dart';
@@ -209,7 +210,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const SplashPage(),
+          home: const ProfilePage(),
           // RoleSelectionPage()
           // SplashPage(),
           // Fivepage( email: 'hakoben@gmail.com',)

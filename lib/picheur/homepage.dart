@@ -652,15 +652,6 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Addbatchpage()),
-              );
-            },
-            child: _navIcon(Icons.storefront_outlined, false),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
                 MaterialPageRoute(builder: (context) => WeatherSafetypage()),
               );
             },
