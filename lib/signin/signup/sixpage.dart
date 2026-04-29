@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:projet2/signin/signup/selectrole.dart';
 
 class Sixpage extends StatefulWidget {
-  const Sixpage({super.key});
+  final String email;
+  const Sixpage({super.key, required this.email});
 
   @override
   State<Sixpage> createState() => _SixpageState();
@@ -64,7 +65,7 @@ class _SixpageState extends State<Sixpage> {
                 ),
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => RoleSelectionPage()),
+                    MaterialPageRoute(builder: (context) => RoleSelectionPage(email: widget.email)),
                   );
                 },
                 child: const Text(

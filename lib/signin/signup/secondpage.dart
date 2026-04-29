@@ -39,7 +39,7 @@ class _SecondpageState extends State<Secondpage> {
             Navigator.pushReplacement(
               context,
               // MaterialPageRoute(builder: (_) => RoleSelectionPage()),
-              MaterialPageRoute(builder: (_) => Sixpage()),
+              MaterialPageRoute(builder: (_) => Sixpage( email: state.user['email'] ?? '')),
 
             );
           } else if (state is AuthError) {

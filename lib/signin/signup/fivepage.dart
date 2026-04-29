@@ -33,15 +33,20 @@ class _FivepageState extends State<Fivepage> {
       ),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
-          if (state is PasswordSentSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Account created successfully!"),
-                backgroundColor: Colors.green, // Vert pour succès
-              ),
-            );
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Sixpage()));
-          } else if (state is AuthError) {
+          // if (state is PasswordSentSuccess) {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     const SnackBar(
+          //       content: Text("Account created successfully!"),
+          //       backgroundColor: Colors.green, // Vert pour succès
+          //     ),
+          //   );
+          //   Navigator.push(context, MaterialPageRoute(builder: (context) => Sixpage(email: widget.email,)));
+          // }
+          if (state is AuthAuthenticated) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => Sixpage(email: widget.email)));
+          }
+          else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -123,7 +128,7 @@ class _FivepageState extends State<Fivepage> {
                           : MaterialButton(
                         onPressed: () {
                           Navigator.of(context).push(
-                             MaterialPageRoute(builder: (context) => Sixpage()),
+                             MaterialPageRoute(builder: (context) => Sixpage(email: widget.email,)),
                           );
                         },
                         child: const Text(

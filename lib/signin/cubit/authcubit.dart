@@ -1026,21 +1026,23 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       // Envoie le rôle au backend
-      final response = await _authorizedRequest("POST", "$_baseUrl/auth/send-email-fishmen", body: {
-        "email":email,
-        "role": role});
+      // final response = await _authorizedRequest("POST", "$_baseUrl/auth/send-email-fishmen", body: {
+      //   "email":email,
+      //   "role": role});
       //")
-      // final response = await http.post(
-      //   Uri.parse("$_baseUrl/auth/select-role"),
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     "Authorization": "Bearer $token",
-      //   },
-      //   body: jsonEncode({"role": role}),
-      //   // on envoie : {"role": "fishmen"}
-      //   // ou         {"role": "vet"}
-      //   // ou         {"role": "consumer"}
-      // );
+      final response = await http.post(
+        Uri.parse("$_baseUrl/auth/select-role"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({
+          "email":email,
+          "role": role}),
+        // on envoie : {"role": "fishmen"}
+        // ou         {"role": "vet"}
+        // ou         {"role": "consumer"}
+      );
 
       if (response.statusCode == 200) {
         // Sauvegarde le rôle localement
