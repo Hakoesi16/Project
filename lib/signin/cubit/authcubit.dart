@@ -19,9 +19,85 @@ class AuthCubit extends Cubit<AuthState> {
   );
 
   // Sauvegarde token ET role ensemble
-  Future<void> _saveTokenAndRole(String token, String role) async {
+  Future<void> _saveTokenAndRole(String token, String role,{String? refreshToken}) async {
     await storage.write(key: "token", value: token);
     await storage.write(key: "role", value: role);
+    if (refreshToken != null) {
+      await storage.write(key: "refresh_token", value: refreshToken);
+    }
+  }
+  //---refresh token---
+  Future<bool> _refreshToken() async {
+    try {
+      final refreshToken = await storage.read(key: "refresh_token");
+      if (refreshToken == null) return false;
+
+      final response = await http.post(
+        Uri.parse("$_baseUrl/auth/refresh-token-fishmen"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"refresh_token": refreshToken}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        // Mettre à jour les tokens
+        await storage.write(key: "token", value: data['token']);
+        if (data['refresh_token'] != null) {
+          await storage.write(key: "refresh_token", value: data['refresh_token']);
+        }
+        return true;
+      } else {
+        // Refresh token expiré → logout
+        await _clearSession();
+        emit(AuthInitial());
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  //---Remplace http---
+  Future<http.Response> _authorizedRequest(
+      String method,
+      String url, {
+        Map<String, dynamic>? body,
+      }) async {
+    String? token = await _getToken();
+
+    Future<http.Response> makeRequest(String t) {
+      final headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $t",
+      };
+      final uri = Uri.parse(url);
+      // if (method == "GET") return http.get(uri, headers: headers);
+      // if (method == "PUT") return http.put(uri, headers: headers, body: jsonEncode(body));
+      // return http.post(uri, headers: headers, body: jsonEncode(body));
+      if (method == "GET")    return http.get(uri, headers: headers);
+      if (method == "PUT")    return http.put(uri, headers: headers, body: jsonEncode(body));
+      if (method == "POST")   return http.post(uri, headers: headers, body: jsonEncode(body));
+      if (method == "DELETE") return http.delete(uri, headers: headers);
+
+      // Méthode inconnue → exception claire
+      throw UnsupportedError("Méthode HTTP non supportée : $method");
+    }
+    if (token == null) {
+      emit(AuthInitial()); // redirige vers login
+      throw Exception("No token found");
+    }
+    var response = await makeRequest(token);
+
+    // Si token expiré → on tente le refresh
+    if (response.statusCode == 401) {
+      final refreshed = await _refreshToken();
+      if (refreshed) {
+        token = await _getToken();
+        response = await makeRequest(token!); // on réessaie
+      }
+    }
+
+    return response;
   }
 
   // Récupère le token
@@ -38,6 +114,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> _clearSession() async {
     await storage.delete(key: "token");
     await storage.delete(key: "role");
+    await storage.delete(key: "refresh_token");
   }
   // --- LOGIN GOOGLE+API ---
   Future<void> signInWithGoogle() async {
@@ -60,12 +137,15 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("Failed to get ID Token from Google"));
         return;
       }
-
+      // final response= await _authorizedRequest("Post", "$_baseUrl/auth/google-login-fishmen", body: jsonEncode({
+      //   "idToken": idToken,
+      //   "clientId": "936821595024-uek9ov9mlscdqvbg483dughq9b5u1ksi.apps.googleusercontent.com",
+      //   "serverAuthCode": serverAuthCode,
+      // }),);
       final response = await http.post(
         Uri.parse("$_baseUrl/auth/google-login-fishmen"),
         headers: {
           "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",
         },
         body: jsonEncode({
           "idToken": idToken,
@@ -105,7 +185,6 @@ class AuthCubit extends Cubit<AuthState> {
         Uri.parse("$_baseUrl/auth/facebook-login-fishmen"),
         headers: {
           "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",
         },
         body: jsonEncode({"accessToken": result.accessToken!.token}),
       );
@@ -131,14 +210,13 @@ class AuthCubit extends Cubit<AuthState> {
         Uri.parse("$_baseUrl/auth/login-fishmen"),
         headers: {
           "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",
         },
         body: jsonEncode({"email": email, "password": password}),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        await _saveTokenAndRole(data['token'], data['role']);
+        await _saveTokenAndRole(data['token'], data['role'],refreshToken: data['refresh_token'],);
         emit(AuthAuthenticated(data));
       } else {
         emit(AuthError("Invalid email or password"));
@@ -155,14 +233,13 @@ class AuthCubit extends Cubit<AuthState> {
         Uri.parse("$_baseUrl/auth/register-fishmen"),
         headers: {
           "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",
         },
         body: jsonEncode({"email": email, "password": password}),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final userData = jsonDecode(response.body);
-        await _saveTokenAndRole(userData['token'], userData['role']);
+        await _saveTokenAndRole(userData['token'], userData['role'],refreshToken: userData['refresh_token'],);
         emit(AuthAuthenticated(userData));
       } else {
         emit(AuthError("Registration failed: ${response.statusCode}"));
@@ -195,14 +272,14 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-      final response = await http.get(
-        Uri.parse("$_baseUrl/auth/get-profile-fishmen"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
-      );
+      final response = await _authorizedRequest("GET", "$_baseUrl/auth/get-profile-fishmen");
+      // final response = await http.get(
+      //   Uri.parse("$_baseUrl/auth/get-profile-fishmen"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token",
+      //   },
+      // );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -217,7 +294,7 @@ class AuthCubit extends Cubit<AuthState> {
 
 
 
-  //Edit profil FISHERMAN+API
+  //---Edit profil FISHERMAN+API---
   Future<void> updateProfile({
     required String name,
     required String phone,
@@ -233,22 +310,31 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-
-      final response = await http.put(
-        Uri.parse("$_baseUrl/auth/get-Edit-profile-fishmen"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
-        body: jsonEncode({
+      final response = await _authorizedRequest(
+        "PUT",
+        "$_baseUrl/auth/get-Edit-profile-fishmen",
+        body: {
           "fullName": name,
           "phone": phone,
           "homePort": homePort,
           "boatName": boatName,
           "capacity": capacity,
-        }),
+        },
       );
+      // final response = await http.put(
+      //   Uri.parse("$_baseUrl/auth/get-Edit-profile-fishmen"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token",
+      //   },
+      //   body: jsonEncode({
+      //     "fullName": name,
+      //     "phone": phone,
+      //     "homePort": homePort,
+      //     "boatName": boatName,
+      //     "capacity": capacity,
+      //   }),
+      // );
 
       if (response.statusCode == 200) {
         emit(ProfileUpdatedSuccess());
@@ -285,7 +371,6 @@ class AuthCubit extends Cubit<AuthState> {
       var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/auth/complete-setup-fishmen"));
       request.headers.addAll({
         "Authorization": "Bearer $token",
-        "ngrok-skip-browser-warning": "true",
       });
 
       request.fields['fullName'] = fullName;
@@ -331,7 +416,6 @@ class AuthCubit extends Cubit<AuthState> {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
         },
       );
       await _googleSignIn.signOut();
@@ -362,12 +446,12 @@ class AuthCubit extends Cubit<AuthState> {
   //       emit(AuthError("No token found"));
   //       return;
   //     }
+  //        final response= await _authorizedRequest("GET", "$_baseUrl/auth/profile-vit");
   //     final response = await http.get(
   //       Uri.parse("$_baseUrl/auth/profile-vit"),
   //       headers: {
   //         "Content-Type": "application/json",
   //         "Authorization": "Bearer $token",
-  //         "ngrok-skip-browser-warning": "true",
   //       },
   //     );
   //
@@ -398,19 +482,29 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-      final response = await http.put(
-        Uri.parse("$_baseUrl/api/profile"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: jsonEncode({
+      final response = await _authorizedRequest(
+        "PUT",
+        "$_baseUrl/api/profile",
+        body: {
           "Vname": name,
           "Vphone": phone,
           "VhomePort": homePort,
           "VboatName": boatName,
-        }),
+        },
       );
+      // final response = await http.put(
+      //   Uri.parse("$_baseUrl/api/profile"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token",
+      //   },
+      //   body: jsonEncode({
+      //     "Vname": name,
+      //     "Vphone": phone,
+      //     "VhomePort": homePort,
+      //     "VboatName": boatName,
+      //   }),
+      // );
 
       if (response.statusCode == 200) {
         emit(ProfileUpdatedSuccess());
@@ -426,7 +520,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.post(
-        Uri.parse("$_baseUrl/auth/send-email-fishmen"),
+        Uri.parse("$_baseUrl/auth/send-email"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email}),
       );
@@ -450,17 +544,25 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-    final response = await http.post(
-      Uri.parse("$_baseUrl/api/reject-batch"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-      body: jsonEncode({
-        "batchId": batchId,
-        "reason": reason,
-      }),
-    );
+      final response = await _authorizedRequest(
+        "POST",
+        "$_baseUrl/api/reject-batch",
+        body: {
+          "batchId": batchId,
+          "reason": reason,
+        },
+      );
+    // final response = await http.post(
+    //   Uri.parse("$_baseUrl/api/reject-batch"),
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": "Bearer $token",
+    //   },
+    //   body: jsonEncode({
+    //     "batchId": batchId,
+    //     "reason": reason,
+    //   }),
+    // );
 
     if (response.statusCode == 200) {
       // Vous pouvez émettre un état de succès ici
@@ -483,6 +585,7 @@ class AuthCubit extends Cubit<AuthState> {
 //   return;
 //   }
 
+//       final response await _authorizedRequest("GET", "$_baseUrl/api/inspection/$batchId");
 //
 //       final response = await http.get(
 //         Uri.parse("https://yourbackend.com/api/inspection/$batchId"),
@@ -644,12 +747,12 @@ class AuthCubit extends Cubit<AuthState> {
   //     }
   //     // Simulation d'un appel API
   //     await Future.delayed(const Duration(seconds: 1));
+  // final response = await _authorizedRequest("GET", "$_baseUrl/auth/get-profile-fishmen");
   //     final response = await http.get(
-  //       Uri.parse("https://yourbackend.com/api/profile"),
+  //       Uri.parse("$_baseUrl/auth/get-profile-fishmen"),
   //       headers: {
   //         "Content-Type": "application/json",
   //         "Authorization": "Bearer $token",
-  //         "ngrok-skip-browser-warning": "true",
   //       },
   //     );
   //     if (response.statusCode == 200) {
@@ -682,7 +785,7 @@ class AuthCubit extends Cubit<AuthState> {
   //       emit(AuthError("No token found"));
   //       return;
   //     }
-  //
+  //     final response = await _authorizedRequest("GET", "$_baseUrl/api/profileConsumer");
   //     final response = await http.get(
   //       Uri.parse("https://api.example.com/profileConsumer"),
   //       headers: {
@@ -758,18 +861,25 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-      final response = await http.put(
-        Uri.parse("$_baseUrl/auth/change-password"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
-        body: jsonEncode({
+      final response = await _authorizedRequest(
+        "PUT",
+        "$_baseUrl/auth/change-password",
+        body: {
           "currentPassword": currentPassword,
           "password": password,
-        }),
+        },
       );
+      // final response = await http.put(
+      //   Uri.parse("$_baseUrl/auth/change-password"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token",
+      //   },
+      //   body: jsonEncode({
+      //     "currentPassword": currentPassword,
+      //     "password": password,
+      //   }),
+      // );
 
       if (response.statusCode == 200) {
         emit(PasswordUpdatedSuccess());
@@ -794,19 +904,22 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-
-      final response = await http.put(
-        Uri.parse("$_baseUrl/auth/update-profile"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
-        body: jsonEncode({
-          "currentpasswordVit":currentpasswordVit,
-          "passwordVit": passwordVit,
-        }),
-      );
+      final response = await _authorizedRequest("PUT", "$_baseUrl/auth/update-profile",
+      body:{
+        "currentpasswordVit":currentpasswordVit,
+        "passwordVit": passwordVit,
+      });
+      // final response = await http.put(
+      //   Uri.parse("$_baseUrl/auth/update-profile"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token",
+      //   },
+      //   body: jsonEncode({
+      //     "currentpasswordVit":currentpasswordVit,
+      //     "passwordVit": passwordVit,
+      //   }),
+      // );
 
       if (response.statusCode == 200) {
         emit(PasswordUpdatedSuccess());
@@ -829,19 +942,22 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-
-      final response = await http.put(
-        Uri.parse("$_baseUrl/auth/update-profile"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
-        body: jsonEncode({
-          "currentpaaswordCons":currentpasswordCons,
-          "passwordCons": passwordCons,
-        }),
-      );
+      final response = await _authorizedRequest("PUT", "$_baseUrl/auth/update-profile",
+      body:{
+        "currentpaaswordCons":currentpasswordCons,
+        "passwordCons": passwordCons,
+      });
+      // final response = await http.put(
+      //   Uri.parse("$_baseUrl/auth/update-profile"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token",
+      //   },
+      //   body: jsonEncode({
+      //     "currentpaaswordCons":currentpasswordCons,
+      //     "passwordCons": passwordCons,
+      //   }),
+      // );
 
       if (response.statusCode == 200) {
         emit(PasswordUpdatedSuccess());
@@ -866,21 +982,28 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-
-      final response = await http.put(
-        Uri.parse("$_baseUrl/auth/update-profile"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token_cons",
-          "ngrok-skip-browser-warning": "true",
-        },
-        body: jsonEncode({
+      final response = await _authorizedRequest(
+        "PUT",
+        "$_baseUrl/auth/update-profile",
+        body: {
           "fullName": name_cons,
           "phone": phone_cons,
           "homePort": homePort_cons,
           "boatName": boatName_cons,
-        }),
-      );
+        });
+      // final response = await http.put(
+      //   Uri.parse("$_baseUrl/auth/update-profile"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token_cons",
+      //   },
+      //   body: jsonEncode({
+      //     "fullName": name_cons,
+      //     "phone": phone_cons,
+      //     "homePort": homePort_cons,
+      //     "boatName": boatName_cons,
+      //   }),
+      // );
 
       if (response.statusCode == 200) {
         emit(ProfileUpdatedSuccess());
@@ -892,7 +1015,7 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
   // --- SÉLECTION DU RÔLE ---
-  Future<void> selectRole(String role) async {
+  Future<void> selectRole(String email,String role) async {
     try {
       emit(AuthLoading());
 
@@ -903,18 +1026,21 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       // Envoie le rôle au backend
-      final response = await http.post(
-        Uri.parse("$_baseUrl/auth/select-role"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
-        body: jsonEncode({"role": role}),
-        // on envoie : {"role": "fishmen"}
-        // ou         {"role": "vet"}
-        // ou         {"role": "consumer"}
-      );
+      final response = await _authorizedRequest("POST", "$_baseUrl/auth/send-email-fishmen", body: {
+        "email":email,
+        "role": role});
+      //")
+      // final response = await http.post(
+      //   Uri.parse("$_baseUrl/auth/select-role"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token",
+      //   },
+      //   body: jsonEncode({"role": role}),
+      //   // on envoie : {"role": "fishmen"}
+      //   // ou         {"role": "vet"}
+      //   // ou         {"role": "consumer"}
+      // );
 
       if (response.statusCode == 200) {
         // Sauvegarde le rôle localement
@@ -936,7 +1062,6 @@ class AuthCubit extends Cubit<AuthState> {
           headers:
           {
             "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true",
           },
           body: jsonEncode({"email": email, "code": code,}));
       if (response.statusCode == 200) {
@@ -962,15 +1087,22 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-      final response = await http.post(
-          Uri.parse("$_baseUrl/auth/code_verification"),
-          headers:
-          {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer $token",
-            "ngrok-skip-browser-warning": "true",
-          },
-          body: jsonEncode({"emailvet": emailvet, "passwordvet": passwordvet, "homePortvet": homePortvet,}));
+      final response = await _authorizedRequest(
+        "POST",
+        "$_baseUrl/auth/code_verification",
+        body: {
+          "emailvet": emailvet,
+          "passwordvet": passwordvet,
+          "homePortvet": homePortvet,
+        });
+      // final response = await http.post(
+      //     Uri.parse("$_baseUrl/auth/code_verification"),
+      //     headers:
+      //     {
+      //       "Content-Type": "application/json",
+      //       "Authorization": "Bearer $token",
+      //     },
+      //     body: jsonEncode({"emailvet": emailvet, "passwordvet": passwordvet, "homePortvet": homePortvet,}));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         emit(VetCreatedSuccess());
@@ -992,14 +1124,14 @@ class AuthCubit extends Cubit<AuthState> {
     }
     // Simulation d'un appel API
     await Future.delayed(const Duration(seconds: 1));
-    final response = await http.get(
-      Uri.parse("https://yourbackend.com/api/profile"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-        "ngrok-skip-browser-warning": "true",
-      },
-    );
+    final response = await _authorizedRequest("GET", "$_baseUrl/api/profile");
+    // final response = await http.get(
+    //   Uri.parse("https://yourbackend.com/api/profile"),
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": "Bearer $token",
+    //   },
+    // );
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       emit(AdminLoaded(data));
@@ -1038,14 +1170,17 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-      final response = await http.get(
-        Uri.parse("$_baseUrl/auth/profile-fishmen"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
+      final response = await _authorizedRequest(
+        "GET",
+        "$_baseUrl/auth/profile-fishmen",
       );
+      // final response = await http.get(
+      //   Uri.parse("$_baseUrl/auth/profile-fishmen"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token",
+      //   },
+      // );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -1065,14 +1200,17 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-      final response = await http.get(
-        Uri.parse("$_baseUrl/auth/profile-fishmen"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-          "ngrok-skip-browser-warning": "true",
-        },
+      final response = await _authorizedRequest(
+        "GET",
+        "$_baseUrl/auth/profile-fishmen",
       );
+      // final response = await http.get(
+      //   Uri.parse("$_baseUrl/auth/profile-fishmen"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token",
+      //   },
+      // );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
