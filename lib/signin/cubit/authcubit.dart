@@ -216,7 +216,9 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        await _saveTokenAndRole(data['token'], data['role'],refreshToken: data['refresh_token'],);
+        await _saveTokenAndRole(data['token'], data['role'],
+          // refreshToken: data['refresh_token'],
+        );
         emit(AuthAuthenticated(data));
       } else {
         emit(AuthError("Invalid email or password"));
@@ -239,7 +241,9 @@ class AuthCubit extends Cubit<AuthState> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final userData = jsonDecode(response.body);
-        await _saveTokenAndRole(userData['token'], userData['role'],refreshToken: userData['refresh_token'],);
+        await _saveTokenAndRole(userData['token'], userData['role'],
+          // refreshToken: userData['refresh_token']
+        );
         emit(AuthAuthenticated(userData));
       } else {
         emit(AuthError("Registration failed: ${response.statusCode}"));
