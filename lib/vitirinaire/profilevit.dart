@@ -4,7 +4,7 @@ import 'package:projet2/vitirinaire/updatpaasword.dart';
 import 'package:share_plus/share_plus.dart';
 import '../signin/cubit/authcubit.dart';
 import '../signin/cubit/authstate.dart';
-import 'editeprofilevit.dart';
+import 'editprofilvit.dart';
 
 class ProfilevitPage extends StatefulWidget {
 
