@@ -11,7 +11,7 @@ import 'authstate.dart';
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
   
-  final String _baseUrl = "https://cushionless-buxomly-cherry.ngrok-free.dev/api";
+  final String _baseUrl = "http://10.209.195.228:3000/";
   final FlutterSecureStorage storage = const FlutterSecureStorage();
   
   final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -33,7 +33,7 @@ class AuthCubit extends Cubit<AuthState> {
       if (refreshToken == null) return false;
 
       final response = await http.post(
-        Uri.parse("$_baseUrl/auth/refresh-token-fishmen"),
+        Uri.parse("$_baseUrl/refresh-token-fishmen"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"refresh_token": refreshToken}),
       );
@@ -143,7 +143,7 @@ class AuthCubit extends Cubit<AuthState> {
       //   "serverAuthCode": serverAuthCode,
       // }),);
       final response = await http.post(
-        Uri.parse("$_baseUrl/auth/google-login-fishmen"),
+        Uri.parse("$_baseUrl/google-login-fishmen"),
         headers: {
           "Content-Type": "application/json",
         },
@@ -182,7 +182,7 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       final response = await http.post(
-        Uri.parse("$_baseUrl/auth/facebook-login-fishmen"),
+        Uri.parse("$_baseUrl/facebook-login-fishmen"),
         headers: {
           "Content-Type": "application/json",
         },
@@ -207,7 +207,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.post(
-        Uri.parse("$_baseUrl/auth/login-fishmen"),
+        Uri.parse("$_baseUrl/login-fishmen"),
         headers: {
           "Content-Type": "application/json",
         },
@@ -232,7 +232,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.post(
-        Uri.parse("$_baseUrl/auth/register-fishmen"),
+        Uri.parse("$_baseUrl/register-fishmen"),
         headers: {
           "Content-Type": "application/json",
         },
@@ -276,7 +276,7 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-      final response = await _authorizedRequest("GET", "$_baseUrl/auth/get-profile-fishmen");
+      final response = await _authorizedRequest("GET", "$_baseUrl/get-profile-fishmen");
       // final response = await http.get(
       //   Uri.parse("$_baseUrl/auth/get-profile-fishmen"),
       //   headers: {
@@ -316,7 +316,7 @@ class AuthCubit extends Cubit<AuthState> {
       }
       final response = await _authorizedRequest(
         "PUT",
-        "$_baseUrl/auth/get-Edit-profile-fishmen",
+        "$_baseUrl/get-Edit-profile-fishmen",
         body: {
           "fullName": name,
           "phone": phone,
@@ -372,7 +372,7 @@ class AuthCubit extends Cubit<AuthState> {
         emit(AuthError("No token found"));
         return;
       }
-      var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/auth/complete-setup-fishmen"));
+      var request = http.MultipartRequest('POST', Uri.parse("$_baseUrl/complete-setup-fishmen"));
       request.headers.addAll({
         "Authorization": "Bearer $token",
       });
@@ -416,7 +416,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       String? token = await _getToken();
       await http.post(
-        Uri.parse("$_baseUrl/auth/logout-fishmen"),
+        Uri.parse("$_baseUrl/logout-fishmen"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -524,7 +524,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.post(
-        Uri.parse("$_baseUrl/auth/send-email"),
+        Uri.parse("$_baseUrl/send-email"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email}),
       );
@@ -692,83 +692,83 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
   // --- HOME DATA FISHERMAN ---
-  Future<void> fetchHomeData() async {
-    try {
-      emit(AuthLoading());
-      // String? token = await _getToken();
-      // if (token == null) {
-      //   emit(AuthError("No token found"));
-      //   return;
-      // }
-      await Future.delayed(const Duration(seconds: 1));
-      emit(HomeDataLoaded({
-        "userName":        "Capt. Ahmed",
-        "earnings":        "12,450.00 DA",
-        "earningsTrend":   "8.4%",
-        "weight":          "4,250 kg",
-        "weightTrend":     "5.2%",
-        "pendingBatches":  24,
-        "approvedBatches": 85,
-        "rejectedBatches": 12,
-        "expiredBatches":  7,
-
-        // ✅ Donut — valeurs numériques
-        "batch_approved":  72.0,
-        "batch_expired":   18.0,
-        "batch_pending":    4.0,
-        "batch_rejected":   6.0,
-
-        // ✅ Donut — labels String
-        "approved_label": "72%",
-        "expired_label":  "18%",
-        "pending_label":   "4%",
-        "rejected_label":  "6%",
-        "batch":          "105",   // ← nombre au centre
-
-        // ✅ Fish distribution
-        "sardine_pct":    42.5,
-        "salmon_pct":     28.1,
-        "tuna_pct":       15.4,
-        "seabass_pct":     9.2,
-        "other_pct":       4.8,
-        "sardine_label":  "42.5%",
-        "salmon_label":   "28.1%",
-        "tuna_label":     "15.4%",
-        "seabass_label":   "9.2%",
-        "other_label":     "4.8%",
-      }));
-    } catch (e) {
-      emit(AuthError(e.toString()));
-    }
-  }
   // Future<void> fetchHomeData() async {
   //   try {
   //     emit(AuthLoading());
-  //     String? token = await _getToken();
-  //     if (token == null) {
-  //       emit(AuthError("No token found"));
-  //       return;
-  //     }
-  //     // Simulation d'un appel API
+  //     // String? token = await _getToken();
+  //     // if (token == null) {
+  //     //   emit(AuthError("No token found"));
+  //     //   return;
+  //     // }
   //     await Future.delayed(const Duration(seconds: 1));
-  // final response = await _authorizedRequest("GET", "$_baseUrl/auth/get-profile-fishmen");
-  //     final response = await http.get(
-  //       Uri.parse("$_baseUrl/auth/get-profile-fishmen"),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Authorization": "Bearer $token",
-  //       },
-  //     );
-  //     if (response.statusCode == 200) {
-  //       final data = jsonDecode(response.body);
-  //       emit(ProfileLoaded(data));
-  //     } else {
-  //       emit(AuthError("Failed to load Home page"));
-  //     }
+  //     emit(HomeDataLoaded({
+  //       "userName":        "Capt. Ahmed",
+  //       "earnings":        "12,450.00 DA",
+  //       "earningsTrend":   "8.4%",
+  //       "weight":          "4,250 kg",
+  //       "weightTrend":     "5.2%",
+  //       "pendingBatches":  24,
+  //       "approvedBatches": 85,
+  //       "rejectedBatches": 12,
+  //       "expiredBatches":  7,
+  //
+  //       // ✅ Donut — valeurs numériques
+  //       "batch_approved":  72.0,
+  //       "batch_expired":   18.0,
+  //       "batch_pending":    4.0,
+  //       "batch_rejected":   6.0,
+  //
+  //       // ✅ Donut — labels String
+  //       "approved_label": "72%",
+  //       "expired_label":  "18%",
+  //       "pending_label":   "4%",
+  //       "rejected_label":  "6%",
+  //       "batch":          "105",   // ← nombre au centre
+  //
+  //       // ✅ Fish distribution
+  //       "sardine_pct":    42.5,
+  //       "salmon_pct":     28.1,
+  //       "tuna_pct":       15.4,
+  //       "seabass_pct":     9.2,
+  //       "other_pct":       4.8,
+  //       "sardine_label":  "42.5%",
+  //       "salmon_label":   "28.1%",
+  //       "tuna_label":     "15.4%",
+  //       "seabass_label":   "9.2%",
+  //       "other_label":     "4.8%",
+  //     }));
   //   } catch (e) {
   //     emit(AuthError(e.toString()));
   //   }
   // }
+  Future<void> fetchHomeData() async {
+    try {
+      emit(AuthLoading());
+      String? token = await _getToken();
+      if (token == null) {
+        emit(AuthError("No token found"));
+        return;
+      }
+      // Simulation d'un appel API
+      await Future.delayed(const Duration(seconds: 1));
+  final response = await _authorizedRequest("GET", "$_baseUrl/get-profile-fishmen");
+      // final response = await http.get(
+      //   Uri.parse("$_baseUrl/auth/get-profile-fishmen"),
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //     "Authorization": "Bearer $token",
+      //   },
+      // );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        emit(ProfileLoaded(data));
+      } else {
+        emit(AuthError("Failed to load Home page"));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
 
   //profile de consumer
   Future<void> fetchConsumerProfile() async {
@@ -867,7 +867,7 @@ class AuthCubit extends Cubit<AuthState> {
       }
       final response = await _authorizedRequest(
         "PUT",
-        "$_baseUrl/auth/change-password",
+        "$_baseUrl/change-password",
         body: {
           "currentPassword": currentPassword,
           "password": password,
@@ -1035,7 +1035,7 @@ class AuthCubit extends Cubit<AuthState> {
       //   "role": role});
       //")
       final response = await http.post(
-        Uri.parse("$_baseUrl/auth/select-role"),
+        Uri.parse("$_baseUrl/send-email"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -1064,7 +1064,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
       final response = await http.post(
-          Uri.parse("$_baseUrl/auth/verify-code-fishmen"),
+          Uri.parse("$_baseUrl/verify-code-fishmen"),
           headers:
           {
             "Content-Type": "application/json",
@@ -1154,7 +1154,7 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthLoading());
 
       final response = await http.post(
-        Uri.parse("$_baseUrl/auth/reset-password-fishmen"),
+        Uri.parse("$_baseUrl/reset-password-fishmen"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email}),
       );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projet2/picheur/interfacepage.dart';
 import 'package:projet2/picheur/profil.dart';
 import 'package:projet2/signin/cubit/authcubit.dart';
 import 'package:projet2/signin/cubit/themecubit.dart';
@@ -82,7 +83,7 @@ class MyApp extends StatelessWidget {
             ),
             dividerTheme: const DividerThemeData(color: Colors.white12),
           ),
-          home: const ProfilePage(),
+          home: const Interfacepage(),
           // RoleSelectionPage()
           // SplashPage(),
           // Fivepage( email: 'hakoben@gmail.com',)
